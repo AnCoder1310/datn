@@ -5,7 +5,7 @@
   z-index: 80;
   display: flex;
   justify-content: flex-end;
-  background: rgba(17, 17, 17, 0.45);
+  background: rgba(23, 43, 58, 0.45);
   font-family: 'Be Vietnam Pro', system-ui, sans-serif;
   color: #172B3A;
   font-variant-numeric: tabular-nums;
@@ -17,7 +17,7 @@
   display: flex;
   flex-direction: column;
   background: #fff;
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.08);
+  box-shadow: -10px 0 30px rgba(23, 43, 58, 0.08);
   outline: none;
   animation: rp-slide-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -60,7 +60,7 @@
   text-align: right;
   padding: 8px 14px;
   border-radius: 14px;
-  background: #F8FAFC;
+  background: #F5F8FA;
   border: 1px solid #E5EAEE;
 }
 .rp-total-label { font-size: 12px; color: #64748B; }
@@ -83,7 +83,7 @@
   color: #172B3A;
   cursor: pointer;
 }
-.rp-close:hover { background: #F8FAFC; }
+.rp-close:hover { background: #F5F8FA; }
 
 .rp-body {
   flex: 1;
@@ -97,7 +97,7 @@
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--app-line);
-  background: #F8FAFC;
+  background: #F5F8FA;
 }
 .rp-transcript h3,
 .rp-scores h3 { margin: 0; font-size: 15px; font-weight: 700; }
@@ -126,7 +126,7 @@
   background: #fff;
   border: 1px solid #E5EAEE;
 }
-.rp-msg--advisor .rp-bubble { background: #F5F8FA; border-color: #C9D9FF; }
+.rp-msg--advisor .rp-bubble { background: rgba(128, 229, 229, 0.15); border-color: #80E5E5; color: #172B3A; }
 .rp-empty { margin: 0; padding: 0 24px; font-size: 14px; color: #64748B; }
 
 .rp-scores {
@@ -180,7 +180,7 @@
   padding: 8px 12px;
   border: 0;
   border-radius: 10px;
-  background: #F8FAFC;
+  background: #F5F8FA;
   font: inherit;
   font-size: 13px;
   line-height: 1.5;
@@ -201,7 +201,7 @@
 .rp-change textarea {
   border-radius: 10px;
   border: 1px solid var(--app-blue);
-  box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.1);
+  box-shadow: 0 0 0 4px rgba(128, 229, 229, 0.2);
   padding: 8px 10px;
   font: inherit;
   font-size: 14px;
@@ -253,9 +253,9 @@
   cursor: pointer;
 }
 .rp-btn--outline { border: 1px solid #E5EAEE; background: #fff; color: #172B3A; font-weight: 500; }
-.rp-btn--outline:hover:not(:disabled) { background: #F8FAFC; }
-.rp-btn--primary { border: 0; background: #172B3A; color: #fff; font-weight: 600; padding: 0 20px; }
-.rp-btn--primary:hover:not(:disabled) { background: #000000; }
+.rp-btn--outline:hover:not(:disabled) { background: #F5F8FA; }
+.rp-btn--primary { border: 1px solid #80E5E5; background: #80E5E5; color: #172B3A; font-weight: 700; padding: 0 20px; box-shadow: 0 1px 4px rgba(128, 229, 229, 0.3); }
+.rp-btn--primary:hover:not(:disabled) { background: #6ad6d6; }
 .rp-btn:disabled { opacity: 0.6; cursor: wait; }
 
 @media (max-width: 1100px) {

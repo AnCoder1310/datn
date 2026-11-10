@@ -6,7 +6,7 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(17, 17, 17, 0.45);
+  background: rgba(23, 43, 58, 0.45);
   animation: notice-fade 180ms ease-out;
 }
 
@@ -21,7 +21,7 @@
   border: 1px solid #E5EAEE;
   background: #FFFFFF;
   color: #172B3A;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 16px 40px rgba(23, 43, 58, 0.12);
   animation: notice-enter 180ms ease-out;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .notice-dialog p {
-  color: #666666;
+  color: #64748B;
   font-size: 0.9rem;
   line-height: 1.55;
 }
@@ -84,18 +84,19 @@
 }
 
 .notice-dialog-action-primary {
-  background: #172B3A;
-  color: #FFFFFF;
-  border: 1px solid #172B3A;
+  background: #80E5E5;
+  color: #172B3A;
+  border: 1px solid #80E5E5;
+  font-weight: 700;
 }
 
 .notice-dialog-action-primary:hover {
-  background: #000000;
+  background: #6ad6d6;
 }
 
 .notice-dialog-action-secondary {
   background: #FFFFFF;
-  border: 1px solid #CCCCCC;
+  border: 1px solid #E5EAEE;
   color: #172B3A;
 }
 

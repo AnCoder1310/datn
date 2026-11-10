@@ -79,18 +79,18 @@ export function ProductContextPanel({
         overflow: 'hidden',
         backgroundColor: '#FFFFFF',
         borderRadius: 12,
-        border: '1px solid #E5E7EB',
+        border: '1px solid #E5EAEE',
       }}
     >
       {/* HEADER */}
       <div
         style={{
           padding: '14px 18px',
-          borderBottom: '1px solid #E5E5E5',
+          borderBottom: '1px solid #E5EAEE',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: '#FAFAFA',
+          backgroundColor: '#F5F8FA',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -100,14 +100,14 @@ export function ProductContextPanel({
               style={{
                 fontSize: '0.88rem',
                 fontWeight: 800,
-                color: '#111827',
+                color: '#172B3A',
                 margin: 0,
                 letterSpacing: '-0.01em',
               }}
             >
               {isConsultationMode ? 'Bổ sung để tư vấn khách' : 'Bạn muốn tư vấn xe nào?'}
             </h3>
-            <span style={{ fontSize: '0.7rem', color: '#6B7280' }}>
+            <span style={{ fontSize: '0.7rem', color: '#64748B' }}>
               {isConsultationMode
                 ? 'Thông tin sản phẩm và chính sách theo ngày đối chiếu'
                 : 'Chọn xe và chủ đề để bắt đầu chuẩn bị tư vấn'}
@@ -121,7 +121,7 @@ export function ProductContextPanel({
               style={{
                 padding: '3px 8px',
                 borderRadius: 6,
-                backgroundColor: '#111827',
+                backgroundColor: '#172B3A',
                 color: '#FFFFFF',
                 fontSize: '0.74rem',
                 fontWeight: 700,
@@ -136,9 +136,9 @@ export function ProductContextPanel({
                 style={{
                   padding: '3px 8px',
                   borderRadius: 6,
-                  border: '1px solid #D1D5DB',
+                  border: '1px solid #E5EAEE',
                   backgroundColor: '#FFFFFF',
-                  color: '#4B5563',
+                  color: '#64748B',
                   fontSize: '0.7rem',
                   fontWeight: 600,
                   cursor: 'pointer',
@@ -154,8 +154,8 @@ export function ProductContextPanel({
             style={{
               padding: '3px 7px',
               borderRadius: 6,
-              backgroundColor: '#F5F5F5',
-              color: '#111111',
+              backgroundColor: '#F5F8FA',
+              color: '#172B3A',
               fontSize: '0.7rem',
               fontWeight: 700,
             }}
@@ -186,11 +186,11 @@ export function ProductContextPanel({
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '8px 10px',
-                backgroundColor: '#F9FAFB',
-                border: '1px solid #E5E7EB',
+                backgroundColor: '#F5F8FA',
+                border: '1px solid #E5EAEE',
                 borderRadius: 8,
                 fontSize: '0.72rem',
-                color: '#4B5563',
+                color: '#64748B',
               }}
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -207,7 +207,7 @@ export function ProductContextPanel({
                 style={{
                   padding: '24px 16px',
                   textAlign: 'center',
-                  color: '#6B7280',
+                  color: '#64748B',
                   fontSize: '0.8rem',
                 }}
               >
@@ -219,11 +219,11 @@ export function ProductContextPanel({
               <div
                 style={{
                   padding: '12px 14px',
-                  backgroundColor: '#F8F8F8',
-                  border: '1px solid #FECACA',
+                  backgroundColor: '#F5F8FA',
+                  border: '1px solid #E5EAEE',
                   borderRadius: 8,
                   fontSize: '0.78rem',
-                  color: '#111111',
+                  color: '#172B3A',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
@@ -237,7 +237,7 @@ export function ProductContextPanel({
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: '#111111',
+                      color: '#172B3A',
                       fontWeight: 700,
                       cursor: 'pointer',
                     }}
@@ -253,16 +253,16 @@ export function ProductContextPanel({
                 style={{
                   padding: '28px 16px',
                   textAlign: 'center',
-                  backgroundColor: '#F9FAFB',
-                  border: '1px dashed #D1D5DB',
+                  backgroundColor: '#F5F8FA',
+                  border: '1px dashed #E5EAEE',
                   borderRadius: 8,
                 }}
               >
                 <span style={{ fontSize: '1.4rem', display: 'block', marginBottom: 6 }}>✅</span>
-                <p style={{ fontSize: '0.82rem', fontWeight: 700, color: '#374151', margin: '0 0 4px 0' }}>
+                <p style={{ fontSize: '0.82rem', fontWeight: 700, color: '#172B3A', margin: '0 0 4px 0' }}>
                   Chưa có thông tin nổi bật bổ sung
                 </p>
-                <p style={{ fontSize: '0.75rem', color: '#6B7280', margin: 0 }}>
+                <p style={{ fontSize: '0.75rem', color: '#64748B', margin: 0 }}>
                   Bạn có thể hỏi thêm về thông số, trang bị hoặc chính sách của xe để đối chiếu tài liệu.
                 </p>
               </div>
@@ -284,13 +284,13 @@ export function ProductContextPanel({
                   style={{
                     padding: '12px 14px',
                     backgroundColor: isPolicy ? '#FFFFFF' : '#FFFFFF',
-                    border: `1px solid ${isPolicy ? '#86EFAC' : '#E5E5E5'}`,
-                    borderLeft: `4px solid ${isPolicy ? '#111111' : '#111111'}`,
+                    border: `1px solid ${isPolicy ? '#80E5E5' : '#E5EAEE'}`,
+                    borderLeft: `4px solid ${isPolicy ? '#172B3A' : '#172B3A'}`,
                     borderRadius: 8,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 8,
-                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.03)',
+                    boxShadow: '0 1px 2px rgba(23, 43, 58, 0.03)',
                   }}
                 >
                   {/* Category & Model Tags */}
@@ -302,8 +302,8 @@ export function ProductContextPanel({
                           borderRadius: 4,
                           fontSize: '0.66rem',
                           fontWeight: 700,
-                          backgroundColor: isPolicy ? '#F5F5F5' : '#F5F5F5',
-                          color: isPolicy ? '#111111' : '#111111',
+                          backgroundColor: isPolicy ? '#F5F8FA' : '#F5F8FA',
+                          color: isPolicy ? '#172B3A' : '#172B3A',
                         }}
                       >
                         {isPolicy ? '📜 Chính sách áp dụng' : '💡 Điểm nổi bật'}
@@ -314,7 +314,7 @@ export function ProductContextPanel({
                           borderRadius: 4,
                           fontSize: '0.66rem',
                           fontWeight: 600,
-                          backgroundColor: '#111827',
+                          backgroundColor: '#172B3A',
                           color: '#FFFFFF',
                         }}
                       >
@@ -326,8 +326,8 @@ export function ProductContextPanel({
                       <span
                         style={{
                           fontSize: '0.66rem',
-                          color: '#D97706',
-                          backgroundColor: '#F5F5F5',
+                          color: '#80E5E5',
+                          backgroundColor: '#F5F8FA',
                           padding: '2px 6px',
                           borderRadius: 4,
                           fontWeight: 600,
@@ -344,7 +344,7 @@ export function ProductContextPanel({
                       style={{
                         fontSize: '0.84rem',
                         fontWeight: 800,
-                        color: '#111827',
+                        color: '#172B3A',
                         margin: '0 0 4px 0',
                         lineHeight: 1.35,
                       }}
@@ -354,7 +354,7 @@ export function ProductContextPanel({
                     <p
                       style={{
                         fontSize: '0.78rem',
-                        color: '#374151',
+                        color: '#172B3A',
                         lineHeight: 1.5,
                         margin: 0,
                       }}
@@ -364,7 +364,7 @@ export function ProductContextPanel({
                   </div>
 
                   {isPolicy && insight.citation?.effective_from && (
-                    <p style={{ margin: 0, fontSize: '0.7rem', color: '#4B5563' }}>
+                    <p style={{ margin: 0, fontSize: '0.7rem', color: '#64748B' }}>
                       Hiệu lực từ {insight.citation.effective_from}
                       {insight.citation.effective_to ? ` đến ${insight.citation.effective_to}` : ''}
                     </p>
@@ -382,10 +382,10 @@ export function ProductContextPanel({
                           gap: 5,
                           padding: '3px 8px',
                           backgroundColor: '#FFFFFF',
-                          border: '1px solid #CCCCCC',
+                          border: '1px solid #E5EAEE',
                           borderRadius: 6,
                           fontSize: '0.68rem',
-                          color: '#333333',
+                          color: '#172B3A',
                           fontWeight: 600,
                           cursor: 'pointer',
                           maxWidth: '100%',
@@ -393,20 +393,20 @@ export function ProductContextPanel({
                           transition: 'background-color 0.15s ease, border-color 0.15s ease',
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#F5F5F5';
-                          e.currentTarget.style.borderColor = '#93C5FD';
+                          e.currentTarget.style.backgroundColor = '#F5F8FA';
+                          e.currentTarget.style.borderColor = '#80E5E5';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = '#FFFFFF';
-                          e.currentTarget.style.borderColor = '#CCCCCC';
+                          e.currentTarget.style.borderColor = '#E5EAEE';
                         }}
                         title={`Bấm để tra cứu trích đoạn gốc: ${insight.citation.title || insight.citation.document_id}`}
                       >
-                        <BookIcon style={{ width: 11, height: 11, color: '#111111', flexShrink: 0 }} />
+                        <BookIcon style={{ width: 11, height: 11, color: '#172B3A', flexShrink: 0 }} />
                         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           Nguồn: {insight.citation.title || insight.citation.document_id}
                         </span>
-                        <span style={{ fontSize: '0.65rem', color: '#808080' }}>↗</span>
+                        <span style={{ fontSize: '0.65rem', color: '#64748B' }}>↗</span>
                       </button>
                     </div>
                   )}
@@ -416,11 +416,11 @@ export function ProductContextPanel({
                     <div
                       style={{
                         padding: '5px 8px',
-                        backgroundColor: '#F8F8F8',
+                        backgroundColor: '#F5F8FA',
                         borderRadius: 6,
-                        border: '1px solid #FDE68A',
+                        border: '1px solid #80E5E5',
                         fontSize: '0.71rem',
-                        color: '#111111',
+                        color: '#172B3A',
                         lineHeight: 1.35,
                       }}
                     >
@@ -435,7 +435,7 @@ export function ProductContextPanel({
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       paddingTop: 6,
-                      borderTop: '1px solid #F3F4F6',
+                      borderTop: '1px solid #E5EAEE',
                     }}
                   >
                     <div style={{ display: 'flex', gap: 6 }}>
@@ -446,10 +446,10 @@ export function ProductContextPanel({
                         style={{
                           padding: '4px 8px',
                           borderRadius: 5,
-                          border: '1px solid #CCCCCC',
+                          border: '1px solid #E5EAEE',
                           backgroundColor: '#FFFFFF',
                           fontSize: '0.72rem',
-                          color: copiedId === copyKey ? '#111111' : '#333333',
+                          color: copiedId === copyKey ? '#172B3A' : '#172B3A',
                           fontWeight: 600,
                           cursor: 'pointer',
                           display: 'inline-flex',
@@ -460,7 +460,7 @@ export function ProductContextPanel({
                       >
                         {copiedId === copyKey ? (
                           <>
-                            <CheckIcon style={{ width: 12, height: 12, color: '#111111' }} />
+                            <CheckIcon style={{ width: 12, height: 12, color: '#172B3A' }} />
                             <span>Đã chép</span>
                           </>
                         ) : (
@@ -485,10 +485,10 @@ export function ProductContextPanel({
                         style={{
                           padding: '4px 8px',
                           borderRadius: 5,
-                          border: '1px solid #CCCCCC',
+                          border: '1px solid #E5EAEE',
                           backgroundColor: '#FFFFFF',
                           fontSize: '0.72rem',
-                          color: '#111111',
+                          color: '#172B3A',
                           fontWeight: 600,
                           cursor: 'pointer',
                         }}
@@ -509,7 +509,7 @@ export function ProductContextPanel({
                           border: 'none',
                           backgroundColor: 'transparent',
                           fontSize: '0.72rem',
-                          color: '#111111',
+                          color: '#172B3A',
                           fontWeight: 600,
                           cursor: 'pointer',
                           display: 'inline-flex',
@@ -535,7 +535,7 @@ export function ProductContextPanel({
                 style={{
                   fontSize: '0.72rem',
                   fontWeight: 700,
-                  color: '#4B5563',
+                  color: '#64748B',
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em',
                   display: 'block',
@@ -561,8 +561,8 @@ export function ProductContextPanel({
                       style={{
                         padding: '10px 8px',
                         borderRadius: 8,
-                        border: isSelected ? '2px solid #111111' : '1px solid #E5E7EB',
-                        backgroundColor: isSelected ? '#F5F5F5' : '#F9FAFB',
+                        border: isSelected ? '2px solid #172B3A' : '1px solid #E5EAEE',
+                        backgroundColor: isSelected ? '#F5F8FA' : '#F5F8FA',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
@@ -575,12 +575,12 @@ export function ProductContextPanel({
                         style={{
                           fontSize: '0.88rem',
                           fontWeight: 800,
-                          color: isSelected ? '#111111' : '#111827',
+                          color: isSelected ? '#172B3A' : '#172B3A',
                         }}
                       >
                         {v.model}
                       </span>
-                      <span style={{ fontSize: '0.66rem', color: '#6B7280' }}>
+                      <span style={{ fontSize: '0.66rem', color: '#64748B' }}>
                         {v.segment}
                       </span>
                     </button>
@@ -596,19 +596,19 @@ export function ProductContextPanel({
                   style={{
                     padding: '10px 12px',
                     borderRadius: 8,
-                    backgroundColor: '#F5F5F5',
+                    backgroundColor: '#F5F8FA',
                     border: '1px solid #BAE6FD',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#111111' }}>
+                    <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#172B3A' }}>
                       {selectedBrowse}
                     </span>
-                    <span style={{ fontSize: '0.72rem', color: '#111111', fontWeight: 600 }}>
+                    <span style={{ fontSize: '0.72rem', color: '#172B3A', fontWeight: 600 }}>
                       Ngữ cảnh chuẩn bị tư vấn
                     </span>
                   </div>
-                  <p style={{ fontSize: '0.74rem', color: '#333333', margin: '4px 0 0 0' }}>
+                  <p style={{ fontSize: '0.74rem', color: '#172B3A', margin: '4px 0 0 0' }}>
                     {vehicleCatalog.find((v) => v.model === selectedBrowse)?.highlight}
                   </p>
                 </div>
@@ -618,7 +618,7 @@ export function ProductContextPanel({
                     style={{
                       fontSize: '0.72rem',
                       fontWeight: 700,
-                      color: '#4B5563',
+                      color: '#64748B',
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
                       display: 'block',
@@ -638,10 +638,10 @@ export function ProductContextPanel({
                           textAlign: 'left',
                           padding: '9px 12px',
                           borderRadius: 6,
-                          border: '1px solid #E5E7EB',
+                          border: '1px solid #E5EAEE',
                           backgroundColor: '#FFFFFF',
                           fontSize: '0.78rem',
-                          color: '#1F2937',
+                          color: '#172B3A',
                           fontWeight: 600,
                           cursor: 'pointer',
                           display: 'flex',
@@ -650,17 +650,17 @@ export function ProductContextPanel({
                           transition: 'all 0.15s ease',
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#F5F5F5';
-                          e.currentTarget.style.borderColor = '#93C5FD';
+                          e.currentTarget.style.backgroundColor = '#F5F8FA';
+                          e.currentTarget.style.borderColor = '#80E5E5';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = '#FFFFFF';
-                          e.currentTarget.style.borderColor = '#E5E7EB';
+                          e.currentTarget.style.borderColor = '#E5EAEE';
                         }}
                         title="Điền câu hỏi mẫu vào ô nhập liệu"
                       >
                         <span>{topic.label}</span>
-                        <ChevronRight style={{ width: 12, height: 12, color: '#9CA3AF' }} />
+                        <ChevronRight style={{ width: 12, height: 12, color: '#94A3B8' }} />
                       </button>
                     ))}
                   </div>

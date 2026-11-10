@@ -3,11 +3,11 @@ import { managerApi } from '../../api/managerApi';
 import { ShieldCheckIcon, RefreshIcon } from '../common/Icons';
 
 const ACTION_LABELS = {
-  SCORE_OVERRIDE: { label: 'Sửa điểm AI', color: '#111111', bg: '#F5F5F5' },
-  REVIEW_APPROVED: { label: 'Duyệt bài thi', color: '#111111', bg: '#F5F5F5' },
-  ASSIGNMENT_CREATED: { label: 'Giao bài tập', color: '#111111', bg: '#F5F5F5' },
-  SCENARIO_CREATED: { label: 'Tạo kịch bản', color: '#111111', bg: '#F5F5F5' },
-  SCENARIO_GENERATED: { label: 'AI sinh kịch bản', color: '#111111', bg: '#F5F5F5' },
+  SCORE_OVERRIDE: { label: 'Sửa điểm AI', color: '#172B3A', bg: '#F5F8FA' },
+  REVIEW_APPROVED: { label: 'Duyệt bài thi', color: '#172B3A', bg: '#F5F8FA' },
+  ASSIGNMENT_CREATED: { label: 'Giao bài tập', color: '#172B3A', bg: '#F5F8FA' },
+  SCENARIO_CREATED: { label: 'Tạo kịch bản', color: '#172B3A', bg: '#F5F8FA' },
+  SCENARIO_GENERATED: { label: 'AI sinh kịch bản', color: '#172B3A', bg: '#F5F8FA' },
 };
 
 function formatDateTime(val) {
@@ -46,10 +46,10 @@ export function ManagerAuditView() {
       <div className="md-panel-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h2 id="audit-title" className="md-panel-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ShieldCheckIcon style={{ width: 22, height: 22, color: '#111111' }} />
+            <ShieldCheckIcon style={{ width: 22, height: 22, color: '#172B3A' }} />
             Nhật Ký Kiểm Toán Doanh Nghiệp (Audit Trail)
           </h2>
-          <p style={{ color: '#666', fontSize: '13px', margin: '4px 0 0 0' }}>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: '4px 0 0 0' }}>
             Lưu vết bất biến mọi hành động can thiệp sửa điểm, duyệt bài, giao bài và tạo kịch bản của quản lý.
           </p>
         </div>
@@ -58,7 +58,7 @@ export function ManagerAuditView() {
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
-            style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '13px' }}
+            style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #E5EAEE', fontSize: '13px' }}
           >
             <option value="">Tất cả hành động</option>
             <option value="SCORE_OVERRIDE">Sửa điểm AI (Score Override)</option>
@@ -103,10 +103,10 @@ export function ManagerAuditView() {
             </thead>
             <tbody>
               {logs.map((log) => {
-                const badge = ACTION_LABELS[log.action] || { label: log.action, color: '#4a5568', bg: '#edf2f7' };
+                const badge = ACTION_LABELS[log.action] || { label: log.action, color: '#64748B', bg: '#F5F8FA' };
                 return (
                   <tr key={log.id}>
-                    <td style={{ fontSize: '12px', color: '#666' }}>{formatDateTime(log.created_at)}</td>
+                    <td style={{ fontSize: '12px', color: '#64748B' }}>{formatDateTime(log.created_at)}</td>
                     <td style={{ fontWeight: 600 }}>{log.actor_id}</td>
                     <td>
                       <span style={{

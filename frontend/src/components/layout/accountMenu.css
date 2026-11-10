@@ -21,7 +21,7 @@
 
 .account-menu-trigger:hover,
 .account-menu-trigger.is-open {
-  background: #F8FAFC;
+  background: #F5F8FA;
   border-color: #80E5E5;
 }
 
@@ -146,8 +146,8 @@
 }
 
 .account-menu-logout:hover {
-  background: #F8FAFC;
-  border-color: #CBD5E1;
+  background: #F5F8FA;
+  border-color: #94A3B8;
 }
 
 .account-menu-logout:focus-visible {

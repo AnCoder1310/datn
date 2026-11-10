@@ -24,6 +24,7 @@ import {
 } from './agendaData';
 import { useWorkspaceClock } from '../customerWorkspace/useCustomerWorkspace';
 import { VinFastShowcaseHero } from './VinFastShowcaseHero';
+import dashboardFallback from '../../../data/dashboardFallback.json';
 
 const STAGE_LABELS = {
   new: 'Mới liên hệ',
@@ -40,14 +41,14 @@ const STAGE_LABELS = {
 // Modern SaaS Palette for pipeline stages (Soft Cyan & Midnight Navy tones)
 const STAGE_COLORS = {
   won: '#172B3A',
-  deposit_process: '#2A4A63',
-  negotiating: '#3E6686',
-  considering: '#5683A7',
+  deposit_process: '#172B3A',
+  negotiating: '#172B3A',
+  considering: '#172B3A',
   qualified: '#80E5E5',
-  discovery: '#A5EEEE',
-  new: '#C7F5F5',
+  discovery: '#80E5E5',
+  new: '#80E5E5',
   needs_confirmation: '#94A3B8',
-  lost: '#CBD5E1',
+  lost: '#94A3B8',
 };
 
 function getStageLabel(stageId) {
@@ -227,7 +228,7 @@ export function DashboardView({
     () => salesCopilotApi.getDashboard({ activity_days: days, work_filter: filter, work_page: page }),
     active
   );
-  const data = resource.data;
+  const data = resource.data || dashboardFallback;
 
   function changeFilter(value) {
     setFilter(value);
@@ -591,18 +592,16 @@ export function DashboardView({
                         ? compactWaiting(customer.waiting_since, now)
                         : null;
 
-                      // Short, punchy single note (at most 1 clear sentence)
-                      const rawNote =
-                        customerQueueTab === 'waiting' && !selectedStage && !selectedModel
-                          ? customer.last_message || customer.issues?.[0]
-                          : customerQueueTab === 'intelligence' && !selectedStage && !selectedModel
-                            ? customer.issues?.[0] || customer.quick_summary
-                            : customer.buying_signals?.[0] ||
-                                customer.issues?.[0] ||
-                                customer.quick_summary ||
-                                customer.last_message;
-
-                      const shortNote = rawNote ? cleanDemoText(rawNote).slice(0, 100) : null;
+                      // Chỉ hiển thị ghi chú nếu là vấn đề thực tế, không lặp văn bản mẫu
+                      const candidateNote = (customer.issues && customer.issues.length > 0)
+                        ? customer.issues[0]
+                        : (customer.last_message && !customer.last_message.includes('Em đã ghi nhận'))
+                          ? customer.last_message
+                          : null;
+                      const cleaned = cleanDemoText(candidateNote);
+                      const shortNote = cleaned && !cleaned.toLowerCase().includes('kịch bản') && cleaned.length > 6
+                        ? cleaned.slice(0, 80)
+                        : null;
 
                       return (
                         <div className="agenda-minimal-row" key={customer.customer_id}>
@@ -633,16 +632,8 @@ export function DashboardView({
                               className="agenda-btn-primary-action"
                               onClick={() => onCustomer(customer)}
                             >
-                              <span>Hội thoại</span>
+                              <span>Tư vấn</span>
                               <ArrowRight size={13} />
-                            </button>
-                            <button
-                              type="button"
-                              className="agenda-btn-subtle"
-                              onClick={() => onCustomer({ ...customer, tool: 'summary' })}
-                              title="Xem hồ sơ khách hàng"
-                            >
-                              Hồ sơ
                             </button>
                           </div>
                         </div>

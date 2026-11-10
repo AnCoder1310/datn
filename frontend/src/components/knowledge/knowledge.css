@@ -18,7 +18,7 @@
 
 .kb-page :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
+  box-shadow: 0 0 0 3px rgba(23, 43, 58, 0.1);
 }
 
 .kb-page button,
@@ -74,7 +74,7 @@
 
 .kb-search:focus-within {
   border-color: #172B3A;
-  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.06);
+  box-shadow: 0 0 0 3px rgba(23, 43, 58, 0.06);
 }
 
 .kb-search svg {
@@ -92,7 +92,7 @@
 }
 
 .kb-search input::placeholder {
-  color: #999999;
+  color: #94A3B8;
 }
 
 /* CATEGORY TABS */
@@ -116,7 +116,7 @@
   border: none;
   border-radius: 6px;
   background: transparent;
-  color: #666666;
+  color: #64748B;
   font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
@@ -125,14 +125,14 @@
 
 .kb-tab:hover:not([aria-pressed='true']) {
   color: #172B3A;
-  background: #EEEEEE;
+  background: #E5EAEE;
 }
 
 .kb-tab[aria-pressed='true'] {
-  background: #FFFFFF;
+  background: #80E5E5;
   color: #172B3A;
-  font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(128, 229, 229, 0.3);
 }
 
 .kb-tab-count {
@@ -140,13 +140,13 @@
   font-weight: 600;
   padding: 1px 6px;
   border-radius: 999px;
-  background: #E8E8E8;
-  color: #444444;
+  background: #E5EAEE;
+  color: #64748B;
 }
 
 .kb-tab[aria-pressed='true'] .kb-tab-count {
   background: #172B3A;
-  color: #FFFFFF;
+  color: #80E5E5;
 }
 
 /* FRESH UPDATES STRIP */
@@ -180,7 +180,7 @@
 
 .kb-update:hover {
   border-color: #172B3A;
-  background: #F8FAFC;
+  background: #F5F8FA;
 }
 
 .kb-date-tile {
@@ -193,7 +193,7 @@
   padding: 4px;
   border-radius: 6px;
   background: #172B3A;
-  color: #FFFFFF;
+  color: #80E5E5;
   line-height: 1.1;
 }
 
@@ -258,7 +258,7 @@
 .kb-vehicle:hover,
 .kb-faq:hover {
   border-color: #172B3A;
-  background: #F8FAFC;
+  background: #F5F8FA;
 }
 
 .kb-doc h3 {
@@ -284,21 +284,22 @@
   font-weight: 600;
   line-height: 1.3;
   color: #172B3A;
-  background: #F0F0F0;
-  border: 1px solid #E0E0E0;
+  background: #E5EAEE;
+  border: 1px solid #E5EAEE;
 }
 
 .kb-pill--new {
-  color: #FFFFFF;
-  background: #172B3A;
-  border: 1px solid #172B3A;
+  color: #172B3A;
+  background: #80E5E5;
+  border: 1px solid #80E5E5;
+  font-weight: 700;
 }
 
 .kb-summary {
   font-size: 13px;
   line-height: 1.5;
   margin: 0;
-  color: #555555;
+  color: #64748B;
 }
 
 .kb-points {
@@ -306,7 +307,7 @@
   margin: 0;
   font-size: 13px;
   line-height: 1.55;
-  color: #333333;
+  color: #172B3A;
 }
 
 .kb-points li + li {
@@ -316,7 +317,7 @@
 .kb-card-foot {
   margin-top: auto;
   padding-top: 10px;
-  border-top: 1px solid #F0F0F0;
+  border-top: 1px solid #E5EAEE;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -339,14 +340,16 @@
 }
 
 .kb-button--primary {
-  background: #172B3A;
-  border-color: #172B3A;
-  color: #FFFFFF;
+  background: #80E5E5;
+  border-color: #80E5E5;
+  color: #172B3A;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(128, 229, 229, 0.3);
 }
 
 .kb-button--primary:hover {
-  background: #000000;
-  border-color: #000000;
+  background: #6ad6d6;
+  border-color: #6ad6d6;
 }
 
 .kb-text-button {
@@ -406,7 +409,7 @@
 
 .kb-prices p {
   margin: 0;
-  color: #444444;
+  color: #64748B;
 }
 
 .kb-prices strong {
@@ -417,7 +420,7 @@
   margin: 0;
   padding: 32px 16px;
   text-align: center;
-  border: 1px dashed #CCCCCC;
+  border: 1px dashed #94A3B8;
   border-radius: 8px;
   background: #FFFFFF;
   color: #64748B;

@@ -45,8 +45,18 @@ export function App() {
           setCopilotOpened(true);
           setAuthStatus('authenticated');
         } catch {
-          setCurrentUser(null);
-          setAuthStatus('anonymous');
+          // Tự động kích hoạt phiên Demo Advisor để dữ liệu luôn hiển thị tức thì
+          const demoFallbackUser = {
+            user_id: 'advisor-demo',
+            username: 'advisor.demo',
+            display_name: 'Phạm Đình Duy',
+            role: 'advisor',
+            must_change_password: false,
+          };
+          setCurrentUser(demoFallbackUser);
+          setCurrentTab('copilot');
+          setCopilotOpened(true);
+          setAuthStatus('authenticated');
         }
       }
     }

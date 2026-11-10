@@ -1,37 +1,37 @@
 .evaluation-page { font-family: 'Be Vietnam Pro', system-ui, sans-serif; width: 100%; max-width: 1160px; margin: 0 auto; padding: 22px 28px 48px; color: #172B3A; }
-.evaluation-header { position: relative; margin: -22px -28px 28px; padding: 22px 28px 30px; background: #F8FAFC; border-bottom: 1px solid #E5EAEE; }
+.evaluation-header { position: relative; margin: -22px -28px 28px; padding: 22px 28px 30px; background: #F5F8FA; border-bottom: 1px solid #E5EAEE; }
 .evaluation-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
 .evaluation-toolbar button, .evaluation-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 0; cursor: pointer; font-weight: 700; }
 .evaluation-toolbar svg, .evaluation-actions svg { width: 17px; height: 17px; }
 .evaluation-back { padding: 9px 2px; background: transparent; color: #172B3A; font-size: .83rem; }
-.evaluation-back:hover { color: #000000; }
-.evaluation-download { padding: 10px 16px; border-radius: 999px; background: #fff; color: #172B3A; font-size: .82rem; box-shadow: 0 5px 16px rgba(25, 77, 142, .08); }
-.evaluation-download:hover { background: #e8f2ff; }
+.evaluation-back:hover { color: #172B3A; }
+.evaluation-download { padding: 10px 16px; border-radius: 999px; background: #fff; color: #172B3A; font-size: .82rem; box-shadow: 0 5px 16px rgba(128, 229, 229, .08); }
+.evaluation-download:hover { background: #F5F8FA; }
 .evaluation-eyebrow { display: inline-block; padding: 6px 12px; border-radius: 999px; background: #F5F8FA; color: #172B3A; border: 1px solid #E5EAEE; font-size: .72rem; font-weight: 750; }
 .evaluation-header h1 { margin-top: 13px; font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1.22; font-weight: 800; }
 .evaluation-header p { margin-top: 10px; color: #64748B; font-size: .87rem; line-height: 1.5; }
 .evaluation-header p strong { color: #172B3A; }
 .evaluation-header p span { margin: 0 5px; }
-.evaluation-overview { display: grid; grid-template-columns: 230px 1fr; gap: 34px; padding: 27px; border: 1px solid #E5EAEE; border-radius: 16px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04); }
+.evaluation-overview { display: grid; grid-template-columns: 230px 1fr; gap: 34px; padding: 27px; border: 1px solid #E5EAEE; border-radius: 16px; background: #fff; box-shadow: 0 1px 3px rgba(23, 43, 58, 0.04); }
 .evaluation-score-side { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding-right: 28px; border-right: 1px solid #E5EAEE; }
-.evaluation-score-ring { display: grid; place-items: center; width: 170px; height: 170px; border-radius: 50%; background: conic-gradient(#172B3A var(--score-progress), #E5EAEE 0); }
+.evaluation-score-ring { display: grid; place-items: center; width: 170px; height: 170px; border-radius: 50%; background: conic-gradient(#80E5E5 var(--score-progress), #E5EAEE 0); }
 .evaluation-score-ring > div { display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; width: 148px; height: 148px; padding-top: 45px; border-radius: 50%; background: #fff; text-align: center; }
 .evaluation-score-ring strong { font-size: 2.7rem; line-height: 1; }
 .evaluation-score-ring span { margin-left: 4px; color: #64748B; font-size: 1rem; }
 .evaluation-score-ring small { display: block; width: 100%; margin-top: -30px; color: #64748B; font-size: .78rem; }
 .evaluation-status { padding: 7px 12px; border-radius: 999px; background: #F5F8FA; color: #172B3A; border: 1px solid #E5EAEE; font-size: .7rem; font-weight: 800; text-align: center; }
-.evaluation-status.approved { background: #F5F8FA; color: #172B3A; border: 1px solid #E5EAEE; }
+.evaluation-status.approved { background: #F5F8FA; color: #172B3A; border: 1px solid #80E5E5; font-weight: 700; }
 .evaluation-overview-body h2 { font-size: 1.13rem; font-weight: 800; }
-.evaluation-overview-body > p { margin-top: 9px; color: #666666; font-size: .87rem; line-height: 1.55; }
+.evaluation-overview-body > p { margin-top: 9px; color: #64748B; font-size: .87rem; line-height: 1.55; }
 .evaluation-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
 .evaluation-summary-card { min-height: 120px; padding: 16px; border-radius: 12px; }
-.evaluation-summary-card.strengths { background: #F8FAFC; border: 1px solid #E5EAEE; }
-.evaluation-summary-card.weaknesses { background: #F8FAFC; border: 1px solid #E5EAEE; }
+.evaluation-summary-card.strengths { background: #F5F8FA; border: 1px solid #E5EAEE; }
+.evaluation-summary-card.weaknesses { background: #F5F8FA; border: 1px solid #E5EAEE; }
 .evaluation-summary-card h3 { display: flex; align-items: center; gap: 10px; font-size: .85rem; font-weight: 800; }
 .evaluation-summary-card h3 span { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; color: #fff; background: #172B3A; }
 .evaluation-summary-card.weaknesses h3 span { background: #64748B; color: #FFFFFF; font-size: 1.1rem; }
 .evaluation-summary-card h3 svg { width: 17px; height: 17px; }
-.evaluation-summary-card p, .evaluation-summary-card li { color: #666666; font-size: .79rem; line-height: 1.48; }
+.evaluation-summary-card p, .evaluation-summary-card li { color: #64748B; font-size: .79rem; line-height: 1.48; }
 .evaluation-summary-card p, .evaluation-summary-card ul { margin: 8px 0 0 40px; }
 .evaluation-summary-card ul { padding-left: 14px; }
 .evaluation-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 30px 0 16px; }
@@ -39,27 +39,27 @@
 .evaluation-section-heading > span { display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border-radius: 999px; background: #F5F8FA; color: #172B3A; border: 1px solid #E5EAEE; font-size: .74rem; white-space: nowrap; }
 .evaluation-section-heading svg { width: 15px; height: 15px; }
 .evaluation-criteria { display: flex; flex-direction: column; gap: 16px; }
-.evaluation-criterion { overflow: hidden; border: 1px solid #E5EAEE; border-radius: 16px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04); }
+.evaluation-criterion { overflow: hidden; border: 1px solid #E5EAEE; border-radius: 16px; background: #fff; box-shadow: 0 1px 3px rgba(23, 43, 58, 0.04); }
 .evaluation-criterion-toggle { display: flex; align-items: center; gap: 18px; width: 100%; padding: 17px 20px; border: 0; background: transparent; color: #172B3A; text-align: left; }
 .evaluation-criterion-toggle:hover { background: #F5F8FA; }
-.evaluation-criterion-number { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border: 3px solid #E5EAEE; border-radius: 50%; background: #172B3A; color: #fff; font-size: .85rem; font-weight: 800; box-sizing: content-box; }
+.evaluation-criterion-number { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border: 3px solid #E5EAEE; border-radius: 50%; background: #80E5E5; color: #172B3A; font-size: .85rem; font-weight: 800; box-sizing: content-box; }
 .evaluation-criterion-name { flex: 1; font-size: .94rem; font-weight: 800; }
-.evaluation-criterion-score { padding: 6px 13px; border-radius: 999px; background: #F5F8FA; color: #172B3A; border: 1px solid #E5EAEE; font-size: .82rem; white-space: nowrap; }
-.evaluation-criterion-score.unassessed { background: #F8FAFC; color: #64748B; border: 1px solid #E5EAEE; }
+.evaluation-criterion-score { padding: 6px 13px; border-radius: 999px; background: rgba(128, 229, 229, 0.2); color: #172B3A; border: 1px solid #E5EAEE; font-size: .82rem; white-space: nowrap; }
+.evaluation-criterion-score.unassessed { background: #F5F8FA; color: #64748B; border: 1px solid #E5EAEE; }
 .evaluation-criterion-score strong { font-size: 1rem; }
 .evaluation-chevron { font-size: 1.6rem; line-height: .7; transform: rotate(0); transition: transform .2s; }
 .evaluation-chevron.open { transform: rotate(180deg); }
 .evaluation-criterion-detail { display: flex; flex-direction: column; gap: 15px; margin: 0 16px 16px; padding: 18px; border: 1px solid #E5EAEE; border-radius: 12px; }
 .evaluation-criterion-detail h3 { font-size: .82rem; font-weight: 800; }
-.evaluation-criterion-detail p { margin-top: 6px; color: #666666; font-size: .82rem; line-height: 1.6; }
+.evaluation-criterion-detail p { margin-top: 6px; color: #64748B; font-size: .82rem; line-height: 1.6; }
 .evaluation-reason { display: flex; align-items: flex-start; gap: 16px; }
 .evaluation-reason > svg { flex: none; width: 19px; height: 19px; color: #172B3A; }
-.evaluation-evidence { padding: 13px; border: 1px dashed #CCCCCC; border-radius: 10px; }
+.evaluation-evidence { padding: 13px; border: 1px dashed #94A3B8; border-radius: 10px; }
 .evaluation-evidence h3 { display: flex; align-items: center; gap: 11px; margin-bottom: 9px; }
 .evaluation-evidence h3 span { color: #172B3A; font-size: 2rem; line-height: .5; }
-.evaluation-quote { margin: 6px 0 0 30px; border-radius: 12px; background: #F8FAFC; color: #333333; border-left: 3px solid #172B3A; font-size: .78rem; font-style: italic; }
+.evaluation-quote { margin: 6px 0 0 30px; border-radius: 12px; background: #F5F8FA; color: #172B3A; border-left: 3px solid #80E5E5; font-size: .78rem; font-style: italic; }
 .evaluation-quote a, .evaluation-quote button, .evaluation-quote > span { display: flex; justify-content: space-between; gap: 12px; width: 100%; padding: 8px 12px; border: 0; background: transparent; color: inherit; text-align: left; text-decoration: none; }
-.evaluation-quote a:hover, .evaluation-quote button:hover { color: #000000; }
+.evaluation-quote a:hover, .evaluation-quote button:hover { color: #172B3A; }
 .evaluation-improvement { display: flex; align-items: flex-start; gap: 15px; padding: 14px; border-radius: 10px; background: #F5F8FA; border: 1px solid #E5EAEE; }
 .evaluation-improvement > svg { flex: none; width: 20px; height: 20px; color: #172B3A; }
 .evaluation-extra { margin-top: 18px; padding: 20px; border: 1px solid #E5EAEE; border-radius: 14px; background: #fff; }
@@ -69,7 +69,7 @@
 .evaluation-finding { display: flex; justify-content: space-between; gap: 15px; padding: 12px 0; border-top: 1px solid #E5EAEE; font-size: .85rem; }
 .evaluation-finding span { flex: none; font-weight: 700; color: #172B3A; }
 .evaluation-actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 24px; }
-.evaluation-actions button { padding: 10px 15px; border-radius: 999px; background: #FFFFFF; color: #172B3A; border: 1px solid #CCCCCC; font-size: .84rem; }
+.evaluation-actions button { padding: 10px 15px; border-radius: 999px; background: #FFFFFF; color: #172B3A; border: 1px solid #94A3B8; font-size: .84rem; }
 .evaluation-actions button:last-child { background: #172B3A; color: #FFFFFF; }
 .evaluation-actions button:hover { filter: brightness(.94); }
 .evaluation-pending { max-width: 700px; margin: 50px auto; padding: 45px; border: 1px solid #E5EAEE; border-radius: 16px; background: #fff; text-align: center; }
@@ -98,12 +98,12 @@
 .evaluation-status { display: inline-flex; align-items: center; justify-content: center; gap: 8px; line-height: 1.5; }
 .evaluation-status svg { flex: none; width: 16px; height: 16px; }
 .evaluation-criterion-score.band-3 { background: #F5F8FA; color: #172B3A; border: 1px solid #E5EAEE; }
-.evaluation-criterion-score.band-2 { background: #EEEEEE; color: #172B3A; }
+.evaluation-criterion-score.band-2 { background: #E5EAEE; color: #172B3A; }
 .evaluation-criterion-score.band-1 { background: #F5F8FA; color: #172B3A; border: 1px solid #E5EAEE; }
-.evaluation-highlight { margin-bottom: 20px; padding: 20px 24px; background: #FFF7F0; border: 1px solid #F3D3B5; border-radius: 18px; }
+.evaluation-highlight { margin-bottom: 20px; padding: 20px 24px; background: #F5F8FA; border: 1px solid #F5F8FA; border-radius: 18px; }
 .evaluation-highlight h2 { margin: 0; font-size: 17px; font-weight: 700; }
 .evaluation-highlight p { margin: 10px 0; color: #172B3A; font-size: 15px; line-height: 1.6; }
-.evaluation-highlight a { display: inline-flex; align-items: center; min-height: 32px; color: #000000; font-size: 14px; font-weight: 600; }
+.evaluation-highlight a { display: inline-flex; align-items: center; min-height: 32px; color: #172B3A; font-size: 14px; font-weight: 600; }
 .evaluation-criterion { scroll-margin-top: 24px; }
 .evaluation-page button { font-family: inherit; }
 .evaluation-page button:focus-visible, .evaluation-page a:focus-visible { outline: 2px solid #172B3A; outline-offset: 3px; }

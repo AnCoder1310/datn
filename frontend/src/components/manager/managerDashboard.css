@@ -26,14 +26,14 @@
   font-size: 12px;
   color: #64748B;
   background: #fff;
-  border: 1px dashed #CCCCCC;
+  border: 1px dashed #94A3B8;
   border-radius: 8px;
   padding: 6px 10px;
 }
 
 /* "Cần xử lý hôm nay" */
 .md-today {
-  background: #F8FAFC; border: 1px solid #E5EAEE;
+  background: #F5F8FA; border: 1px solid #E5EAEE;
   color: #172B3A;
   border-radius: 10px;
   padding: 18px 20px;
@@ -60,9 +60,9 @@
   font-size: 14px;
   cursor: pointer;
 }
-.md-btn--primary { border: 0; background: #172B3A; color: #fff; font-weight: 600; }
-.md-btn--primary:hover { background: var(--app-blue-deep); }
-.md-btn--ghost-dark { border: 1px solid #CCCCCC; background: transparent; color: #172B3A; font-weight: 500; }
+.md-btn--primary { border: 1px solid #80E5E5; background: #80E5E5; color: #172B3A; font-weight: 700; box-shadow: 0 1px 4px rgba(128, 229, 229, 0.3); }
+.md-btn--primary:hover { background: #6ad6d6; }
+.md-btn--ghost-dark { border: 1px solid #94A3B8; background: transparent; color: #172B3A; font-weight: 500; }
 .md-btn--ghost-dark:hover { background: rgba(255, 255, 255, 0.08); }
 .md-btn--outline { min-height: 40px; padding: 0 14px; border: 1px solid #E5EAEE; background: #fff; color: #172B3A; font-weight: 600; font-weight: 600; font-size: 13px; }
 .md-btn--outline:hover { background: #F5F8FA; }
@@ -83,8 +83,8 @@
 .md-panel-hint { font-size: 13px; color: #64748B; }
 .md-panel-sub { margin: 6px 0 16px; font-size: 13px; color: #64748B; }
 
-.md-state { margin: 16px 0 0; padding: 14px; font-size: 14px; color: #64748B; border: 1px dashed #CCCCCC; border-radius: 10px; text-align: center; }
-.md-state--error { color: #172B3A; border-color: #CCCCCC; background: #F5F8FA; }
+.md-state { margin: 16px 0 0; padding: 14px; font-size: 14px; color: #64748B; border: 1px dashed #94A3B8; border-radius: 10px; text-align: center; }
+.md-state--error { color: #172B3A; border-color: #94A3B8; background: #F5F8FA; }
 .md-link-btn { margin-left: 8px; border: 0; background: none; padding: 0; font: inherit; color: #172B3A; font-weight: 600; text-decoration: underline; cursor: pointer; }
 
 .md-table-scroll { position: relative; overflow-x: auto; margin-top: 16px; max-width: 100%; }
@@ -99,10 +99,10 @@
 .md-row-btn:hover { color: #172B3A; font-weight: 600; text-decoration: underline; }
 .md-row-note { display: block; font-size: 12px; font-weight: 400; color: #64748B; }
 .md-cell { height: 46px; border-radius: 8px; text-align: center; font-weight: 600; }
-.md-cell--low { background: #F5F8FA; color: #666666; border: 1px solid #E5EAEE; }
-.md-cell--mid { background: #EEEEEE; color: #172B3A; border: 1px solid #E5EAEE; }
-.md-cell--good { background: #64748B; color: #FFFFFF; }
-.md-cell--top { background: #172B3A; color: #fff; }
+.md-cell--low { background: #F5F8FA; color: #64748B; border: 1px solid #E5EAEE; }
+.md-cell--mid { background: #E5EAEE; color: #172B3A; border: 1px solid #E5EAEE; }
+.md-cell--good { background: rgba(128, 229, 229, 0.35); color: #172B3A; font-weight: 700; }
+.md-cell--top { background: #80E5E5; color: #172B3A; font-weight: 700; }
 .md-cell--none { background: repeating-linear-gradient(45deg, var(--app-bg) 0 4px, var(--app-border) 4px 6px); color: #64748B; }
 .md-heatmap-avg-val { text-align: center; font-weight: 700; font-size: 15px; }
 .md-heatmap-n { text-align: center; color: #64748B; }
@@ -142,7 +142,7 @@
 .md-todo-list li { border-top: 1px solid #E5EAEE; }
 .md-todo { display: flex; align-items: center; gap: 12px; min-height: 48px; cursor: pointer; font-size: 14px; }
 .md-todo input { width: 18px; height: 18px; accent-color: #172B3A; flex: none; }
-.md-todo--done { color: #8A95AA; text-decoration: line-through; }
+.md-todo--done { color: #64748B; text-decoration: line-through; }
 
 /* trend chart */
 .md-trend { margin: 16px 0 0; }
@@ -151,7 +151,7 @@
 .md-svg-axis, .md-svg-axis-text { font-family: 'Be Vietnam Pro', sans-serif; font-size: 11px; fill: var(--app-muted); }
 .md-svg-grid { stroke: var(--app-line); }
 .md-svg-base { stroke: var(--app-border); }
-.md-svg-ref { stroke: #CCCCCC; stroke-dasharray: 4 4; }
+.md-svg-ref { stroke: #94A3B8; stroke-dasharray: 4 4; }
 .md-svg-line { stroke: var(--app-blue-deep); stroke-width: 3; stroke-linejoin: round; }
 .md-svg-dot { fill: var(--app-blue-deep); }
 .md-svg-value { font-family: 'Be Vietnam Pro', sans-serif; font-size: 13px; font-weight: 700; fill: var(--app-blue-deep); }
@@ -161,7 +161,7 @@
 .md-agree li { display: grid; grid-template-columns: minmax(0, 1fr) 120px 44px; align-items: center; gap: 10px; font-size: 13px; }
 .md-agree-track { display: block; height: 8px; border-radius: 4px; background: var(--app-line); }
 .md-agree-bar { display: block; height: 8px; border-radius: 4px; background: #172B3A; }
-.md-agree-bar--max { background: #555555; }
+.md-agree-bar--max { background: #64748B; }
 .md-agree li strong { text-align: right; }
 .md-agree-note { margin: 16px 0 0; font-size: 13px; line-height: 1.5; background: #F5F8FA; border: 1px solid #E5EAEE; color: #172B3A; border-radius: 10px; padding: 10px 12px; }
 
@@ -187,7 +187,7 @@
   z-index: 60;
   display: flex;
   justify-content: flex-end;
-  background: rgba(17, 17, 17, 0.45);
+  background: rgba(23, 43, 58, 0.45);
   font-family: 'Be Vietnam Pro', system-ui, sans-serif;
   color: #172B3A;
   font-variant-numeric: tabular-nums;
@@ -196,7 +196,7 @@
   width: min(600px, 100vw);
   height: 100%;
   background: #fff;
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.08);
+  box-shadow: -10px 0 30px rgba(23, 43, 58, 0.08);
   display: flex;
   flex-direction: column;
   outline: none;
@@ -212,7 +212,7 @@
 .md-drawer-title h2 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
 .md-drawer-title p { margin: 3px 0 0; font-size: 13px; color: #64748B; }
 .md-close { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 6px; border: 1px solid #E5EAEE; background: #fff; color: #172B3A; cursor: pointer; }
-.md-close:hover { background: #F8FAFC; }
+.md-close:hover { background: #F5F8FA; }
 .md-drawer-body { flex: 1; overflow: auto; padding: 20px 28px; display: flex; flex-direction: column; gap: 22px; }
 .md-drawer-body h3 { margin: 0 0 10px; font-size: 15px; font-weight: 700; }
 .md-drawer-body .md-state { margin-top: 0; }
@@ -245,7 +245,7 @@
   text-align: left;
   cursor: pointer;
 }
-.md-recent button:hover { background: #F8FAFC; }
+.md-recent button:hover { background: #F5F8FA; }
 .md-recent-main { flex: 1; min-width: 0; }
 .md-recent-title { display: block; font-size: 14px; font-weight: 600; }
 .md-recent-meta { display: block; font-size: 12px; color: #64748B; }

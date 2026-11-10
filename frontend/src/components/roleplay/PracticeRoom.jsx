@@ -37,7 +37,7 @@ function makeBands(green) {
         if (distance >= inner && distance < radius) dots.push({ left: radius + x * step - size / 2, top: radius + y * step - size / 2 });
       }
     }
-    return { radius, size, color: `rgba(17,17,17,${alpha})`, dots };
+    return { radius, size, color: `rgba(23, 43, 58,${alpha})`, dots };
   });
 }
 const BLUE_BANDS = makeBands(false);

@@ -103,16 +103,16 @@ export function ManagerScenariosView() {
       <div className="md-panel-head">
         <div>
           <h2 id="scenario-gen-title" className="md-panel-title" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <SparkleIcon style={{ width: 22, height: 22, color: "#111111" }} />
+            <SparkleIcon style={{ width: 22, height: 22, color: "#172B3A" }} />
             AI Sinh Kịch Bản Luyện Tập (Prompt-to-Scenario)
           </h2>
-          <p style={{ color: "#666", fontSize: "13px", margin: "4px 0 0 0" }}>
+          <p style={{ color: "#64748B", fontSize: "13px", margin: "4px 0 0 0" }}>
             Nhập yêu cầu đào tạo thực tế, hệ thống AI sẽ tự động sinh Persona, rào cản và ánh xạ chính sách VinFast.
           </p>
         </div>
       </div>
 
-      <div style={{ padding: "20px", background: "#fafbfc", borderRadius: "8px", border: "1px solid #E5E5E5", marginTop: "16px" }}>
+      <div style={{ padding: "20px", background: "#F5F8FA", borderRadius: "8px", border: "1px solid #E5EAEE", marginTop: "16px" }}>
         <form onSubmit={handleGenerate}>
           <div style={{ marginBottom: "12px" }}>
             <label style={{ display: "block", fontWeight: 600, fontSize: "13px", marginBottom: "6px" }}>
@@ -124,7 +124,7 @@ export function ManagerScenariosView() {
                 width: "100%",
                 padding: "10px 12px",
                 borderRadius: "6px",
-                border: "1px solid #ccc",
+                border: "1px solid #E5EAEE",
                 fontSize: "14px",
                 fontFamily: "inherit",
                 resize: "vertical"
@@ -137,7 +137,7 @@ export function ManagerScenariosView() {
           </div>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "16px" }}>
-            <span style={{ fontSize: "12px", color: "#666", alignSelf: "center" }}>Gợi ý nhanh:</span>
+            <span style={{ fontSize: "12px", color: "#64748B", alignSelf: "center" }}>Gợi ý nhanh:</span>
             {QUICK_PROMPTS.map((qp, idx) => (
               <button
                 key={idx}
@@ -157,7 +157,7 @@ export function ManagerScenariosView() {
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value)}
-                style={{ padding: "6px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "13px" }}
+                style={{ padding: "6px 12px", borderRadius: "6px", border: "1px solid #E5EAEE", fontSize: "13px" }}
               >
                 <option value="Easy">Cơ bản (Easy)</option>
                 <option value="Medium">Tiêu chuẩn (Medium)</option>
@@ -187,17 +187,17 @@ export function ManagerScenariosView() {
         </form>
 
         {status === "error" && (
-          <div style={{ marginTop: "16px", padding: "12px", background: "#F8F8F8", color: "#111111", border: "1px solid #CCCCCC", borderRadius: "6px", fontSize: "13px" }}>
+          <div style={{ marginTop: "16px", padding: "12px", background: "#F5F8FA", color: "#172B3A", border: "1px solid #E5EAEE", borderRadius: "6px", fontSize: "13px" }}>
             {feedbackMsg}
           </div>
         )}
 
         {status === "saved" && (
-          <div style={{ marginTop: "16px", padding: "14px", background: "#FAFAFA", color: "#111111", borderRadius: "8px", fontSize: "13px", border: "1px solid #E5E5E5", display: "flex", alignItems: "center", gap: "10px" }}>
-            <CheckCircleIcon style={{ width: 20, height: 20, color: "#111111", flexShrink: 0 }} />
+          <div style={{ marginTop: "16px", padding: "14px", background: "#F5F8FA", color: "#172B3A", borderRadius: "8px", fontSize: "13px", border: "1px solid #E5EAEE", display: "flex", alignItems: "center", gap: "10px" }}>
+            <CheckCircleIcon style={{ width: 20, height: 20, color: "#172B3A", flexShrink: 0 }} />
             <div>
               <strong>Kích hoạt thành công!</strong> {feedbackMsg}
-              <div style={{ fontSize: "12px", color: "#555555", marginTop: "2px" }}>
+              <div style={{ fontSize: "12px", color: "#64748B", marginTop: "2px" }}>
                 👉 Tư vấn viên chỉ cần đăng nhập và mở tab <strong>"Phòng luyện tập"</strong> là sẽ thấy kịch bản có huy hiệu <strong>"✨ Kịch bản mới từ Quản lý"</strong> ngay trên danh sách.
               </div>
             </div>
@@ -206,24 +206,24 @@ export function ManagerScenariosView() {
       </div>
 
       {generatedScenario && (
-        <div style={{ marginTop: "24px", padding: "20px", background: "#fff", borderRadius: "8px", border: "1px solid #CCCCCC", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid #eee", paddingBottom: "14px", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
+        <div style={{ marginTop: "24px", padding: "20px", background: "#fff", borderRadius: "8px", border: "1px solid #E5EAEE", boxShadow: "0 1px 3px rgba(23, 43, 58,0.05)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid #F5F8FA", paddingBottom: "14px", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
             <div style={{ flex: 1, minWidth: "260px" }}>
-              <span style={{ display: "inline-block", padding: "2px 8px", background: "#F5F5F5", color: "#111111", border: "1px solid #E5E5E5", borderRadius: "12px", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>
+              <span style={{ display: "inline-block", padding: "2px 8px", background: "#F5F8FA", color: "#172B3A", border: "1px solid #E5EAEE", borderRadius: "12px", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>
                 Mã: {generatedScenario.scenario_id} • Độ khó: {generatedScenario.difficulty}
               </span>
               {isEditing ? (
                 <div>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#555" }}>Tiêu đề kịch bản:</label>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#64748B" }}>Tiêu đề kịch bản:</label>
                   <input
                     type="text"
                     value={generatedScenario.title}
                     onChange={(e) => setGeneratedScenario({ ...generatedScenario, title: e.target.value })}
-                    style={{ width: "100%", padding: "6px 10px", fontSize: "16px", fontWeight: 600, borderRadius: "4px", border: "1px solid #111111", marginTop: "4px" }}
+                    style={{ width: "100%", padding: "6px 10px", fontSize: "16px", fontWeight: 600, borderRadius: "4px", border: "1px solid #172B3A", marginTop: "4px" }}
                   />
                 </div>
               ) : (
-                <h3 style={{ margin: 0, fontSize: "18px", color: "#1a1f36" }}>{generatedScenario.title}</h3>
+                <h3 style={{ margin: 0, fontSize: "18px", color: "#172B3A" }}>{generatedScenario.title}</h3>
               )}
             </div>
             
@@ -238,9 +238,9 @@ export function ManagerScenariosView() {
                   gap: "6px",
                   fontSize: "13px",
                   padding: "8px 14px",
-                  background: isEditing ? "#F5F5F5" : "#FFFFFF",
-                  borderColor: isEditing ? "#007aff" : "#ccc",
-                  color: isEditing ? "#111111" : "inherit"
+                  background: isEditing ? "#F5F8FA" : "#FFFFFF",
+                  borderColor: isEditing ? "#80E5E5" : "#E5EAEE",
+                  color: isEditing ? "#172B3A" : "inherit"
                 }}
               >
                 {isEditing ? "✓ Xong chỉnh sửa" : "✏️ Chỉnh sửa bản nháp"}
@@ -255,7 +255,7 @@ export function ManagerScenariosView() {
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "8px",
-                  background: "#111111",
+                  background: "#172B3A",
                   fontWeight: 600,
                   fontSize: "13px",
                   padding: "8px 16px"
@@ -268,48 +268,48 @@ export function ManagerScenariosView() {
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px", fontSize: "13px" }}>
-            <div style={{ padding: "14px", background: "#f8f9fa", borderRadius: "6px", border: isEditing ? "1px dashed #111111" : "1px solid #E5E5E5" }}>
+            <div style={{ padding: "14px", background: "#f8f9fa", borderRadius: "6px", border: isEditing ? "1px dashed #172B3A" : "1px solid #E5EAEE" }}>
               <h4 style={{ margin: "0 0 10px 0", color: "#333", display: "flex", alignItems: "center", gap: "6px" }}>
                 <CarIcon style={{ width: 16, height: 16 }} /> Thông tin khách hàng (Persona)
               </h4>
               {isEditing ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   <div>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "#666" }}>Họ tên khách:</label>
+                    <label style={{ fontSize: "11px", fontWeight: 600, color: "#64748B" }}>Họ tên khách:</label>
                     <input
                       type="text"
                       value={generatedScenario.persona.name}
                       onChange={(e) => updatePersona("name", e.target.value)}
-                      style={{ width: "100%", padding: "4px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #ccc" }}
+                      style={{ width: "100%", padding: "4px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #E5EAEE" }}
                     />
                   </div>
                   <div style={{ display: "flex", gap: "8px" }}>
                     <div style={{ flex: 1 }}>
-                      <label style={{ fontSize: "11px", fontWeight: 600, color: "#666" }}>Tuổi:</label>
+                      <label style={{ fontSize: "11px", fontWeight: 600, color: "#64748B" }}>Tuổi:</label>
                       <input
                         type="number"
                         value={generatedScenario.persona.age}
                         onChange={(e) => updatePersona("age", Number(e.target.value))}
-                        style={{ width: "100%", padding: "4px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #ccc" }}
+                        style={{ width: "100%", padding: "4px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #E5EAEE" }}
                       />
                     </div>
                     <div style={{ flex: 2 }}>
-                      <label style={{ fontSize: "11px", fontWeight: 600, color: "#666" }}>Xe cân nhắc/xe cũ:</label>
+                      <label style={{ fontSize: "11px", fontWeight: 600, color: "#64748B" }}>Xe cân nhắc/xe cũ:</label>
                       <input
                         type="text"
                         value={generatedScenario.persona.current_car}
                         onChange={(e) => updatePersona("current_car", e.target.value)}
-                        style={{ width: "100%", padding: "4px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #ccc" }}
+                        style={{ width: "100%", padding: "4px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #E5EAEE" }}
                       />
                     </div>
                   </div>
                   <div>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "#666" }}>Phong cách giao tiếp:</label>
+                    <label style={{ fontSize: "11px", fontWeight: 600, color: "#64748B" }}>Phong cách giao tiếp:</label>
                     <input
                       type="text"
                       value={generatedScenario.persona.communication_style}
                       onChange={(e) => updatePersona("communication_style", e.target.value)}
-                      style={{ width: "100%", padding: "4px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #ccc" }}
+                      style={{ width: "100%", padding: "4px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #E5EAEE" }}
                     />
                   </div>
                 </div>
@@ -322,32 +322,32 @@ export function ManagerScenariosView() {
               )}
             </div>
 
-            <div style={{ padding: "14px", background: "#f8f9fa", borderRadius: "6px", border: isEditing ? "1px dashed #111111" : "1px solid #E5E5E5" }}>
+            <div style={{ padding: "14px", background: "#f8f9fa", borderRadius: "6px", border: isEditing ? "1px dashed #172B3A" : "1px solid #E5EAEE" }}>
               <h4 style={{ margin: "0 0 10px 0", color: "#333" }}>Bối cảnh & Lời mở đầu</h4>
               {isEditing ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   <div>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "#666" }}>Lời mở đầu của khách:</label>
+                    <label style={{ fontSize: "11px", fontWeight: 600, color: "#64748B" }}>Lời mở đầu của khách:</label>
                     <textarea
                       rows={2}
                       value={generatedScenario.visible_context}
                       onChange={(e) => setGeneratedScenario({ ...generatedScenario, visible_context: e.target.value })}
-                      style={{ width: "100%", padding: "6px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #ccc" }}
+                      style={{ width: "100%", padding: "6px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #E5EAEE" }}
                     />
                   </div>
                   <div>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "#666" }}>Mục tiêu tư vấn:</label>
+                    <label style={{ fontSize: "11px", fontWeight: 600, color: "#64748B" }}>Mục tiêu tư vấn:</label>
                     <input
                       type="text"
                       value={generatedScenario.training_objective}
                       onChange={(e) => setGeneratedScenario({ ...generatedScenario, training_objective: e.target.value })}
-                      style={{ width: "100%", padding: "4px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #ccc" }}
+                      style={{ width: "100%", padding: "4px 8px", fontSize: "13px", borderRadius: "4px", border: "1px solid #E5EAEE" }}
                     />
                   </div>
                 </div>
               ) : (
                 <>
-                  <p style={{ fontStyle: "italic", color: "#555" }}>"{generatedScenario.visible_context}"</p>
+                  <p style={{ fontStyle: "italic", color: "#64748B" }}>"{generatedScenario.visible_context}"</p>
                   <p><strong>Mục tiêu tư vấn:</strong> {generatedScenario.training_objective}</p>
                 </>
               )}
@@ -359,7 +359,7 @@ export function ManagerScenariosView() {
             {generatedScenario.objections.map((obj, i) => (
               <div key={i} style={{ marginBottom: "8px" }}>
                 <p style={{ margin: "0 0 4px 0" }}><strong>Khách nói:</strong> "{obj.objection_text}"</p>
-                <p style={{ margin: 0, color: "#111111" }}><strong>Hướng phản hồi chuẩn:</strong> {obj.ideal_sales_response}</p>
+                <p style={{ margin: 0, color: "#172B3A" }}><strong>Hướng phản hồi chuẩn:</strong> {obj.ideal_sales_response}</p>
               </div>
             ))}
           </div>
@@ -367,14 +367,14 @@ export function ManagerScenariosView() {
       )}
 
       {/* Danh sách các kịch bản tùy chỉnh do Quản lý đã kích hoạt */}
-      <div style={{ marginTop: "36px", paddingTop: "24px", borderTop: "1px solid #E5E5E5" }}>
+      <div style={{ marginTop: "36px", paddingTop: "24px", borderTop: "1px solid #E5EAEE" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
           <div>
-            <h3 style={{ fontSize: "16px", margin: 0, display: "flex", alignItems: "center", gap: "8px", color: "#1a1f36" }}>
-              <CarIcon style={{ width: 18, height: 18, color: "#111111" }} />
+            <h3 style={{ fontSize: "16px", margin: 0, display: "flex", alignItems: "center", gap: "8px", color: "#172B3A" }}>
+              <CarIcon style={{ width: 18, height: 18, color: "#172B3A" }} />
               Danh Sách Kịch Bản Do Quản Lý Đã Kích Hoạt ({customScenarios.length})
             </h3>
-            <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#666" }}>
+            <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#64748B" }}>
               Các kịch bản này đã được đưa vào Thư viện tình huống cho tư vấn viên luyện tập. Bạn có thể xóa nếu trùng lặp.
             </p>
           </div>
@@ -389,7 +389,7 @@ export function ManagerScenariosView() {
         </div>
 
         {customScenarios.length === 0 ? (
-          <div style={{ padding: "20px", textAlign: "center", background: "#fafbfc", borderRadius: "6px", border: "1px dashed #CCCCCC", color: "#666", fontSize: "13px" }}>
+          <div style={{ padding: "20px", textAlign: "center", background: "#F5F8FA", borderRadius: "6px", border: "1px dashed #E5EAEE", color: "#64748B", fontSize: "13px" }}>
             Chưa có kịch bản tùy chỉnh nào do Quản lý tạo. Hãy dùng form phía trên để khởi tạo kịch bản mới!
           </div>
         ) : (
@@ -406,23 +406,23 @@ export function ManagerScenariosView() {
                     padding: "12px 16px",
                     background: "#fff",
                     borderRadius: "6px",
-                    border: "1px solid #E5E5E5",
-                    boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
+                    border: "1px solid #E5EAEE",
+                    boxShadow: "0 1px 2px rgba(23, 43, 58,0.03)",
                     flexWrap: "wrap",
                     gap: "10px"
                   }}
                 >
                   <div style={{ maxWidth: "78%" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                      <span style={{ background: "#F5F5F5", color: "#111111", border: "1px solid #E5E5E5", fontSize: "11px", fontWeight: 600, padding: "2px 8px", borderRadius: "4px" }}>
+                      <span style={{ background: "#F5F8FA", color: "#172B3A", border: "1px solid #E5EAEE", fontSize: "11px", fontWeight: 600, padding: "2px 8px", borderRadius: "4px" }}>
                         {modelMatch}
                       </span>
-                      <strong style={{ fontSize: "14px", color: "#1a1f36" }}>{sc.title}</strong>
-                      <span style={{ fontSize: "11px", color: "#666", background: "#f1f3f5", padding: "1px 6px", borderRadius: "3px" }}>
+                      <strong style={{ fontSize: "14px", color: "#172B3A" }}>{sc.title}</strong>
+                      <span style={{ fontSize: "11px", color: "#64748B", background: "#f1f3f5", padding: "1px 6px", borderRadius: "3px" }}>
                         Độ khó: {sc.difficulty}
                       </span>
                     </div>
-                    <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "#555" }}>
+                    <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "#64748B" }}>
                       Mã: <code>{sc.scenario_id}</code> • <em>"{sc.visible_context ? sc.visible_context.slice(0, 95) : ""}{sc.visible_context?.length > 95 ? "..." : ""}"</em>
                     </p>
                   </div>
@@ -430,7 +430,7 @@ export function ManagerScenariosView() {
                     type="button"
                     onClick={() => handleDelete(sc.scenario_id, sc.title)}
                     className="md-btn md-btn--outline"
-                    style={{ color: "#111111", borderColor: "#CCCCCC", fontSize: "12px", padding: "6px 12px", background: "#FFFFFF" }}
+                    style={{ color: "#172B3A", borderColor: "#E5EAEE", fontSize: "12px", padding: "6px 12px", background: "#FFFFFF" }}
                     title="Xóa kịch bản này khỏi phòng luyện tập"
                   >
                     🗑️ Xóa kịch bản

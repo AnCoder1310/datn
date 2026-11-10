@@ -1,0 +1,1174 @@
+{
+  "generated_at": "2026-11-10T17:57:34.780253+00:00",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "customers": [
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_8",
+      "customer_name": "Bảo Ngân",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_8",
+      "stage": "deposit_process",
+      "score": 73,
+      "models": [
+        "VF 8",
+        "VF 9"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 1500000000,
+      "waiting_since": null,
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "buying_signals": [],
+      "issues": [
+        "Chưa xác nhận thời điểm giao xe"
+      ],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 8, VF 9, ưu tiên nhu cầu gia đình."
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_1",
+      "customer_name": "Hoàng Nam",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_1",
+      "stage": "discovery",
+      "score": 31,
+      "models": [
+        "VF 5",
+        "VF 6"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 550000000,
+      "waiting_since": "2026-11-09T15:17:00+00:00",
+      "last_message": "[Mẫu] Chưa rõ phương án sạc tại chung cư",
+      "buying_signals": [],
+      "issues": [
+        "Chưa rõ phương án sạc tại chung cư"
+      ],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 5, VF 6, ưu tiên nhu cầu gia đình."
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_7",
+      "customer_name": "Hải Đăng",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_7",
+      "stage": "needs_confirmation",
+      "score": 67,
+      "models": [
+        "VF 9"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 1700000000,
+      "waiting_since": "2026-11-09T13:23:00+00:00",
+      "last_message": "[Mẫu] Cần kiểm tra chỗ đỗ xe tại nhà",
+      "buying_signals": [],
+      "issues": [
+        "Cần kiểm tra chỗ đỗ xe tại nhà"
+      ],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 9, ưu tiên nhu cầu gia đình."
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_10",
+      "customer_name": "Khánh Linh",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_10",
+      "stage": "lost",
+      "score": 85,
+      "models": [
+        "VF 5"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 550000000,
+      "waiting_since": null,
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "buying_signals": [],
+      "issues": [],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 5, ưu tiên nhu cầu gia đình."
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_0",
+      "customer_name": "Minh Anh",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_0",
+      "stage": "new",
+      "score": 25,
+      "models": [
+        "VF 3"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 350000000,
+      "waiting_since": "2026-11-09T15:36:00+00:00",
+      "last_message": "[Mẫu] Em muốn tìm hiểu thêm về VF 3.",
+      "buying_signals": [],
+      "issues": [],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 3, ưu tiên nhu cầu gia đình."
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_4",
+      "customer_name": "Ngọc Mai",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_4",
+      "stage": "considering",
+      "score": 49,
+      "models": [
+        "VF 5"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 600000000,
+      "waiting_since": null,
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "buying_signals": [],
+      "issues": [
+        "Cần so sánh chi phí sử dụng hằng tháng"
+      ],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 5, ưu tiên nhu cầu gia đình."
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_5",
+      "customer_name": "Quang Dũng",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_5",
+      "stage": "negotiating",
+      "score": 55,
+      "models": [
+        "VF 8"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 1300000000,
+      "waiting_since": "2026-11-09T14:01:00+00:00",
+      "last_message": "[Mẫu] Chưa xác nhận màu xe sẵn có",
+      "buying_signals": [],
+      "issues": [
+        "Chưa xác nhận màu xe sẵn có"
+      ],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 8, ưu tiên nhu cầu gia đình."
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_6",
+      "customer_name": "Thanh Trúc",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_6",
+      "stage": "needs_confirmation",
+      "score": 61,
+      "models": [
+        "VF 6",
+        "VF 7"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 900000000,
+      "waiting_since": null,
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "buying_signals": [],
+      "issues": [
+        "Cần xác nhận địa điểm lái thử"
+      ],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 6, VF 7, ưu tiên nhu cầu gia đình."
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_2",
+      "customer_name": "Thu Hà",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_2",
+      "stage": "qualified",
+      "score": 37,
+      "models": [
+        "VF 6"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 750000000,
+      "waiting_since": null,
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "buying_signals": [],
+      "issues": [
+        "Cần bảng dự toán lăn bánh"
+      ],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 6, ưu tiên nhu cầu gia đình."
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_9",
+      "customer_name": "Trung Kiên",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_9",
+      "stage": "won",
+      "score": 79,
+      "models": [
+        "VF 3"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 350000000,
+      "waiting_since": null,
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "buying_signals": [],
+      "issues": [],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 3, ưu tiên nhu cầu gia đình."
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_11",
+      "customer_name": "Tuấn Phong",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_11",
+      "stage": "qualified",
+      "score": 91,
+      "models": [
+        "VF 7"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 900000000,
+      "waiting_since": null,
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "buying_signals": [],
+      "issues": [
+        "Cần tư vấn phụ kiện phù hợp"
+      ],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 7, ưu tiên nhu cầu gia đình."
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_3",
+      "customer_name": "Đức Long",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_3",
+      "stage": "considering",
+      "score": 43,
+      "models": [
+        "VF 7",
+        "VF 8"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 1100000000,
+      "waiting_since": "2026-11-09T14:39:00+00:00",
+      "last_message": "[Mẫu] Cần so sánh không gian hàng ghế sau",
+      "buying_signals": [],
+      "issues": [
+        "Cần so sánh không gian hàng ghế sau",
+        "Chưa thống nhất phương án trả góp"
+      ],
+      "promises": [],
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 7, VF 8, ưu tiên nhu cầu gia đình."
+    }
+  ],
+  "milestones": [],
+  "kpis": {
+    "active_customers": 10,
+    "waiting_customers": 5,
+    "today_events": 3,
+    "upcoming_events": 13,
+    "total_tasks": 29,
+    "hot_leads": 5,
+    "closing_leads": 2,
+    "unanalyzed_customers": 0,
+    "stale_tasks": 9,
+    "review_tasks": 3,
+    "completed_tasks": 3,
+    "active_appointments": 10,
+    "high_priority_tasks": 7,
+    "pending_proposals": 0,
+    "pipeline_budget_vnd": 9650000000,
+    "avg_lead_score": 53
+  },
+  "work_items": {
+    "items": [
+      {
+        "id": "dashdemo1_c59a205d85_task_7",
+        "customer_id": "dashdemo1_c59a205d85_customer_1",
+        "conversation_id": "dashdemo1_c59a205d85_conversation_1",
+        "owner_sales_id": "advisor-demo",
+        "task_type": "manual_follow_up",
+        "title": "Chuẩn bị phương án tư vấn VF 5",
+        "description": "Dữ liệu mô phỏng Dashboard; không phải lịch hẹn với khách thật.",
+        "due_at": null,
+        "due_window": null,
+        "starts_at": "2026-11-11T02:00:00+00:00",
+        "ends_at": "2026-11-11T03:00:00+00:00",
+        "item_type": "task",
+        "priority": "medium",
+        "status": "pending",
+        "dedupe_key": "dashdemo1_c59a205d85_task_7",
+        "created_at": "2026-11-07T15:48:00+00:00",
+        "completed_at": null,
+        "customer_name": "Hoàng Nam",
+        "location": null,
+        "source_message_ids": [
+          "dashdemo1_c59a205d85_message_1_38"
+        ]
+      },
+      {
+        "id": "dashdemo1_c59a205d85_task_13",
+        "customer_id": "dashdemo1_c59a205d85_customer_7",
+        "conversation_id": "dashdemo1_c59a205d85_conversation_7",
+        "owner_sales_id": "advisor-demo",
+        "task_type": "manual_follow_up",
+        "title": "Trao đổi kế hoạch mua xe VF 9",
+        "description": "Dữ liệu mô phỏng Dashboard; không phải lịch hẹn với khách thật.",
+        "due_at": null,
+        "due_window": null,
+        "starts_at": "2026-11-11T05:00:00+00:00",
+        "ends_at": "2026-11-11T06:00:00+00:00",
+        "item_type": "task",
+        "priority": "medium",
+        "status": "pending",
+        "dedupe_key": "dashdemo1_c59a205d85_task_13",
+        "created_at": "2026-11-07T15:48:00+00:00",
+        "completed_at": null,
+        "customer_name": "Hải Đăng",
+        "location": null,
+        "source_message_ids": [
+          "dashdemo1_c59a205d85_message_7_36"
+        ]
+      },
+      {
+        "id": "dashdemo1_c59a205d85_task_19",
+        "customer_id": "dashdemo1_c59a205d85_customer_4",
+        "conversation_id": "dashdemo1_c59a205d85_conversation_4",
+        "owner_sales_id": "advisor-demo",
+        "task_type": "manual_follow_up",
+        "title": "Chuẩn bị phương án tư vấn VF 5",
+        "description": "Dữ liệu mô phỏng Dashboard; không phải lịch hẹn với khách thật.",
+        "due_at": null,
+        "due_window": null,
+        "starts_at": "2026-11-11T08:00:00+00:00",
+        "ends_at": "2026-11-11T09:00:00+00:00",
+        "item_type": "task",
+        "priority": "medium",
+        "status": "pending",
+        "dedupe_key": "dashdemo1_c59a205d85_task_19",
+        "created_at": "2026-11-07T15:48:00+00:00",
+        "completed_at": null,
+        "customer_name": "Ngọc Mai",
+        "location": null,
+        "source_message_ids": [
+          "dashdemo1_c59a205d85_message_4_36"
+        ]
+      }
+    ],
+    "total": 3,
+    "page": 1,
+    "page_size": 10,
+    "filter": "today"
+  },
+  "upcoming_events": [
+    {
+      "id": "dashdemo1_c59a205d85_task_7",
+      "customer_id": "dashdemo1_c59a205d85_customer_1",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_1",
+      "owner_sales_id": "advisor-demo",
+      "task_type": "manual_follow_up",
+      "title": "Chuẩn bị phương án tư vấn VF 5",
+      "description": "Dữ liệu mô phỏng Dashboard; không phải lịch hẹn với khách thật.",
+      "due_at": null,
+      "due_window": null,
+      "starts_at": "2026-11-11T02:00:00+00:00",
+      "ends_at": "2026-11-11T03:00:00+00:00",
+      "item_type": "task",
+      "priority": "medium",
+      "status": "pending",
+      "dedupe_key": "dashdemo1_c59a205d85_task_7",
+      "created_at": "2026-11-07T15:48:00+00:00",
+      "completed_at": null,
+      "customer_name": "Hoàng Nam",
+      "location": null,
+      "source_message_ids": [
+        "dashdemo1_c59a205d85_message_1_38"
+      ]
+    },
+    {
+      "id": "dashdemo1_c59a205d85_task_13",
+      "customer_id": "dashdemo1_c59a205d85_customer_7",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_7",
+      "owner_sales_id": "advisor-demo",
+      "task_type": "manual_follow_up",
+      "title": "Trao đổi kế hoạch mua xe VF 9",
+      "description": "Dữ liệu mô phỏng Dashboard; không phải lịch hẹn với khách thật.",
+      "due_at": null,
+      "due_window": null,
+      "starts_at": "2026-11-11T05:00:00+00:00",
+      "ends_at": "2026-11-11T06:00:00+00:00",
+      "item_type": "task",
+      "priority": "medium",
+      "status": "pending",
+      "dedupe_key": "dashdemo1_c59a205d85_task_13",
+      "created_at": "2026-11-07T15:48:00+00:00",
+      "completed_at": null,
+      "customer_name": "Hải Đăng",
+      "location": null,
+      "source_message_ids": [
+        "dashdemo1_c59a205d85_message_7_36"
+      ]
+    },
+    {
+      "id": "dashdemo1_c59a205d85_task_19",
+      "customer_id": "dashdemo1_c59a205d85_customer_4",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_4",
+      "owner_sales_id": "advisor-demo",
+      "task_type": "manual_follow_up",
+      "title": "Chuẩn bị phương án tư vấn VF 5",
+      "description": "Dữ liệu mô phỏng Dashboard; không phải lịch hẹn với khách thật.",
+      "due_at": null,
+      "due_window": null,
+      "starts_at": "2026-11-11T08:00:00+00:00",
+      "ends_at": "2026-11-11T09:00:00+00:00",
+      "item_type": "task",
+      "priority": "medium",
+      "status": "pending",
+      "dedupe_key": "dashdemo1_c59a205d85_task_19",
+      "created_at": "2026-11-07T15:48:00+00:00",
+      "completed_at": null,
+      "customer_name": "Ngọc Mai",
+      "location": null,
+      "source_message_ids": [
+        "dashdemo1_c59a205d85_message_4_36"
+      ]
+    },
+    {
+      "id": "dashdemo1_c59a205d85_task_8",
+      "customer_id": "dashdemo1_c59a205d85_customer_2",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_2",
+      "owner_sales_id": "advisor-demo",
+      "task_type": "manual_follow_up",
+      "title": "Gọi chăm sóc VF 6",
+      "description": "Dữ liệu mô phỏng Dashboard; không phải lịch hẹn với khách thật.",
+      "due_at": null,
+      "due_window": null,
+      "starts_at": "2026-11-12T02:00:00+00:00",
+      "ends_at": "2026-11-12T02:45:00+00:00",
+      "item_type": "appointment",
+      "priority": "high",
+      "status": "pending",
+      "dedupe_key": "dashdemo1_c59a205d85_task_8",
+      "created_at": "2026-11-07T15:48:00+00:00",
+      "completed_at": null,
+      "customer_name": "Thu Hà",
+      "location": null,
+      "source_message_ids": [
+        "dashdemo1_c59a205d85_message_2_38"
+      ]
+    },
+    {
+      "id": "dashdemo1_c59a205d85_task_14",
+      "customer_id": "dashdemo1_c59a205d85_customer_8",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_8",
+      "owner_sales_id": "advisor-demo",
+      "task_type": "manual_follow_up",
+      "title": "Hẹn lái thử VF 8",
+      "description": "Dữ liệu mô phỏng Dashboard; không phải lịch hẹn với khách thật.",
+      "due_at": null,
+      "due_window": null,
+      "starts_at": "2026-11-12T05:00:00+00:00",
+      "ends_at": "2026-11-12T05:45:00+00:00",
+      "item_type": "appointment",
+      "priority": "high",
+      "status": "pending",
+      "dedupe_key": "dashdemo1_c59a205d85_task_14",
+      "created_at": "2026-11-07T15:48:00+00:00",
+      "completed_at": null,
+      "customer_name": "Bảo Ngân",
+      "location": null,
+      "source_message_ids": [
+        "dashdemo1_c59a205d85_message_8_38"
+      ]
+    }
+  ],
+  "unscheduled": {
+    "total": 0,
+    "items": []
+  },
+  "waiting_customers": [
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_7",
+      "customer_name": "Hải Đăng",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_7",
+      "waiting_since": "2026-11-09T13:23:00+00:00",
+      "stage": "needs_confirmation",
+      "score": 67,
+      "priority": "high",
+      "models": [
+        "VF 9"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 1700000000,
+      "down_payment_vnd": null,
+      "payment_method": "installment",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "phone": null,
+      "location": "TP. Hồ Chí Minh",
+      "last_message": "[Mẫu] Cần kiểm tra chỗ đỗ xe tại nhà",
+      "buying_signals": [],
+      "issues": [
+        "Cần kiểm tra chỗ đỗ xe tại nhà"
+      ],
+      "promises": [],
+      "unanalyzed_count": 0
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_5",
+      "customer_name": "Quang Dũng",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_5",
+      "waiting_since": "2026-11-09T14:01:00+00:00",
+      "stage": "negotiating",
+      "score": 55,
+      "priority": "high",
+      "models": [
+        "VF 8"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 1300000000,
+      "down_payment_vnd": null,
+      "payment_method": "installment",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "phone": null,
+      "location": "Đà Nẵng",
+      "last_message": "[Mẫu] Chưa xác nhận màu xe sẵn có",
+      "buying_signals": [],
+      "issues": [
+        "Chưa xác nhận màu xe sẵn có"
+      ],
+      "promises": [],
+      "unanalyzed_count": 0
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_3",
+      "customer_name": "Đức Long",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_3",
+      "waiting_since": "2026-11-09T14:39:00+00:00",
+      "stage": "considering",
+      "score": 43,
+      "priority": "high",
+      "models": [
+        "VF 7",
+        "VF 8"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 1100000000,
+      "down_payment_vnd": null,
+      "payment_method": "installment",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "phone": null,
+      "location": "Hà Nội",
+      "last_message": "[Mẫu] Cần so sánh không gian hàng ghế sau",
+      "buying_signals": [],
+      "issues": [
+        "Cần so sánh không gian hàng ghế sau",
+        "Chưa thống nhất phương án trả góp"
+      ],
+      "promises": [],
+      "unanalyzed_count": 0
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_1",
+      "customer_name": "Hoàng Nam",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_1",
+      "waiting_since": "2026-11-09T15:17:00+00:00",
+      "stage": "discovery",
+      "score": 31,
+      "priority": "high",
+      "models": [
+        "VF 5",
+        "VF 6"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 550000000,
+      "down_payment_vnd": null,
+      "payment_method": "installment",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "phone": null,
+      "location": "TP. Hồ Chí Minh",
+      "last_message": "[Mẫu] Chưa rõ phương án sạc tại chung cư",
+      "buying_signals": [],
+      "issues": [
+        "Chưa rõ phương án sạc tại chung cư"
+      ],
+      "promises": [],
+      "unanalyzed_count": 0
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_0",
+      "customer_name": "Minh Anh",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_0",
+      "waiting_since": "2026-11-09T15:36:00+00:00",
+      "stage": "new",
+      "score": 25,
+      "priority": "high",
+      "models": [
+        "VF 3"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 350000000,
+      "down_payment_vnd": null,
+      "payment_method": "cash",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "phone": null,
+      "location": "Hà Nội",
+      "last_message": "[Mẫu] Em muốn tìm hiểu thêm về VF 3.",
+      "buying_signals": [],
+      "issues": [],
+      "promises": [],
+      "unanalyzed_count": 0
+    }
+  ],
+  "customer_intelligence": [
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_3",
+      "customer_name": "Đức Long",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_3",
+      "issues": [
+        "Cần so sánh không gian hàng ghế sau",
+        "Chưa thống nhất phương án trả góp"
+      ],
+      "promises": [],
+      "buying_signals": [],
+      "competitor_models": [],
+      "analyzed_at": "2026-11-09T15:48:00+00:00",
+      "stage": "considering",
+      "score": 43,
+      "models": [
+        "VF 7",
+        "VF 8"
+      ],
+      "budget_vnd": 1100000000,
+      "payment_method": "installment",
+      "phone": null,
+      "location": "Hà Nội",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 7, VF 8, ưu tiên nhu cầu gia đình.",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "unanalyzed_count": 0
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_8",
+      "customer_name": "Bảo Ngân",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_8",
+      "issues": [
+        "Chưa xác nhận thời điểm giao xe"
+      ],
+      "promises": [],
+      "buying_signals": [],
+      "competitor_models": [],
+      "analyzed_at": "2026-11-09T15:48:00+00:00",
+      "stage": "deposit_process",
+      "score": 73,
+      "models": [
+        "VF 8",
+        "VF 9"
+      ],
+      "budget_vnd": 1500000000,
+      "payment_method": "cash",
+      "phone": null,
+      "location": "Đà Nẵng",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 8, VF 9, ưu tiên nhu cầu gia đình.",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "unanalyzed_count": 0
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_1",
+      "customer_name": "Hoàng Nam",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_1",
+      "issues": [
+        "Chưa rõ phương án sạc tại chung cư"
+      ],
+      "promises": [],
+      "buying_signals": [],
+      "competitor_models": [],
+      "analyzed_at": "2026-11-09T15:48:00+00:00",
+      "stage": "discovery",
+      "score": 31,
+      "models": [
+        "VF 5",
+        "VF 6"
+      ],
+      "budget_vnd": 550000000,
+      "payment_method": "installment",
+      "phone": null,
+      "location": "TP. Hồ Chí Minh",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 5, VF 6, ưu tiên nhu cầu gia đình.",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "unanalyzed_count": 0
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_7",
+      "customer_name": "Hải Đăng",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_7",
+      "issues": [
+        "Cần kiểm tra chỗ đỗ xe tại nhà"
+      ],
+      "promises": [],
+      "buying_signals": [],
+      "competitor_models": [],
+      "analyzed_at": "2026-11-09T15:48:00+00:00",
+      "stage": "needs_confirmation",
+      "score": 67,
+      "models": [
+        "VF 9"
+      ],
+      "budget_vnd": 1700000000,
+      "payment_method": "installment",
+      "phone": null,
+      "location": "TP. Hồ Chí Minh",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 9, ưu tiên nhu cầu gia đình.",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "unanalyzed_count": 0
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_4",
+      "customer_name": "Ngọc Mai",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_4",
+      "issues": [
+        "Cần so sánh chi phí sử dụng hằng tháng"
+      ],
+      "promises": [],
+      "buying_signals": [],
+      "competitor_models": [],
+      "analyzed_at": "2026-11-09T15:48:00+00:00",
+      "stage": "considering",
+      "score": 49,
+      "models": [
+        "VF 5"
+      ],
+      "budget_vnd": 600000000,
+      "payment_method": "cash",
+      "phone": null,
+      "location": "TP. Hồ Chí Minh",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 5, ưu tiên nhu cầu gia đình.",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "unanalyzed_count": 0
+    }
+  ],
+  "priority_customers": [
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_8",
+      "customer_name": "Bảo Ngân",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_8",
+      "stage": "deposit_process",
+      "score": 73,
+      "priority": "medium",
+      "models": [
+        "VF 8",
+        "VF 9"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 1500000000,
+      "down_payment_vnd": null,
+      "payment_method": "cash",
+      "charging_condition": "home_ground",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "usage_purpose": "Đi làm và đi chơi cùng gia đình",
+      "phone": null,
+      "location": "Đà Nẵng",
+      "rationale": "[Mẫu] Giai đoạn xác nhận trong kịch bản mô phỏng.",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 8, VF 9, ưu tiên nhu cầu gia đình.",
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "waiting_since": null,
+      "is_waiting": false,
+      "unanalyzed_count": 0,
+      "pending_proposals": 0,
+      "buying_signals": [],
+      "issues": [
+        "Chưa xác nhận thời điểm giao xe"
+      ],
+      "promises": [],
+      "issues_count": 1
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_5",
+      "customer_name": "Quang Dũng",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_5",
+      "stage": "negotiating",
+      "score": 55,
+      "priority": "high",
+      "models": [
+        "VF 8"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 1300000000,
+      "down_payment_vnd": null,
+      "payment_method": "installment",
+      "charging_condition": "public_charger",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "usage_purpose": "Đi làm và đi chơi cùng gia đình",
+      "phone": null,
+      "location": "Đà Nẵng",
+      "rationale": "[Mẫu] Giai đoạn xác nhận trong kịch bản mô phỏng.",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 8, ưu tiên nhu cầu gia đình.",
+      "last_message": "[Mẫu] Chưa xác nhận màu xe sẵn có",
+      "waiting_since": "2026-11-09T14:01:00+00:00",
+      "is_waiting": true,
+      "unanalyzed_count": 0,
+      "pending_proposals": 0,
+      "buying_signals": [],
+      "issues": [
+        "Chưa xác nhận màu xe sẵn có"
+      ],
+      "promises": [],
+      "issues_count": 1
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_4",
+      "customer_name": "Ngọc Mai",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_4",
+      "stage": "considering",
+      "score": 49,
+      "priority": "medium",
+      "models": [
+        "VF 5"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 600000000,
+      "down_payment_vnd": null,
+      "payment_method": "cash",
+      "charging_condition": "home_ground",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "usage_purpose": "Đi làm và đi chơi cùng gia đình",
+      "phone": null,
+      "location": "TP. Hồ Chí Minh",
+      "rationale": "[Mẫu] Giai đoạn xác nhận trong kịch bản mô phỏng.",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 5, ưu tiên nhu cầu gia đình.",
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "waiting_since": null,
+      "is_waiting": false,
+      "unanalyzed_count": 0,
+      "pending_proposals": 0,
+      "buying_signals": [],
+      "issues": [
+        "Cần so sánh chi phí sử dụng hằng tháng"
+      ],
+      "promises": [],
+      "issues_count": 1
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_3",
+      "customer_name": "Đức Long",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_3",
+      "stage": "considering",
+      "score": 43,
+      "priority": "high",
+      "models": [
+        "VF 7",
+        "VF 8"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 1100000000,
+      "down_payment_vnd": null,
+      "payment_method": "installment",
+      "charging_condition": "public_charger",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "usage_purpose": "Đi làm và đi chơi cùng gia đình",
+      "phone": null,
+      "location": "Hà Nội",
+      "rationale": "[Mẫu] Giai đoạn xác nhận trong kịch bản mô phỏng.",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 7, VF 8, ưu tiên nhu cầu gia đình.",
+      "last_message": "[Mẫu] Cần so sánh không gian hàng ghế sau",
+      "waiting_since": "2026-11-09T14:39:00+00:00",
+      "is_waiting": true,
+      "unanalyzed_count": 0,
+      "pending_proposals": 0,
+      "buying_signals": [],
+      "issues": [
+        "Cần so sánh không gian hàng ghế sau",
+        "Chưa thống nhất phương án trả góp"
+      ],
+      "promises": [],
+      "issues_count": 2
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_11",
+      "customer_name": "Tuấn Phong",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_11",
+      "stage": "qualified",
+      "score": 91,
+      "priority": "medium",
+      "models": [
+        "VF 7"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 900000000,
+      "down_payment_vnd": null,
+      "payment_method": "installment",
+      "charging_condition": "public_charger",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "usage_purpose": "Đi làm và đi chơi cùng gia đình",
+      "phone": null,
+      "location": "Đà Nẵng",
+      "rationale": "[Mẫu] Giai đoạn xác nhận trong kịch bản mô phỏng.",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 7, ưu tiên nhu cầu gia đình.",
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "waiting_since": null,
+      "is_waiting": false,
+      "unanalyzed_count": 0,
+      "pending_proposals": 0,
+      "buying_signals": [],
+      "issues": [
+        "Cần tư vấn phụ kiện phù hợp"
+      ],
+      "promises": [],
+      "issues_count": 1
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_2",
+      "customer_name": "Thu Hà",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_2",
+      "stage": "qualified",
+      "score": 37,
+      "priority": "medium",
+      "models": [
+        "VF 6"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 750000000,
+      "down_payment_vnd": null,
+      "payment_method": "cash",
+      "charging_condition": "home_ground",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "usage_purpose": "Đi làm và đi chơi cùng gia đình",
+      "phone": null,
+      "location": "Đà Nẵng",
+      "rationale": "[Mẫu] Giai đoạn xác nhận trong kịch bản mô phỏng.",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 6, ưu tiên nhu cầu gia đình.",
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "waiting_since": null,
+      "is_waiting": false,
+      "unanalyzed_count": 0,
+      "pending_proposals": 0,
+      "buying_signals": [],
+      "issues": [
+        "Cần bảng dự toán lăn bánh"
+      ],
+      "promises": [],
+      "issues_count": 1
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_7",
+      "customer_name": "Hải Đăng",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_7",
+      "stage": "needs_confirmation",
+      "score": 67,
+      "priority": "high",
+      "models": [
+        "VF 9"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 1700000000,
+      "down_payment_vnd": null,
+      "payment_method": "installment",
+      "charging_condition": "public_charger",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "usage_purpose": "Đi làm và đi chơi cùng gia đình",
+      "phone": null,
+      "location": "TP. Hồ Chí Minh",
+      "rationale": "[Mẫu] Giai đoạn xác nhận trong kịch bản mô phỏng.",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 9, ưu tiên nhu cầu gia đình.",
+      "last_message": "[Mẫu] Cần kiểm tra chỗ đỗ xe tại nhà",
+      "waiting_since": "2026-11-09T13:23:00+00:00",
+      "is_waiting": true,
+      "unanalyzed_count": 0,
+      "pending_proposals": 0,
+      "buying_signals": [],
+      "issues": [
+        "Cần kiểm tra chỗ đỗ xe tại nhà"
+      ],
+      "promises": [],
+      "issues_count": 1
+    },
+    {
+      "customer_id": "dashdemo1_c59a205d85_customer_6",
+      "customer_name": "Thanh Trúc",
+      "conversation_id": "dashdemo1_c59a205d85_conversation_6",
+      "stage": "needs_confirmation",
+      "score": 61,
+      "priority": "medium",
+      "models": [
+        "VF 6",
+        "VF 7"
+      ],
+      "competitor_models": [],
+      "budget_vnd": 900000000,
+      "down_payment_vnd": null,
+      "payment_method": "cash",
+      "charging_condition": "home_ground",
+      "purchase_timeline": "Trong 1–2 tháng tới",
+      "usage_purpose": "Đi làm và đi chơi cùng gia đình",
+      "phone": null,
+      "location": "Hà Nội",
+      "rationale": "[Mẫu] Giai đoạn xác nhận trong kịch bản mô phỏng.",
+      "quick_summary": "Kịch bản mô phỏng: khách quan tâm VF 6, VF 7, ưu tiên nhu cầu gia đình.",
+      "last_message": "[Mẫu] Em đã ghi nhận và sẽ chuẩn bị nội dung cho lần trao đổi tiếp theo.",
+      "waiting_since": null,
+      "is_waiting": false,
+      "unanalyzed_count": 0,
+      "pending_proposals": 0,
+      "buying_signals": [],
+      "issues": [
+        "Cần xác nhận địa điểm lái thử"
+      ],
+      "promises": [],
+      "issues_count": 1
+    }
+  ],
+  "portfolio_insights": {
+    "work_counts": {
+      "today": 3,
+      "upcoming": 13,
+      "stale": 9,
+      "unscheduled": 0,
+      "review": 3,
+      "completed": 3
+    },
+    "payment_breakdown": [
+      {
+        "key": "installment",
+        "label": "Trả góp / Vay NH",
+        "count": 5
+      },
+      {
+        "key": "cash",
+        "label": "Trả thẳng 100%",
+        "count": 5
+      },
+      {
+        "key": "unknown",
+        "label": "Chưa xác định",
+        "count": 0
+      }
+    ],
+    "charging_breakdown": [
+      {
+        "key": "home",
+        "label": "Sạc tại nhà riêng",
+        "count": 5
+      },
+      {
+        "key": "public",
+        "label": "Trạm V-GREEN / Chung cư",
+        "count": 5
+      },
+      {
+        "key": "unknown",
+        "label": "Chưa khảo sát",
+        "count": 0
+      }
+    ],
+    "budget_segments": [
+      {
+        "key": "under_600m",
+        "label": "Dưới 600 triệu (VF 3, VF 5)",
+        "count": 2
+      },
+      {
+        "key": "600m_to_1b",
+        "label": "600 triệu - 1 tỷ (VF 6, VF 7)",
+        "count": 4
+      },
+      {
+        "key": "over_1b",
+        "label": "Trên 1 tỷ (VF 8, VF 9)",
+        "count": 4
+      },
+      {
+        "key": "unknown",
+        "label": "Chưa rõ ngân sách",
+        "count": 0
+      }
+    ],
+    "profile_completeness": {
+      "total_active": 10,
+      "with_model": 10,
+      "with_budget": 10,
+      "with_payment": 10,
+      "with_charging": 10,
+      "with_timeline": 10
+    }
+  },
+  "stage_distribution": [
+    {
+      "stage": "deposit_process",
+      "count": 1
+    },
+    {
+      "stage": "discovery",
+      "count": 1
+    },
+    {
+      "stage": "needs_confirmation",
+      "count": 2
+    },
+    {
+      "stage": "lost",
+      "count": 1
+    },
+    {
+      "stage": "new",
+      "count": 1
+    },
+    {
+      "stage": "considering",
+      "count": 2
+    },
+    {
+      "stage": "negotiating",
+      "count": 1
+    },
+    {
+      "stage": "qualified",
+      "count": 2
+    },
+    {
+      "stage": "won",
+      "count": 1
+    }
+  ],
+  "model_interest": [
+    {
+      "model": "VF 5",
+      "count": 3
+    },
+    {
+      "model": "VF 6",
+      "count": 3
+    },
+    {
+      "model": "VF 7",
+      "count": 3
+    },
+    {
+      "model": "VF 8",
+      "count": 3
+    },
+    {
+      "model": "VF 3",
+      "count": 2
+    },
+    {
+      "model": "VF 9",
+      "count": 2
+    }
+  ],
+  "message_activity": [
+    {
+      "date": "2026-11-05",
+      "customer": 8,
+      "sales": 8
+    },
+    {
+      "date": "2026-11-06",
+      "customer": 7,
+      "sales": 7
+    },
+    {
+      "date": "2026-11-07",
+      "customer": 7,
+      "sales": 7
+    },
+    {
+      "date": "2026-11-08",
+      "customer": 8,
+      "sales": 8
+    },
+    {
+      "date": "2026-11-09",
+      "customer": 12,
+      "sales": 19
+    },
+    {
+      "date": "2026-11-10",
+      "customer": 0,
+      "sales": 0
+    },
+    {
+      "date": "2026-11-11",
+      "customer": 0,
+      "sales": 0
+    }
+  ]
+}
