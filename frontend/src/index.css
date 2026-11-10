@@ -1,48 +1,61 @@
-/* VINFAST AI SALES ENABLEMENT — AUTOMOTIVE MONOCHROME DESIGN SYSTEM */
+/* VINFAST AI SALES ENABLEMENT — MODERN SAAS DESIGN SYSTEM */
+/* Strict Palette:
+   - Primary: #80E5E5 (Soft Cyan)
+   - Secondary: #172B3A (Midnight Navy)
+   - Background: #F5F8FA (Cloud White)
+   - Card Background: #FFFFFF
+   - Border: #E5EAEE
+   - Secondary Text: #64748B
+   - Muted Text: #94A3B8
+*/
 
 :root {
   --color-white: #FFFFFF;
-  --color-black: #111111;
-  --color-gray: #808080;
+  --color-black: #172B3A;
+  --color-gray: #64748B;
 
-  --bg-app: #FFFFFF;
+  --bg-app: #F5F8FA;
   --surface: #FFFFFF;
-  --surface-alt: #F8F8F8;
-  --surface-subtle: #F2F2F2;
+  --surface-alt: #F8FAFC;
+  --surface-subtle: #F1F5F9;
 
-  --primary: #111111;
-  --primary-hover: #000000;
-  --secondary: #333333;
-  --muted: #808080;
-  --muted-light: #B3B3B3;
-  --muted-dark: #444444;
+  --primary: #80E5E5;
+  --primary-hover: #6ad6d6;
+  --primary-active: #58c7c7;
+  --primary-text: #172B3A;
 
-  --border: #E5E5E5;
-  --border-light: #F0F0F0;
-  --border-dark: #CCCCCC;
+  --secondary: #172B3A;
+  --secondary-hover: #223c50;
+  --muted: #64748B;
+  --muted-light: #CBD5E1;
+  --muted-dark: #334155;
+
+  --border: #E5EAEE;
+  --border-light: #EEF2F5;
+  --border-dark: #CBD5E1;
 
   --white: #FFFFFF;
-  --black: #111111;
-  --gray: #808080;
+  --black: #172B3A;
+  --gray: #64748B;
 
-  --hover: #F5F5F5;
-  --active: #EBEBEB;
+  --hover: rgba(128, 229, 229, 0.1);
+  --active: rgba(128, 229, 229, 0.2);
 
-  --dark-card: #111111;
-  --dark-card-hover: #222222;
-  --dark-border: #333333;
-  --dark-text-muted: #808080;
+  --dark-card: #13222E;
+  --dark-card-hover: #1A2E3E;
+  --dark-border: #1F3447;
+  --dark-text-muted: #94A3B8;
 
-  --status-good-bg: #F5F5F5;
-  --status-good-text: #111111;
-  --status-good-border: #E5E5E5;
+  --status-good-bg: #E6FBF8;
+  --status-good-text: #0E7060;
+  --status-good-border: #80E5E5;
 
-  --status-warn-bg: #F5F5F5;
-  --status-warn-text: #111111;
-  --status-warn-border: #E5E5E5;
+  --status-warn-bg: #FEF7EE;
+  --status-warn-text: #B45309;
+  --status-warn-border: #FCD34D;
 
-  --status-badge-bg: #F5F5F5;
-  --status-badge-text: #111111;
+  --status-badge-bg: rgba(128, 229, 229, 0.22);
+  --status-badge-text: #172B3A;
 
   --font-sans: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -53,28 +66,49 @@
   --radius-xl: 18px;
   --radius-pill: 9999px;
 
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-flyout: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-subtle: 0 1px 3px rgba(23, 43, 58, 0.04);
+  --shadow-card: 0 2px 8px rgba(23, 43, 58, 0.04);
+  --shadow-flyout: 0 10px 30px rgba(23, 43, 58, 0.08);
 
   --transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 
-  --app-ink: #111111;
-  --app-muted: #808080;
-  --app-blue: #111111;
-  --app-blue-deep: #000000;
-  --app-bg: #FFFFFF;
-  --app-border: #E5E5E5;
-  --app-line: #EEEEEE;
-  --app-blue-soft: #F5F5F5;
-  --app-warn: #111111;
-  --app-orange: #555555;
+  --app-ink: #172B3A;
+  --app-muted: #64748B;
+  --app-blue: #80E5E5;
+  --app-blue-deep: #172B3A;
+  --app-bg: #F5F8FA;
+  --app-border: #E5EAEE;
+  --app-line: #EEF2F5;
+  --app-blue-soft: rgba(128, 229, 229, 0.15);
+  --app-warn: #D97706;
+  --app-orange: #EA580C;
 
-  --login-ink: #111111;
-  --login-muted: #808080;
-  --login-blue: #111111;
-  --login-blue-deep: #000000;
-  --login-violet: #333333;
+  --login-ink: #172B3A;
+  --login-muted: #64748B;
+  --login-blue: #80E5E5;
+  --login-blue-deep: #172B3A;
+  --login-violet: #223c50;
+}
+
+[data-theme="dark"] {
+  --bg-app: #0B131B;
+  --surface: #13222E;
+  --surface-alt: #172836;
+  --surface-subtle: #1C3042;
+  --border: #1F3447;
+  --border-light: #263E54;
+  --border-dark: #324D66;
+  --primary: #80E5E5;
+  --primary-hover: #9bf0f0;
+  --primary-text: #172B3A;
+  --secondary: #F1F5F9;
+  --black: #0B131B;
+  --gray: #94A3B8;
+  --muted: #64748B;
+  --app-ink: #F1F5F9;
+  --app-muted: #94A3B8;
+  --app-bg: #0B131B;
+  --app-border: #1F3447;
 }
 
 * {
@@ -85,8 +119,8 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: #FFFFFF;
-  color: var(--primary);
+  background-color: var(--bg-app);
+  color: var(--secondary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -1667,8 +1701,9 @@ a {
 
 /* BUTTONS */
 .btn-primary {
-  background-color: var(--primary);
-  color: var(--white);
+  background-color: #80E5E5;
+  color: #172B3A;
+  border: 1px solid #80E5E5;
   padding: 10px 20px;
   border-radius: var(--radius-pill);
   font-size: 0.88rem;
@@ -3289,13 +3324,14 @@ a {
 /* ADVISOR HOME — login branding carried into the authenticated experience. */
 .top-header {
   background: #FFFFFF;
-  color: #111111;
+  color: #172B3A;
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid #E5EAEE;
   position: sticky;
   top: 0;
   z-index: 50;
   height: 58px;
+  box-shadow: 0 1px 3px rgba(23, 43, 58, 0.02);
 }
 
 .top-header button { font-family: inherit; }
@@ -3350,13 +3386,13 @@ a {
   font-size: 13.5px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #111111;
+  color: #172B3A;
   white-space: nowrap;
 }
 
 .brand-subtitle {
   font-size: 11px;
-  color: #808080;
+  color: #64748B;
   white-space: nowrap;
 }
 
@@ -3365,8 +3401,8 @@ a {
   align-items: center;
   gap: 4px;
   padding: 3px;
-  background: #F5F5F5;
-  border: 1px solid #E5E5E5;
+  background: #F5F8FA;
+  border: 1px solid #E5EAEE;
   border-radius: 9999px;
 }
 
@@ -3387,15 +3423,15 @@ a {
 }
 
 .nav-tab-item:hover {
-  color: #111111;
-  background: rgba(0, 0, 0, 0.04);
+  color: #172B3A;
+  background: rgba(128, 229, 229, 0.12);
 }
 
 .nav-tab-item.active {
-  background: #111111;
-  color: #FFFFFF;
-  font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  background: #80E5E5;
+  color: #172B3A;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(128, 229, 229, 0.3);
 }
 
 .roleplay-file-icon {
@@ -3415,7 +3451,8 @@ a {
   place-items: center;
   border-radius: 50%;
   color: #fff;
-  background: #111111;
+  background: #172B3A;
+  color: #80E5E5;
   font-weight: 700;
 }
 

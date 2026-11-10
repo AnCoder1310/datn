@@ -2,13 +2,11 @@ import { useState } from 'react';
 import {
   ArrowRight,
   CalendarDays,
-  Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Circle,
   Clock3,
-  MessageSquare,
   Plus,
   RefreshCw,
   X,
@@ -20,12 +18,12 @@ import {
   cleanDemoText,
   compactWaiting,
   filters,
-  formatDateTime,
   formatTimeRange,
   itemLabel,
   taskState,
 } from './agendaData';
 import { useWorkspaceClock } from '../customerWorkspace/useCustomerWorkspace';
+import { VinFastShowcaseHero } from './VinFastShowcaseHero';
 
 const STAGE_LABELS = {
   new: 'Mới liên hệ',
@@ -39,16 +37,17 @@ const STAGE_LABELS = {
   needs_confirmation: 'Cần xác nhận',
 };
 
-const STAGE_GRAY_SHADES = {
-  won: '#111111',
-  deposit_process: '#222222',
-  negotiating: '#444444',
-  considering: '#666666',
-  qualified: '#888888',
-  discovery: '#AAAAAA',
-  new: '#CCCCCC',
-  needs_confirmation: '#999999',
-  lost: '#D4D4D4',
+// Modern SaaS Palette for pipeline stages (Soft Cyan & Midnight Navy tones)
+const STAGE_COLORS = {
+  won: '#172B3A',
+  deposit_process: '#2A4A63',
+  negotiating: '#3E6686',
+  considering: '#5683A7',
+  qualified: '#80E5E5',
+  discovery: '#A5EEEE',
+  new: '#C7F5F5',
+  needs_confirmation: '#94A3B8',
+  lost: '#CBD5E1',
 };
 
 function getStageLabel(stageId) {
@@ -96,7 +95,6 @@ function TaskRow({ item, now, onEdit, onCustomer, onStatus, busy }) {
 
   return (
     <div className={`agenda-task-row ${isDone ? 'is-completed' : ''}`}>
-      {/* Quick completion toggle button */}
       <button
         type="button"
         className={`agenda-task-toggle ${isDone ? 'is-done' : ''}`}
@@ -220,6 +218,7 @@ export function DashboardView({
   const [showAllCustomers, setShowAllCustomers] = useState(false);
   const [customerQueueTab, setCustomerQueueTab] = useState('waiting');
   const [selectedStage, setSelectedStage] = useState(null);
+  const [selectedModel, setSelectedModel] = useState(null);
   const now = useWorkspaceClock();
 
   const resource = useAgendaResource(
@@ -261,13 +260,6 @@ export function DashboardView({
     />
   );
 
-  const activityMax = Math.max(1, ...(data?.message_activity || []).map((day) => day.customer + day.sales));
-  const totalCustomerMsgs = (data?.message_activity || []).reduce((acc, d) => acc + d.customer, 0);
-  const totalSalesMsgs = (data?.message_activity || []).reduce((acc, d) => acc + d.sales, 0);
-  const workCounts = data?.portfolio_insights?.work_counts || {};
-  const pendingActionTasks =
-    (data?.kpis?.stale_tasks || 0) + (data?.unscheduled?.total || 0) + (data?.kpis?.review_tasks || 0);
-
   const rawQueueList =
     customerQueueTab === 'waiting'
       ? data?.waiting_customers || []
@@ -275,21 +267,32 @@ export function DashboardView({
         ? data?.priority_customers || []
         : data?.customer_intelligence || [];
 
-  const filteredCustomers = selectedStage
-    ? (data?.customers || []).filter((c) => c.stage === selectedStage)
-    : rawQueueList;
+  // Filter by selected vehicle model or funnel stage
+  let filteredCustomers = rawQueueList;
+  if (selectedModel) {
+    filteredCustomers = (data?.customers || []).filter((c) =>
+      c.models?.some((m) => m.toLowerCase().includes(selectedModel.toLowerCase()))
+    );
+  } else if (selectedStage) {
+    filteredCustomers = (data?.customers || []).filter((c) => c.stage === selectedStage);
+  }
 
   const visibleCustomers = showAllCustomers ? filteredCustomers : filteredCustomers.slice(0, 6);
   const totalCustomers = data?.customers?.length || 0;
+  const workCounts = data?.portfolio_insights?.work_counts || {};
+
+  const activityMax = Math.max(1, ...(data?.message_activity || []).map((day) => day.customer + day.sales));
+  const totalCustomerMsgs = (data?.message_activity || []).reduce((acc, d) => acc + d.customer, 0);
+  const totalSalesMsgs = (data?.message_activity || []).reduce((acc, d) => acc + d.sales, 0);
 
   return (
     <div className="agenda-page dashboard-page" aria-label="Bảng điều khiển bán hàng">
-      {/* MINIMALIST HEADER */}
+      {/* TOP HEADER */}
       <header className="agenda-topbar">
         <div className="agenda-topbar-left">
           <h1>Bảng điều khiển</h1>
           <span className="agenda-topbar-meta">
-            {currentUser?.display_name || 'Tư vấn viên'}
+            {currentUser?.display_name || 'Tư vấn viên'} · VinFast Smart Sales
           </span>
         </div>
 
@@ -312,9 +315,9 @@ export function DashboardView({
             type="button"
             className="agenda-btn-solid"
             disabled={!data}
-            onClick={() => onCreate(data.customers)}
+            onClick={() => onCreate(data?.customers || [])}
           >
-            <Plus size={14} strokeWidth={2} />
+            <Plus size={14} strokeWidth={2.2} />
             <span>Tạo việc</span>
           </button>
         </div>
@@ -329,6 +332,23 @@ export function DashboardView({
         </div>
       )}
 
+      {/* SHOWCASE HERO — AUTOMOTIVE VINFAST VEHICLE SHOWCASE (LIKE TESLA/MODERN EV DASHBOARD) */}
+      <VinFastShowcaseHero
+        modelInterest={data?.model_interest || []}
+        customers={data?.customers || []}
+        selectedModelKey={selectedModel}
+        onSelectModel={(modelKey) => {
+          setSelectedModel(modelKey);
+          setSelectedStage(null);
+        }}
+        onBookTestDrive={(model) => {
+          if (onCreate) onCreate(data?.customers || []);
+        }}
+        onQuotePrice={(model) => {
+          if (onCreate) onCreate(data?.customers || []);
+        }}
+      />
+
       {!data && (
         <p className="agenda-empty" role="status">
           {resource.loading ? 'Đang tải dữ liệu...' : 'Chưa tải được dữ liệu.'}
@@ -337,21 +357,22 @@ export function DashboardView({
 
       {data && (
         <>
-          {/* ROW 1: SLEEK METRIC STRIP (PURE MONOCHROME) */}
+          {/* ROW 1: 4 SPACIOUS METRIC CARDS (SAAS AESTHETIC) */}
           <section className="agenda-metric-strip" aria-label="Chỉ số vận hành">
             <button
               type="button"
               className="agenda-metric-cell"
               onClick={() => {
+                setSelectedModel(null);
                 setSelectedStage(null);
                 setCustomerQueueTab('waiting');
               }}
             >
-              <span className="agenda-metric-label">Chờ phản hồi</span>
+              <span className="agenda-metric-label">Khách chờ phản hồi</span>
               <div className="agenda-metric-main">
-                <strong>{data.kpis.waiting_customers}</strong>
+                <strong>{data?.kpis?.waiting_customers || 0}</strong>
                 <small>
-                  {data.waiting_customers[0]?.waiting_since
+                  {data?.waiting_customers?.[0]?.waiting_since
                     ? compactWaiting(data.waiting_customers[0].waiting_since, now)
                     : 'Đã phản hồi'}
                 </small>
@@ -362,6 +383,7 @@ export function DashboardView({
               type="button"
               className="agenda-metric-cell"
               onClick={() => {
+                setSelectedModel(null);
                 setSelectedStage(null);
                 setCustomerQueueTab('priority');
               }}
@@ -369,10 +391,10 @@ export function DashboardView({
               <span className="agenda-metric-label">Cơ hội nóng</span>
               <div className="agenda-metric-main">
                 <strong>
-                  {data.kpis.hot_leads}
-                  <span className="agenda-metric-denom">/{data.kpis.active_customers}</span>
+                  {data?.kpis?.hot_leads || 0}
+                  <span className="agenda-metric-denom">/{data?.kpis?.active_customers || 0}</span>
                 </strong>
-                <small>{data.kpis.closing_leads || 0} sát chốt</small>
+                <small>{data?.kpis?.closing_leads || 0} sát chốt cọc</small>
               </div>
             </button>
 
@@ -381,30 +403,10 @@ export function DashboardView({
               className="agenda-metric-cell"
               onClick={() => changeFilter('today')}
             >
-              <span className="agenda-metric-label">Lịch hôm nay</span>
+              <span className="agenda-metric-label">Lịch hẹn hôm nay</span>
               <div className="agenda-metric-main">
-                <strong>{data.kpis.today_events}</strong>
-                <small>{data.kpis.upcoming_events} sắp tới</small>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              className="agenda-metric-cell"
-              onClick={() =>
-                changeFilter(
-                  data.kpis.stale_tasks > 0
-                    ? 'stale'
-                    : data.unscheduled.total > 0
-                      ? 'unscheduled'
-                      : 'review'
-                )
-              }
-            >
-              <span className="agenda-metric-label">Cần xếp lịch</span>
-              <div className="agenda-metric-main">
-                <strong>{pendingActionTasks}</strong>
-                <small>{data.unscheduled.total} chưa xếp</small>
+                <strong>{data?.kpis?.today_events || 0}</strong>
+                <small>{data?.kpis?.upcoming_events || 0} sắp tới tuần này</small>
               </div>
             </button>
 
@@ -412,50 +414,57 @@ export function DashboardView({
               type="button"
               className="agenda-metric-cell"
               onClick={() => {
+                setSelectedModel(null);
                 setSelectedStage(null);
                 setCustomerQueueTab('priority');
               }}
             >
-              <span className="agenda-metric-label">Dự kiến cọc</span>
+              <span className="agenda-metric-label">Tổng cọc dự kiến</span>
               <div className="agenda-metric-main">
                 <strong className="is-money">
-                  {data.kpis.pipeline_budget_vnd > 0
+                  {data?.kpis?.pipeline_budget_vnd > 0
                     ? formatCompactMoney(data.kpis.pipeline_budget_vnd)
                     : '0 ₫'}
                 </strong>
                 <small>
-                  {data.kpis.completed_tasks}/{data.kpis.total_tasks} việc xong
+                  {data?.kpis?.completed_tasks || 0}/{data?.kpis?.total_tasks || 0} việc xong
                 </small>
               </div>
             </button>
           </section>
 
-          {/* ROW 2: SLEEK SEGMENTED PIPELINE (REPLACES 9 CHUNKY BOXES) */}
+          {/* ROW 2: SEGMENTED PIPELINE WITH CRISP FILTER PILLS */}
           <section className="agenda-pipeline-card" aria-label="Phễu bán hàng">
             <div className="agenda-pipeline-header">
               <div className="agenda-pipeline-title-group">
                 <span className="agenda-pipeline-title">Phễu bán hàng</span>
-                <span className="agenda-pipeline-count">Tổng {totalCustomers} khách</span>
+                <span className="agenda-pipeline-count">
+                  {selectedModel ? `Lọc theo ${selectedModel}: ` : 'Toàn bộ '}
+                  {filteredCustomers.length} khách
+                </span>
               </div>
-              {selectedStage && (
+              {(selectedStage || selectedModel) && (
                 <button
                   type="button"
                   className="agenda-pill-clear"
-                  onClick={() => setSelectedStage(null)}
+                  onClick={() => {
+                    setSelectedStage(null);
+                    setSelectedModel(null);
+                  }}
                 >
-                  <X size={12} /> Bỏ lọc: {getStageLabel(selectedStage)}
+                  <X size={12} /> Bỏ lọc ({selectedModel || getStageLabel(selectedStage)})
                 </button>
               )}
             </div>
 
             {/* Continuous segmented progress bar */}
             <div className="agenda-pipeline-bar" role="meter" aria-label="Tiến độ phễu khách hàng">
-              {data.stage_distribution
+              {(data?.stage_distribution || [])
                 .filter((item) => item.count > 0)
                 .map((item) => {
                   const pct = Math.max(4, (item.count / Math.max(1, totalCustomers)) * 100);
                   const isSelected = selectedStage === item.stage;
-                  const shade = STAGE_GRAY_SHADES[item.stage] || '#888888';
+                  const shade = STAGE_COLORS[item.stage] || '#80E5E5';
                   return (
                     <button
                       type="button"
@@ -463,7 +472,10 @@ export function DashboardView({
                       className={`agenda-pipeline-segment ${isSelected ? 'is-active' : ''}`}
                       style={{ width: `${pct}%`, backgroundColor: shade }}
                       title={`${getStageLabel(item.stage)}: ${item.count} khách`}
-                      onClick={() => setSelectedStage(isSelected ? null : item.stage)}
+                      onClick={() => {
+                        setSelectedModel(null);
+                        setSelectedStage(isSelected ? null : item.stage);
+                      }}
                     />
                   );
                 })}
@@ -473,13 +485,16 @@ export function DashboardView({
             <div className="agenda-pipeline-pills" role="tablist" aria-label="Bộ lọc giai đoạn phễu">
               <button
                 type="button"
-                className={`agenda-stage-pill ${!selectedStage ? 'is-active' : ''}`}
-                onClick={() => setSelectedStage(null)}
+                className={`agenda-stage-pill ${!selectedStage && !selectedModel ? 'is-active' : ''}`}
+                onClick={() => {
+                  setSelectedStage(null);
+                  setSelectedModel(null);
+                }}
               >
                 <span>Tất cả</span>
                 <em>{totalCustomers}</em>
               </button>
-              {data.stage_distribution
+              {(data?.stage_distribution || [])
                 .filter((item) => item.count > 0)
                 .map((item) => {
                   const isSelected = selectedStage === item.stage;
@@ -488,7 +503,10 @@ export function DashboardView({
                       type="button"
                       key={item.stage}
                       className={`agenda-stage-pill ${isSelected ? 'is-active' : ''}`}
-                      onClick={() => setSelectedStage(isSelected ? null : item.stage)}
+                      onClick={() => {
+                        setSelectedModel(null);
+                        setSelectedStage(isSelected ? null : item.stage);
+                      }}
                     >
                       <span>{getStageLabel(item.stage)}</span>
                       <em>{item.count}</em>
@@ -511,9 +529,9 @@ export function DashboardView({
             </Panel>
           )}
 
-          {/* ROW 3: PRIMARY 2-COLUMN WORKSPACE (CUSTOMERS + TASKS) */}
+          {/* ROW 3: PRIMARY 2-COLUMN WORKSPACE (CONCISE CUSTOMERS + TASKS) */}
           <div className="agenda-main-grid">
-            {/* LEFT: CUSTOMER LIST (MINIMALIST WITH HIGH-VALUE DETAILS) */}
+            {/* LEFT: CUSTOMER LIST (MINIMAL, HIGH VALUE, NO WALL OF TEXT) */}
             <div className="agenda-column" id="agenda-primary-queue">
               <section className="agenda-panel">
                 <div className="agenda-queue-header">
@@ -521,41 +539,44 @@ export function DashboardView({
                     <button
                       type="button"
                       role="tab"
-                      aria-selected={!selectedStage && customerQueueTab === 'waiting'}
-                      className={!selectedStage && customerQueueTab === 'waiting' ? 'is-active' : ''}
+                      aria-selected={!selectedStage && !selectedModel && customerQueueTab === 'waiting'}
+                      className={!selectedStage && !selectedModel && customerQueueTab === 'waiting' ? 'is-active' : ''}
                       onClick={() => {
                         setSelectedStage(null);
+                        setSelectedModel(null);
                         setCustomerQueueTab('waiting');
                       }}
                     >
                       <span>Chờ phản hồi</span>
-                      <em>{data.waiting_customers.length}</em>
+                      <em>{(data?.waiting_customers || []).length}</em>
                     </button>
                     <button
                       type="button"
                       role="tab"
-                      aria-selected={!selectedStage && customerQueueTab === 'priority'}
-                      className={!selectedStage && customerQueueTab === 'priority' ? 'is-active' : ''}
+                      aria-selected={!selectedStage && !selectedModel && customerQueueTab === 'priority'}
+                      className={!selectedStage && !selectedModel && customerQueueTab === 'priority' ? 'is-active' : ''}
                       onClick={() => {
                         setSelectedStage(null);
+                        setSelectedModel(null);
                         setCustomerQueueTab('priority');
                       }}
                     >
-                      <span>Trọng điểm</span>
-                      <em>{(data.priority_customers || []).length}</em>
+                      <span>Cơ hội nóng</span>
+                      <em>{(data?.priority_customers || []).length}</em>
                     </button>
                     <button
                       type="button"
                       role="tab"
-                      aria-selected={!selectedStage && customerQueueTab === 'intelligence'}
-                      className={!selectedStage && customerQueueTab === 'intelligence' ? 'is-active' : ''}
+                      aria-selected={!selectedStage && !selectedModel && customerQueueTab === 'intelligence'}
+                      className={!selectedStage && !selectedModel && customerQueueTab === 'intelligence' ? 'is-active' : ''}
                       onClick={() => {
                         setSelectedStage(null);
+                        setSelectedModel(null);
                         setCustomerQueueTab('intelligence');
                       }}
                     >
                       <span>Băn khoăn</span>
-                      <em>{(data.customer_intelligence || []).length}</em>
+                      <em>{(data?.customer_intelligence || []).length}</em>
                     </button>
                   </div>
                 </div>
@@ -566,25 +587,22 @@ export function DashboardView({
                       const stageLabel = getStageLabel(customer.stage);
                       const modelText = customer.models?.length ? customer.models.join(', ') : null;
                       const budgetText = formatCompactMoney(customer.budget_vnd);
-                      const competitorText = customer.competitor_models?.length
-                        ? `So sánh ${customer.competitor_models[0]}`
-                        : null;
                       const waitText = customer.waiting_since
                         ? compactWaiting(customer.waiting_since, now)
                         : null;
 
-                      const facts = [stageLabel, budgetText, competitorText].filter(Boolean);
-
-                      const singleNote = cleanDemoText(
-                        customerQueueTab === 'waiting' && !selectedStage
-                          ? customer.last_message || customer.issues?.[0] || customer.buying_signals?.[0]
-                          : customerQueueTab === 'intelligence' && !selectedStage
-                            ? customer.issues?.[0] || customer.promises?.[0] || customer.quick_summary
+                      // Short, punchy single note (at most 1 clear sentence)
+                      const rawNote =
+                        customerQueueTab === 'waiting' && !selectedStage && !selectedModel
+                          ? customer.last_message || customer.issues?.[0]
+                          : customerQueueTab === 'intelligence' && !selectedStage && !selectedModel
+                            ? customer.issues?.[0] || customer.quick_summary
                             : customer.buying_signals?.[0] ||
                                 customer.issues?.[0] ||
                                 customer.quick_summary ||
-                                customer.last_message
-                      );
+                                customer.last_message;
+
+                      const shortNote = rawNote ? cleanDemoText(rawNote).slice(0, 100) : null;
 
                       return (
                         <div className="agenda-minimal-row" key={customer.customer_id}>
@@ -598,12 +616,12 @@ export function DashboardView({
                                 {cleanDemoText(customer.customer_name)}
                               </button>
                               {modelText && <span className="agenda-model-tag">{modelText}</span>}
-                              <span className="agenda-minimal-meta">{facts.join(' · ')}</span>
+                              <span className="agenda-stage-tag">{stageLabel}</span>
+                              {budgetText && <span className="agenda-budget-tag">{budgetText}</span>}
                             </div>
-                            {/* Rich customer message/issue - prominent & readable */}
-                            {singleNote && (
+                            {shortNote && (
                               <p className="agenda-customer-note">
-                                “{cleanDemoText(singleNote)}”
+                                “{shortNote}”
                               </p>
                             )}
                           </div>
@@ -616,13 +634,13 @@ export function DashboardView({
                               onClick={() => onCustomer(customer)}
                             >
                               <span>Hội thoại</span>
-                              <ArrowRight size={12} />
+                              <ArrowRight size={13} />
                             </button>
                             <button
                               type="button"
                               className="agenda-btn-subtle"
                               onClick={() => onCustomer({ ...customer, tool: 'summary' })}
-                              title="Xem hồ sơ"
+                              title="Xem hồ sơ khách hàng"
                             >
                               Hồ sơ
                             </button>
@@ -653,8 +671,8 @@ export function DashboardView({
             <div className="agenda-column">
               <Panel
                 id="agenda-work-panel"
-                title="Công việc & Lịch"
-                action={<span className="agenda-muted-caption">{data.work_items.total} mục</span>}
+                title="Công việc & Lịch hẹn"
+                action={<span className="agenda-muted-caption">{data?.work_items?.total || 0} mục</span>}
               >
                 <div className="agenda-filter-tabs" aria-label="Lọc công việc">
                   {Object.entries(filters).map(([value, label]) => {
@@ -674,7 +692,7 @@ export function DashboardView({
                   })}
                 </div>
 
-                {data.work_items.items.length ? (
+                {(data?.work_items?.items || []).length ? (
                   <div className="agenda-minimal-list">{data.work_items.items.map(row)}</div>
                 ) : (
                   <div className="agenda-empty-work-fallback">
@@ -683,7 +701,7 @@ export function DashboardView({
                         ? 'Hôm nay chưa có lịch cố định giờ.'
                         : 'Không có mục nào trong bộ lọc này.'}
                     </p>
-                    {filter === 'today' && data.unscheduled.items.length > 0 && (
+                    {filter === 'today' && (data?.unscheduled?.items || []).length > 0 && (
                       <div className="agenda-fallback-section">
                         <div className="agenda-fallback-header">
                           <span>Việc chưa xếp giờ ({data.unscheduled.total})</span>
@@ -703,7 +721,7 @@ export function DashboardView({
                   </div>
                 )}
 
-                {data.work_items.total > 10 && (
+                {(data?.work_items?.total || 0) > 10 && (
                   <div className="agenda-pagination">
                     <button
                       type="button"
@@ -738,7 +756,7 @@ export function DashboardView({
                   </button>
                 }
               >
-                {data.upcoming_events.length ? (
+                {(data?.upcoming_events || []).length ? (
                   <div className="agenda-minimal-list">
                     {data.upcoming_events.map((item) => (
                       <button
@@ -766,15 +784,20 @@ export function DashboardView({
             </div>
           </div>
 
-          {/* ROW 4: COMPACT BOTTOM INSIGHTS (VEHICLE DEMAND + MESSAGE ACTIVITY) */}
+          {/* ROW 4: BOTTOM INSIGHTS (VEHICLE INTEREST & MESSAGE ACTIVITY) */}
           <div className="agenda-bottom-grid" id="agenda-portfolio">
             <Panel title="Nhu cầu theo dòng xe">
               <Bars
-                rows={data.model_interest.map((item) => ({
+                rows={(data?.model_interest || []).map((item) => ({
                   ...item,
                   key: item.model,
                 }))}
                 label={(item) => item.model}
+                selectedKey={selectedModel}
+                onSelect={(modelKey) => {
+                  setSelectedModel(selectedModel === modelKey ? null : modelKey);
+                  setSelectedStage(null);
+                }}
               />
             </Panel>
 
@@ -812,7 +835,7 @@ export function DashboardView({
                 role="img"
                 aria-label={`Số tin nhắn khách hàng và sales trong ${days} ngày`}
               >
-                {data.message_activity.map((day, index) => (
+                {(data?.message_activity || []).map((day, index) => (
                   <div
                     className="agenda-activity-day"
                     key={day.date}

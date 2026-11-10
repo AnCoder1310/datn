@@ -7,7 +7,7 @@
   gap: 20px;
   min-width: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
-  color: #111111;
+  color: #172B3A;
   font-variant-numeric: tabular-nums;
   max-width: 1440px;
   margin: 0 auto;
@@ -25,7 +25,7 @@
   justify-content: space-between;
   gap: 12px 24px;
   padding-bottom: 14px;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid #E5EAEE;
 }
 
 .ap-title h1 {
@@ -33,12 +33,12 @@
   font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #111111;
+  color: #172B3A;
 }
 
 .ap-title p {
   margin: 4px 0 0;
-  color: #808080;
+  color: #64748B;
   font-size: 13.5px;
 }
 
@@ -49,8 +49,8 @@
   margin: 0;
   font-size: 13px;
   color: #666666;
-  background: #F5F5F5;
-  border: 1px solid #E5E5E5;
+  background: #F5F8FA;
+  border: 1px solid #E5EAEE;
   padding: 6px 12px;
   border-radius: 999px;
 }
@@ -59,7 +59,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: #111111;
+  color: #172B3A;
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
@@ -76,7 +76,7 @@
 .ap-card {
   min-width: 0;
   background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #E5EAEE;
   border-radius: 10px;
   padding: 20px;
 }
@@ -96,12 +96,12 @@
   font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #111111;
+  color: #172B3A;
 }
 
 .ap-hint {
   font-size: 12px;
-  color: #808080;
+  color: #64748B;
   margin: 2px 0 0;
 }
 
@@ -114,10 +114,10 @@
 .ap-filter-pills {
   display: flex;
   gap: 4px;
-  background: #F5F5F5;
+  background: #F5F8FA;
   padding: 3px;
   border-radius: 8px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #E5EAEE;
 }
 
 .ap-filter-pill {
@@ -133,11 +133,11 @@
 }
 
 .ap-filter-pill:hover {
-  color: #111111;
+  color: #172B3A;
 }
 
 .ap-filter-pill.is-active {
-  background: #111111;
+  background: #172B3A;
   color: #FFFFFF;
   font-weight: 600;
 }
@@ -148,15 +148,15 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #E5EAEE;
   background: #FFFFFF;
   color: #555555;
   cursor: pointer;
 }
 
 .ap-btn-icon:hover {
-  background: #F5F5F5;
-  color: #111111;
+  background: #F5F8FA;
+  color: #172B3A;
 }
 
 /* SCENARIOS GRID */
@@ -172,7 +172,7 @@
 .ap-scenario {
   position: relative;
   background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #E5EAEE;
   border-radius: 10px;
   padding: 18px;
   display: flex;
@@ -183,8 +183,8 @@
 }
 
 .ap-scenario:hover {
-  border-color: #111111;
-  background: #FAFAFA;
+  border-color: #172B3A;
+  background: #F8FAFC;
 }
 
 .ap-scenario-header {
@@ -206,7 +206,7 @@
   border-radius: 4px;
   font-size: 11px;
   font-weight: 600;
-  color: #111111;
+  color: #172B3A;
   background: #F0F0F0;
   border: 1px solid #E0E0E0;
 }
@@ -218,12 +218,12 @@
   font-size: 11px;
   font-weight: 500;
   color: #555555;
-  background: #F5F5F5;
-  border: 1px solid #E5E5E5;
+  background: #F5F8FA;
+  border: 1px solid #E5EAEE;
 }
 
 .ap-badge-tag.is-urgent {
-  color: #111111;
+  color: #172B3A;
   font-weight: 600;
   background: #EEEEEE;
   border-color: #CCCCCC;
@@ -234,7 +234,7 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.35;
-  color: #111111;
+  color: #172B3A;
 }
 
 /* VEHICLE MEDIA */
@@ -264,8 +264,8 @@
 
 /* CUSTOMER QUOTE */
 .ap-scenario-quote {
-  background: #F5F5F5;
-  border: 1px solid #E5E5E5;
+  background: #F5F8FA;
+  border: 1px solid #E5EAEE;
   border-radius: 8px;
   padding: 10px 12px;
   display: flex;
@@ -276,7 +276,7 @@
 .ap-scenario-quote small {
   font-size: 10.5px;
   font-weight: 600;
-  color: #808080;
+  color: #64748B;
   text-transform: uppercase;
 }
 
@@ -299,7 +299,7 @@
 
 .ap-scenario-status {
   font-size: 11.5px;
-  color: #808080;
+  color: #64748B;
 }
 
 .ap-scenario-buttons {
@@ -315,7 +315,7 @@
   gap: 5px;
   padding: 7px 11px;
   border-radius: 6px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #E5EAEE;
   background: #FFFFFF;
   color: #555555;
   font-size: 12.5px;
@@ -324,8 +324,8 @@
 }
 
 .ap-btn-history:hover {
-  background: #F5F5F5;
-  color: #111111;
+  background: #F5F8FA;
+  color: #172B3A;
   border-color: #CCCCCC;
 }
 
@@ -343,8 +343,8 @@
 }
 
 .ap-btn--primary {
-  border: 1px solid #111111;
-  background: #111111;
+  border: 1px solid #172B3A;
+  background: #172B3A;
   color: #FFFFFF;
 }
 
@@ -375,12 +375,12 @@
   font-size: 38px;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: #111111;
+  color: #172B3A;
 }
 
 .ap-score-value span {
   font-size: 13px;
-  color: #808080;
+  color: #64748B;
   margin-left: 6px;
 }
 
@@ -399,9 +399,9 @@
 }
 
 .ap-radar-area {
-  fill: #111111;
+  fill: #172B3A;
   fill-opacity: 0.15;
-  stroke: #111111;
+  stroke: #172B3A;
   stroke-width: 2;
 }
 
@@ -414,7 +414,7 @@
   margin: 0;
   padding: 24px;
   font-size: 13px;
-  color: #808080;
+  color: #64748B;
   border: 1px dashed #CCCCCC;
   border-radius: 8px;
   text-align: center;

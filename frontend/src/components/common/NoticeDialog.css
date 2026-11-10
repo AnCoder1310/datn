@@ -11,30 +11,30 @@
 }
 
 .notice-dialog {
-  --notice-tone: #111111;
+  --notice-tone: #172B3A;
   width: 100%;
   max-width: 420px;
   max-height: calc(100dvh - 40px);
   overflow-y: auto;
   padding: 28px;
   border-radius: 14px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #E5EAEE;
   background: #FFFFFF;
-  color: #111111;
+  color: #172B3A;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
   animation: notice-enter 180ms ease-out;
 }
 
 .notice-dialog-error {
-  --notice-tone: #111111;
+  --notice-tone: #172B3A;
 }
 
 .notice-dialog-warning {
-  --notice-tone: #111111;
+  --notice-tone: #172B3A;
 }
 
 .notice-dialog-success {
-  --notice-tone: #111111;
+  --notice-tone: #172B3A;
 }
 
 .notice-dialog-icon {
@@ -43,9 +43,9 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #F5F5F5;
-  border: 1px solid #E5E5E5;
-  color: #111111;
+  background: #F5F8FA;
+  border: 1px solid #E5EAEE;
+  color: #172B3A;
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 16px;
@@ -56,7 +56,7 @@
   line-height: 1.35;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #111111;
+  color: #172B3A;
 }
 
 .notice-dialog p {
@@ -84,9 +84,9 @@
 }
 
 .notice-dialog-action-primary {
-  background: #111111;
+  background: #172B3A;
   color: #FFFFFF;
-  border: 1px solid #111111;
+  border: 1px solid #172B3A;
 }
 
 .notice-dialog-action-primary:hover {
@@ -96,16 +96,16 @@
 .notice-dialog-action-secondary {
   background: #FFFFFF;
   border: 1px solid #CCCCCC;
-  color: #111111;
+  color: #172B3A;
 }
 
 .notice-dialog-action-secondary:hover {
-  background: #F5F5F5;
-  border-color: #111111;
+  background: #F5F8FA;
+  border-color: #172B3A;
 }
 
 .notice-dialog-action:focus-visible {
-  outline: 2px solid #111111;
+  outline: 2px solid #172B3A;
   outline-offset: 2px;
 }
 
