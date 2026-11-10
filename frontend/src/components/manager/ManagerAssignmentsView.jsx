@@ -88,7 +88,7 @@ export function ManagerAssignmentsView({ onNavigateTab }) {
 
       {status === 'loading' && <p role="status">Đang tải bài luyện tập…</p>}
       {error && (
-        <p role="alert" style={{ color: '#dc2626', marginBottom: 16 }}>
+        <p role="alert" style={{ color: '#111111', marginBottom: 16 }}>
           {error} {status === 'error' && <button type="button" className="btn-outline" style={{ marginLeft: 8 }} onClick={load}>Thử lại</button>}
         </p>
       )}

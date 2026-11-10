@@ -1,4 +1,4 @@
-import { Sparkles, RefreshCw, X, ArrowDownToLine, ChevronRight } from 'lucide-react';
+import { Sparkles, RefreshCw, X, ArrowDownToLine } from 'lucide-react';
 import { IconButton } from './WorkspacePrimitives';
 import { displayDateTime } from './workspaceData';
 import { CustomerProfile } from './CustomerProfile';

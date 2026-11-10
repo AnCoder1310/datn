@@ -208,6 +208,7 @@ export function RoleplayView({ scenarios, scenarioStatus, onRetryScenarios, onOp
             progressScenarios={progress.data?.scenarios || null}
             assignments={assignmentsLoad.data || []}
             starting={starting}
+            onRefresh={onRetryScenarios}
           />
           <div className="ap-lower ap-lower--single">
             <PracticeHistory

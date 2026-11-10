@@ -26,7 +26,7 @@ from src.models.sales_copilot import CustomerProfileSnapshot, FollowupTask
 from src.services.sales_agenda_service import SalesAgendaService
 
 TZ = ZoneInfo("Asia/Ho_Chi_Minh")
-LABEL = "[Mẫu]"
+LABEL = ""
 NAMES = ["Minh Anh", "Hoàng Nam", "Thu Hà", "Đức Long", "Ngọc Mai", "Quang Dũng",
          "Thanh Trúc", "Hải Đăng", "Bảo Ngân", "Trung Kiên", "Khánh Linh", "Tuấn Phong"]
 STAGES = ["new", "discovery", "qualified", "considering", "considering", "negotiating",
@@ -172,8 +172,9 @@ def main():
     settings = get_settings()
     if settings.app_env == "production":
         raise RuntimeError("Demo seeding is restricted to development/test.")
-    engine = create_engine(normalize_database_url(settings.database_url), pool_pre_ping=True,
-                           connect_args={"connect_timeout": 10})
+    db_url = normalize_database_url(settings.database_url)
+    connect_args = {"check_same_thread": False} if db_url.startswith("sqlite") else {"connect_timeout": 10}
+    engine = create_engine(db_url, pool_pre_ping=True, connect_args=connect_args)
     try:
         result = seed(engine, args.owner, apply=args.apply)
         if args.apply:

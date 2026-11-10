@@ -1,5 +1,5 @@
 .practice-room-voice-controls {
-  --voice-switch-on: #0a84ff;
+  --voice-switch-on: #111111;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
@@ -82,7 +82,7 @@
 }
 
 .practice-room-auto-send[aria-checked="true"] .practice-room-auto-send-track {
-  background: var(--voice-switch-on);
+  background: #111111;
 }
 
 .practice-room-auto-send[aria-checked="true"] .practice-room-auto-send-knob {
@@ -90,7 +90,7 @@
 }
 
 .practice-room-auto-send:focus-visible {
-  outline: 2px solid var(--voice-switch-on);
+  outline: 2px solid #111111;
   outline-offset: 3px;
 }
 

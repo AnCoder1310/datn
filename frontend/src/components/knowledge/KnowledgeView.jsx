@@ -206,7 +206,7 @@ export function KnowledgeView({ sourceDocumentId, sourceReference }) {
   }
   return <div className="kb-page">
     <header className="kb-title">
-      <div><h1>Kho kiến thức</h1><p>Tài liệu VinFast để đọc trước khi luyện tập. Mọi điểm đều dẫn về PDF gốc.</p></div>
+      <div><h1>Kho kiến thức</h1><p>Thông số kỹ thuật, bảng giá và chính sách chính hãng</p></div>
       <div className="kb-search"><label htmlFor={searchId} className="kb-sr-only">Tìm trong tài liệu, dòng xe, câu hỏi</label><Search size={17} aria-hidden="true" /><input id={searchId} type="search" placeholder="Tìm trong mục đang xem…" value={query} onChange={(event) => setQuery(event.target.value)} /></div>
     </header>
     {sourceLoading && <p className="kb-notice" role="status">Đang mở tài liệu gốc…</p>}

@@ -54,7 +54,8 @@ function localDate(value) {
 }
 
 export function toWorkspaceMessage(message) {
-  return { id: message.id, seq: message.seq, role: message.sender_role, content: message.content, time: displayTime(message.sent_at), date: localDate(message.sent_at), sentAt: message.sent_at };
+  const cleanContent = String(message.content || '').replace(/^\[Mẫu\]\s*/i, '').trim();
+  return { id: message.id, seq: message.seq, role: message.sender_role, content: cleanContent, time: displayTime(message.sent_at), date: localDate(message.sent_at), sentAt: message.sent_at };
 }
 
 export function toWorkspaceTask(task) {
@@ -84,7 +85,8 @@ export function formatMoney(value) {
 /** Adapt API state without substituting synthetic messages or inferred financial facts. */
 export function toWorkspaceCustomer(item, detail, savedDraft, index = 0, now = Date.now()) {
   const profile = detail?.profile || {};
-  const name = detail?.customer_name || item.customer_name || 'Khách hàng';
+  const rawName = detail?.customer_name || item.customer_name || 'Khách hàng';
+  const name = String(rawName).replace(/^\[Mẫu\]\s*/i, '').trim();
   const models = Array.isArray(profile.interested_models) ? profile.interested_models : item.interested_models || [];
   const model = models.join(', ') || 'Chưa xác định xe';
   const stageId = (detail ? detail.lead_status?.stage : item.lead_stage) ?? 'needs_confirmation';
@@ -126,7 +128,7 @@ export function toWorkspaceCustomer(item, detail, savedDraft, index = 0, now = D
     stageId, stage, tone,
     attention: (detail ? messages.at(-1)?.role === 'customer' || tasks.some((task) => !task.completed && task.status !== 'needs_review' && ['high', 'urgent'].includes(task.priority) && timestamp(task.ends_at) <= now) : item.last_sender_role === 'customer' || item.important_overdue_count > 0),
     attentionReason: (detail ? messages.at(-1)?.role : item.last_sender_role) === 'customer' ? 'Khách đang chờ phản hồi' : 'Công việc quan trọng cần cập nhật trạng thái',
-    preview: item.last_message || 'Chưa có tin nhắn', time: displayTime(updatedAt), lastMessageTime: displayTime(item.last_message_at),
+    preview: String(item.last_message || 'Chưa có tin nhắn').replace(/^\[Mẫu\]\s*/i, '').trim(), time: displayTime(updatedAt), lastMessageTime: displayTime(item.last_message_at),
     messages, messageTotal: detail?.message_total ?? item.message_total ?? messages.length, nextBeforeSeq: detail?.next_before_seq, tasks, profile, analysisVersion: detail?.analysis_version ?? item.analysis_version ?? 0,
     summary: detail?.memory?.quick_summary || '', draft: savedDraft?.text || '',
     intelligence: customerIntelligence(detail?.memory, profile, sourceAllowed),

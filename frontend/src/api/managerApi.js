@@ -27,7 +27,6 @@ export const managerApi = {
     return request(`/manager/reviews/${encodeURIComponent(sessionId)}/voice/usage`);
   },
 
-  // decision: { score_overrides: { [criterion]: { score, reason } }, general_comment? }
   approveReview(sessionId, decision) {
     return request(`/manager/reviews/${encodeURIComponent(sessionId)}`, {
       method: "PATCH",
@@ -80,5 +79,41 @@ export const managerApi = {
       method: 'POST',
       body: JSON.stringify(payload),
     });
+  },
+
+  generateScenario(prompt, difficulty = 'Medium') {
+    return request('/manager/scenarios/generate', {
+      method: 'POST',
+      body: JSON.stringify({ prompt, difficulty }),
+    });
+  },
+
+  createScenario(scenario) {
+    return request('/manager/scenarios', {
+      method: 'POST',
+      body: JSON.stringify(scenario),
+    });
+  },
+
+  getAuditLogs({ page = 1, pageSize = 50, action = null, dateFrom = null, dateTo = null } = {}) {
+    const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
+    if (action) params.set('action', action);
+    if (dateFrom) params.set('dateFrom', dateFrom);
+    if (dateTo) params.set('dateTo', dateTo);
+    return request(`/manager/audit-logs?${params}`);
+  },
+
+  getDealDiagnostic(sessionId) {
+    return request(`/manager/reviews/${encodeURIComponent(sessionId)}/diagnostic`);
+  },
+
+  deleteScenario(scenarioId) {
+    return request(`/manager/scenarios/${encodeURIComponent(scenarioId)}`, {
+      method: "DELETE",
+    });
+  },
+
+  getScenarios() {
+    return request("/practice/scenarios");
   },
 };

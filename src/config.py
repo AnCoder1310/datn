@@ -72,6 +72,17 @@ class Settings(BaseSettings):
         default="",
         validation_alias=AliasChoices("openai_api_key", "OPENAI_API_KEY"),
     )
+    openrouter_base_url: str = Field(
+        default="https://openrouter.ai/api/v1",
+        validation_alias=AliasChoices(
+            "openrouter_base_url",
+            "OPENROUTER_BASE_URL",
+            "open_router_base_url",
+            "OPEN_ROUTER_BASE_URL",
+            "llm_base_url",
+            "LLM_BASE_URL",
+        ),
+    )
     openrouter_api_key: str = Field(
         default="",
         validation_alias=AliasChoices(

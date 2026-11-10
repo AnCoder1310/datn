@@ -36,8 +36,18 @@ export function App() {
         }
         setAuthStatus('authenticated');
       } catch {
-        setCurrentUser(null);
-        setAuthStatus('anonymous');
+        // Tự động kích hoạt tài khoản Demo Advisor khi truy cập lần đầu
+        // để toàn bộ dữ liệu (12 khách hàng, 29 công việc, kịch bản) hiển thị ngay lập tức
+        try {
+          const user = await authApi.login('advisor.demo', 'DemoAdvisor123!');
+          setCurrentUser(user);
+          setCurrentTab('copilot');
+          setCopilotOpened(true);
+          setAuthStatus('authenticated');
+        } catch {
+          setCurrentUser(null);
+          setAuthStatus('anonymous');
+        }
       }
     }
     restoreSession();
@@ -66,7 +76,7 @@ export function App() {
       }
     }
     loadBackendScenarios();
-  }, [authStatus, currentUser?.role, scenarioReloadToken]);
+  }, [authStatus, currentUser?.role, scenarioReloadToken, currentTab]);
 
   const handleLogin = async (username, password) => {
     const user = await authApi.login(username, password);
@@ -77,6 +87,18 @@ export function App() {
       setCopilotOpened(true);
     } else {
       setCurrentTab('manager');
+    }
+  };
+
+  const handleSwitchRole = async (targetRole) => {
+    try {
+      if (targetRole === 'manager') {
+        await handleLogin('manager.demo', 'DemoManager123!');
+      } else {
+        await handleLogin('advisor.demo', 'DemoAdvisor123!');
+      }
+    } catch (e) {
+      console.error('Không thể chuyển vai trò:', e);
     }
   };
 
@@ -134,6 +156,7 @@ export function App() {
       <ManagerReviewView
         currentUser={currentUser}
         onLogout={handleLogout}
+        onSwitchRole={handleSwitchRole}
       />
     );
   }
@@ -159,6 +182,7 @@ export function App() {
         onOpenNotifications={() => setIsNotifOpen(true)}
         advisorProfile={advisorProfile}
         onLogout={handleLogout}
+        onSwitchRole={handleSwitchRole}
       />
 
       {/* MAIN CONTENT AREA */}

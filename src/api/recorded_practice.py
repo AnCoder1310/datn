@@ -6,6 +6,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, Path, Query, Request, Response, status
 from pydantic import BaseModel
 
+from src.agents.roleplay.contracts import ScenarioContract
 from src.agents.roleplay.graph import (
     RoleplayScenarioNotFoundError,
     RoleplaySessionConflictError,
@@ -15,8 +16,10 @@ from src.agents.roleplay.scenario_loader import ScenarioSummary
 from src.agents.roleplay.state_reducer import StateTransitionError
 from src.api.practice import AdvisorMessageRequest, CreatePracticeSessionRequest
 from src.api.practice_errors import PracticeAPIError, PracticeRoute, session_conflict
+from src.integrations.audit_repository import AuditLogListResponse
 from src.integrations.voice_usage import VoiceUsageSummary
 from src.models.auth import AuthenticatedUser
+from src.services.deal_diagnostic import DealDiagnosticResult
 from src.services.practice import PracticeResultView, PracticeSessionView
 from src.services.practice_records import (
     AdvisorPerformance,
@@ -36,6 +39,7 @@ from src.services.practice_records import (
     UpdateTodoInput,
 )
 from src.services.recorded_practice import RecordedAttemptDetail, RecordedPracticeService
+from src.services.scenario_generator import GenerateScenarioRequest
 from src.services.voice import (
     MAX_AUDIO_BYTES,
     VoiceInputError,
@@ -196,6 +200,14 @@ def create_recorded_practice_routers(
         except (AttemptNotFoundError, RoleplaySessionNotFoundError) as exc:
             raise PracticeAPIError("session_not_found") from exc
 
+    @practice.get("/{session_id}/diagnostic", response_model=DealDiagnosticResult)
+    async def advisor_deal_diagnostic(session_id: SessionId, identity: actor) -> DealDiagnosticResult:
+        require_role(identity, "advisor")
+        try:
+            return await service.diagnose_session(session_id, identity.user_id, is_manager=False)
+        except (AttemptNotFoundError, RoleplaySessionNotFoundError) as exc:
+            raise PracticeAPIError("session_not_found") from exc
+
     @practice.get("/{session_id}", response_model=PracticeSessionView)
     async def advisor_session(session_id: SessionId, identity: actor) -> PracticeSessionView:
         require_role(identity, "advisor")
@@ -282,6 +294,53 @@ def create_recorded_practice_routers(
                 return await voice_service.manager_usage_summary(session_id)
             except AttemptNotFoundError as exc:
                 raise PracticeAPIError("session_not_found") from exc
+
+    @manager.get("/reviews/{session_id}/diagnostic", response_model=DealDiagnosticResult)
+    async def manager_deal_diagnostic(session_id: SessionId, identity: actor) -> DealDiagnosticResult:
+        require_role(identity, "manager")
+        try:
+            return await service.diagnose_session(session_id, identity.user_id, is_manager=True)
+        except (AttemptNotFoundError, RoleplaySessionNotFoundError) as exc:
+            raise PracticeAPIError("session_not_found") from exc
+
+    @manager.post("/scenarios/generate", response_model=ScenarioContract)
+    async def generate_scenario(request: GenerateScenarioRequest, identity: actor) -> ScenarioContract:
+        require_role(identity, "manager")
+        return await service.generate_scenario(identity.user_id, request.prompt, request.difficulty)
+
+    @manager.post("/scenarios", response_model=ScenarioSummary, status_code=status.HTTP_201_CREATED)
+    async def create_scenario(scenario: ScenarioContract, identity: actor) -> ScenarioSummary:
+        require_role(identity, "manager")
+        return await service.create_scenario(identity.user_id, scenario)
+
+    @manager.delete("/scenarios/{scenario_id}", status_code=status.HTTP_200_OK)
+    async def delete_scenario(
+        scenario_id: Annotated[str, Path(min_length=1, max_length=120)], identity: actor
+    ) -> dict[str, str]:
+        require_role(identity, "manager")
+        try:
+            await service.delete_scenario(identity.user_id, scenario_id)
+            return {"status": "deleted", "scenario_id": scenario_id}
+        except Exception as exc:
+            raise PracticeAPIError("validation_error", detail=str(exc)) from exc
+
+    @manager.get("/audit-logs", response_model=AuditLogListResponse)
+    async def list_audit_logs(
+        identity: actor,
+        page: int = Query(1, ge=1),
+        page_size: int = Query(50, ge=1, le=100, alias="pageSize"),
+        action: str | None = Query(None),
+        date_from: str | None = Query(None, alias="dateFrom"),
+        date_to: str | None = Query(None, alias="dateTo"),
+    ) -> AuditLogListResponse:
+        require_role(identity, "manager")
+        return await service.list_audit_logs(
+            page=page,
+            page_size=page_size,
+            action=action,
+            date_from=date_from,
+            date_to=date_to,
+        )
 
     @manager.patch("/reviews/{session_id}", response_model=ManagerReviewRecord)
     async def approve(session_id: SessionId, decision: ManagerReviewDecision, identity: actor) -> ManagerReviewRecord:

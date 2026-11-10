@@ -90,3 +90,4 @@ docs/guide/
 /scripts/migrations/005_*.sql
 /.agents/
 
+.venv

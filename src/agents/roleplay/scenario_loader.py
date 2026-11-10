@@ -66,12 +66,17 @@ def _voice_gender_from_name(name: str) -> Literal["male", "female"] | None:
 class ScenarioRepository:
     """Load the complete dataset once and expose safe lookup operations."""
 
-    def __init__(self, dataset_path: Path = DEFAULT_SCENARIO_PATH) -> None:
+    def __init__(
+        self,
+        dataset_path: Path = DEFAULT_SCENARIO_PATH,
+        custom_dataset_path: Path | None = None,
+    ) -> None:
         self.dataset_path = dataset_path
-        self._scenarios = self._load(dataset_path)
+        self.custom_dataset_path = custom_dataset_path or (dataset_path.parent / "custom_scenarios.json")
+        self._scenarios = self._load(dataset_path, self.custom_dataset_path)
 
     @staticmethod
-    def _load(dataset_path: Path) -> dict[str, ScenarioContract]:
+    def _load(dataset_path: Path, custom_path: Path | None = None) -> dict[str, ScenarioContract]:
         try:
             raw_dataset = json.loads(dataset_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:
@@ -90,6 +95,17 @@ class ScenarioRepository:
                 raise ScenarioDatasetError(f"duplicate scenario_id: {scenario.scenario_id}")
             scenarios[scenario.scenario_id] = scenario
 
+        # Also load custom persistent scenarios if present
+        if custom_path and custom_path.exists():
+            try:
+                custom_raw = json.loads(custom_path.read_text(encoding="utf-8"))
+                if isinstance(custom_raw, list):
+                    for raw_s in custom_raw:
+                        s = ScenarioContract.model_validate(raw_s)
+                        scenarios[s.scenario_id] = s
+            except Exception:
+                pass
+
         if not scenarios:
             raise ScenarioDatasetError("scenario dataset must contain at least one scenario")
         return scenarios
@@ -102,3 +118,61 @@ class ScenarioRepository:
 
     def list_public(self) -> list[ScenarioSummary]:
         return [ScenarioSummary.from_scenario(scenario) for scenario in self._scenarios.values()]
+
+    def register(self, scenario: ScenarioContract, persist: bool = False) -> ScenarioSummary:
+        """Register a validated scenario in memory and optionally persist it."""
+        scenario = ScenarioContract.model_validate(scenario)
+        self._scenarios[scenario.scenario_id] = scenario
+        if persist:
+            self._save_custom(scenario)
+        return ScenarioSummary.from_scenario(scenario)
+
+    def _save_custom(self, scenario: ScenarioContract) -> None:
+        custom_path = self.custom_dataset_path
+        custom_list: list[dict] = []
+        if custom_path.exists():
+            try:
+                loaded = json.loads(custom_path.read_text(encoding="utf-8"))
+                if isinstance(loaded, list):
+                    custom_list = loaded
+            except Exception:
+                custom_list = []
+        updated = False
+        payload = scenario.model_dump(mode="json")
+        for i, item in enumerate(custom_list):
+            if item.get("scenario_id") == scenario.scenario_id:
+                custom_list[i] = payload
+                updated = True
+                break
+        if not updated:
+            custom_list.append(payload)
+        custom_path.write_text(json.dumps(custom_list, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def delete_custom(self, scenario_id: str) -> bool:
+        """Delete a custom scenario from memory and file. Core dataset scenarios cannot be deleted."""
+        if scenario_id not in self._scenarios:
+            raise ScenarioNotFoundError(f"unknown scenario_id: {scenario_id}")
+
+        try:
+            core_raw = json.loads(self.dataset_path.read_text(encoding="utf-8"))
+            core_ids = {s.get("scenario_id") for s in core_raw if isinstance(s, dict)}
+            if scenario_id in core_ids:
+                raise ValueError(f"Không thể xóa kịch bản mặc định cốt lõi của hệ thống ({scenario_id})")
+        except (OSError, json.JSONDecodeError):
+            if not scenario_id.startswith("SCENARIO_CUSTOM_"):
+                raise ValueError(f"Không thể xóa kịch bản hệ thống ({scenario_id})")
+
+        del self._scenarios[scenario_id]
+
+        if self.custom_dataset_path.exists():
+            try:
+                loaded = json.loads(self.custom_dataset_path.read_text(encoding="utf-8"))
+                if isinstance(loaded, list):
+                    filtered = [s for s in loaded if s.get("scenario_id") != scenario_id]
+                    self.custom_dataset_path.write_text(
+                        json.dumps(filtered, ensure_ascii=False, indent=2),
+                        encoding="utf-8"
+                    )
+            except Exception:
+                pass
+        return True

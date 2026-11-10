@@ -1,5 +1,5 @@
 import { BellIcon } from '../common/Icons';
-import { BotMessageSquare, LibraryBig } from 'lucide-react';
+import { BotMessageSquare, GraduationCap, LibraryBig } from 'lucide-react';
 import { AccountMenu } from './AccountMenu';
 
 export function Header({
@@ -10,22 +10,25 @@ export function Header({
   onOpenNotifications,
   advisorProfile,
   onLogout,
+  onSwitchRole,
 }) {
   const tabs = [
-    { id: 'copilot', label: 'Trợ lý Co-pilot', icon: <BotMessageSquare size={20} strokeWidth={1.8} aria-hidden="true" /> },
-    { id: 'roleplay', label: 'Phòng luyện tập', icon: <span className="roleplay-file-icon" aria-hidden="true" /> },
-    { id: 'knowledge', label: 'Kho kiến thức', icon: <LibraryBig size={20} strokeWidth={1.8} aria-hidden="true" /> },
+    { id: 'copilot', label: 'Trợ lý Co-pilot', icon: <BotMessageSquare size={17} strokeWidth={2} aria-hidden="true" /> },
+    { id: 'roleplay', label: 'Phòng luyện tập', icon: <GraduationCap size={17} strokeWidth={2} aria-hidden="true" /> },
+    { id: 'knowledge', label: 'Kho kiến thức', icon: <LibraryBig size={17} strokeWidth={2} aria-hidden="true" /> },
   ];
 
   return (
     <header className="top-header">
       <div className="top-header-inner">
-        {/* BRAND LOGO */}
+        {/* BRAND LOGO & SYSTEM TITLE */}
         <button className="brand-section" type="button" onClick={() => onTabChange('copilot')}>
-          <span className="header-brand-logo"><img src="/vinfast-official-logo.png?v=silver" alt="VinFast" /></span>
+          <span className="header-brand-logo">
+            <img src="/vinfast-official-logo.png?v=silver" alt="VinFast" />
+          </span>
           <div className="brand-info">
-            <span className="brand-title">AI Sales Coach &amp; Co-pilot</span>
-            <span className="brand-subtitle">Nền tảng đào tạo và hỗ trợ tư vấn bán hàng ô tô</span>
+            <span className="brand-title">VinFast AI Sales</span>
+            <span className="brand-subtitle">Enablement Platform</span>
           </div>
         </button>
 
@@ -49,7 +52,6 @@ export function Header({
 
         {/* HEADER ACTIONS */}
         <div className="header-actions">
-          {/* Notifications button */}
           {hasNotifications && (
             <button
               className="icon-badge-btn"
@@ -63,10 +65,11 @@ export function Header({
           )}
 
           <AccountMenu
-            name={advisorProfile.name}
-            username={advisorProfile.username}
-            roleLabel={advisorProfile.role}
+            name={advisorProfile?.name}
+            username={advisorProfile?.username}
+            roleLabel={advisorProfile?.role || 'Tư vấn viên'}
             onLogout={onLogout}
+            onSwitchRole={onSwitchRole}
           />
         </div>
       </div>

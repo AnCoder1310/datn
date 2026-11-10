@@ -3,9 +3,12 @@ import {
   ArrowRight,
   CalendarDays,
   Check,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  Circle,
   Clock3,
+  MessageSquare,
   Plus,
   RefreshCw,
   X,
@@ -13,7 +16,15 @@ import {
 import { salesCopilotApi } from '../../../api/salesCopilotApi';
 import { leadStages } from '../customerWorkspace/workspaceData';
 import { useAgendaResource } from './agendaResource';
-import { filters, formatDateTime, itemLabel, taskState, waitingDuration } from './agendaData';
+import {
+  cleanDemoText,
+  compactWaiting,
+  filters,
+  formatDateTime,
+  formatTimeRange,
+  itemLabel,
+  taskState,
+} from './agendaData';
 import { useWorkspaceClock } from '../customerWorkspace/useCustomerWorkspace';
 
 const STAGE_LABELS = {
@@ -28,26 +39,22 @@ const STAGE_LABELS = {
   needs_confirmation: 'Cần xác nhận',
 };
 
-const STAGE_TONES = {
-  new: 'slate',
-  discovery: 'blue',
-  qualified: 'blue',
-  considering: 'indigo',
-  negotiating: 'teal',
-  deposit_process: 'emerald',
-  won: 'emerald',
-  lost: 'slate',
-  needs_confirmation: 'amber',
+const STAGE_GRAY_SHADES = {
+  won: '#111111',
+  deposit_process: '#222222',
+  negotiating: '#444444',
+  considering: '#666666',
+  qualified: '#888888',
+  discovery: '#AAAAAA',
+  new: '#CCCCCC',
+  needs_confirmation: '#999999',
+  lost: '#D4D4D4',
 };
 
 function getStageLabel(stageId) {
   if (STAGE_LABELS[stageId]) return STAGE_LABELS[stageId];
   const found = leadStages.find((s) => s.id === stageId);
   return found?.label || stageId || 'Chưa phân loại';
-}
-
-function getStageTone(stageId) {
-  return STAGE_TONES[stageId] || 'blue';
 }
 
 function formatCompactMoney(vnd) {
@@ -59,11 +66,6 @@ function formatCompactMoney(vnd) {
   }
   const millions = Math.round(num / 1_000_000);
   return `${millions.toLocaleString('vi-VN')} tr ₫`;
-}
-
-function cleanDemoLabel(text) {
-  if (!text) return '';
-  return String(text).replace(/^\[Mẫu\]\s*/i, '').trim();
 }
 
 function Empty({ children = 'Chưa có dữ liệu.' }) {
@@ -86,25 +88,36 @@ function Panel({ title, subtitle, children, action, className = '', id }) {
 }
 
 function TaskRow({ item, now, onEdit, onCustomer, onStatus, busy }) {
+  const isDone = item.status === 'completed';
   const stateLabel = taskState(item, now);
   const isOverdue = stateLabel === 'Cần cập nhật trạng thái';
   const isHigh = ['high', 'urgent'].includes(item.priority);
-  const timeText = item.starts_at
-    ? `${formatDateTime(item.starts_at)} - ${formatDateTime(item.ends_at)}`
-    : 'Chưa xếp giờ';
-
-  const metaParts = [
-    timeText,
-    itemLabel(item),
-    item.location,
-    isHigh ? 'Ưu tiên cao' : null,
-    isOverdue ? 'Quá giờ' : null,
-  ].filter(Boolean);
+  const timeText = formatTimeRange(item.starts_at, item.ends_at, now);
 
   return (
-    <div className="agenda-task-row">
+    <div className={`agenda-task-row ${isDone ? 'is-completed' : ''}`}>
+      {/* Quick completion toggle button */}
+      <button
+        type="button"
+        className={`agenda-task-toggle ${isDone ? 'is-done' : ''}`}
+        aria-label={isDone ? 'Đánh dấu chưa xong' : 'Đánh dấu hoàn thành'}
+        disabled={busy}
+        onClick={() => onStatus(item, isDone ? 'pending' : 'completed')}
+      >
+        {isDone ? (
+          <CheckCircle2 size={16} strokeWidth={2.2} />
+        ) : (
+          <Circle size={16} strokeWidth={1.75} />
+        )}
+      </button>
+
       <div className="agenda-task-copy">
-        <strong className="agenda-task-title">{item.title}</strong>
+        <div className="agenda-task-header-line">
+          <strong className="agenda-task-title">{cleanDemoText(item.title)}</strong>
+          {isHigh && <span className="agenda-task-pill is-high">Ưu tiên</span>}
+          {isOverdue && !isDone && <span className="agenda-task-pill is-overdue">Quá hạn</span>}
+        </div>
+
         <div className="agenda-task-details">
           {item.customer_name && (
             <>
@@ -113,27 +126,24 @@ function TaskRow({ item, now, onEdit, onCustomer, onStatus, busy }) {
                 className="agenda-inline-link"
                 onClick={() => onCustomer(item)}
               >
-                {item.customer_name}
+                {cleanDemoText(item.customer_name)}
               </button>
               <span className="agenda-dot-sep">·</span>
             </>
           )}
-          <span>{metaParts.join(' · ')}</span>
+          <span>{timeText}</span>
+          <span className="agenda-dot-sep">·</span>
+          <span>{itemLabel(item)}</span>
+          {item.location && (
+            <>
+              <span className="agenda-dot-sep">·</span>
+              <span>{item.location}</span>
+            </>
+          )}
         </div>
       </div>
 
       <div className="agenda-task-actions">
-        {!['completed', 'needs_review'].includes(item.status) && (
-          <button
-            type="button"
-            className="agenda-btn-minimal"
-            disabled={busy}
-            onClick={() => onStatus(item, 'completed')}
-          >
-            <Check size={12} strokeWidth={2} />
-            Xong
-          </button>
-        )}
         <button
           type="button"
           className="agenda-btn-minimal"
@@ -142,24 +152,16 @@ function TaskRow({ item, now, onEdit, onCustomer, onStatus, busy }) {
         >
           {item.status === 'needs_review' ? 'Duyệt' : 'Xếp giờ'}
         </button>
-        {item.status === 'completed' && (
+        {item.status !== 'completed' && (
           <button
             type="button"
-            className="agenda-btn-minimal"
+            className="agenda-btn-minimal is-muted"
             disabled={busy}
-            onClick={() => onStatus(item, 'pending')}
+            onClick={() => onStatus(item, 'cancelled')}
           >
-            Mở lại
+            Hủy
           </button>
         )}
-        <button
-          type="button"
-          className="agenda-btn-minimal is-muted"
-          disabled={busy}
-          onClick={() => onStatus(item, 'cancelled')}
-        >
-          Hủy
-        </button>
       </div>
     </div>
   );
@@ -221,7 +223,7 @@ export function DashboardView({
   const now = useWorkspaceClock();
 
   const resource = useAgendaResource(
-    currentUser.user_id,
+    currentUser?.user_id,
     `dashboard:${days}:${filter}:${page}`,
     () => salesCopilotApi.getDashboard({ activity_days: days, work_filter: filter, work_page: page }),
     active
@@ -278,6 +280,7 @@ export function DashboardView({
     : rawQueueList;
 
   const visibleCustomers = showAllCustomers ? filteredCustomers : filteredCustomers.slice(0, 6);
+  const totalCustomers = data?.customers?.length || 0;
 
   return (
     <div className="agenda-page dashboard-page" aria-label="Bảng điều khiển bán hàng">
@@ -287,7 +290,6 @@ export function DashboardView({
           <h1>Bảng điều khiển</h1>
           <span className="agenda-topbar-meta">
             {currentUser?.display_name || 'Tư vấn viên'}
-            {data ? ` · ${formatDateTime(data.generated_at)}` : ''}
           </span>
         </div>
 
@@ -335,7 +337,7 @@ export function DashboardView({
 
       {data && (
         <>
-          {/* ROW 1: FLAT METRIC STRIP WITH SUBTLE ACCENT DOTS */}
+          {/* ROW 1: SLEEK METRIC STRIP (PURE MONOCHROME) */}
           <section className="agenda-metric-strip" aria-label="Chỉ số vận hành">
             <button
               type="button"
@@ -345,16 +347,13 @@ export function DashboardView({
                 setCustomerQueueTab('waiting');
               }}
             >
-              <span className="agenda-metric-label">
-                <i className="agenda-dot is-amber" />
-                Khách chờ phản hồi
-              </span>
+              <span className="agenda-metric-label">Chờ phản hồi</span>
               <div className="agenda-metric-main">
                 <strong>{data.kpis.waiting_customers}</strong>
-                <small className="is-amber">
+                <small>
                   {data.waiting_customers[0]?.waiting_since
-                    ? waitingDuration(data.waiting_customers[0].waiting_since, now)
-                    : 'Đã trả lời hết'}
+                    ? compactWaiting(data.waiting_customers[0].waiting_since, now)
+                    : 'Đã phản hồi'}
                 </small>
               </div>
             </button>
@@ -367,31 +366,25 @@ export function DashboardView({
                 setCustomerQueueTab('priority');
               }}
             >
-              <span className="agenda-metric-label">
-                <i className="agenda-dot is-emerald" />
-                Cơ hội nóng / Khách mở
-              </span>
+              <span className="agenda-metric-label">Cơ hội nóng</span>
               <div className="agenda-metric-main">
                 <strong>
                   {data.kpis.hot_leads}
                   <span className="agenda-metric-denom">/{data.kpis.active_customers}</span>
                 </strong>
-                <small className="is-emerald">{data.kpis.closing_leads || 0} sát chốt</small>
+                <small>{data.kpis.closing_leads || 0} sát chốt</small>
               </div>
             </button>
 
             <button
               type="button"
               className="agenda-metric-cell"
-              onClick={() => changeFilter(data.kpis.today_events > 0 ? 'today' : 'upcoming')}
+              onClick={() => changeFilter('today')}
             >
-              <span className="agenda-metric-label">
-                <i className="agenda-dot is-blue" />
-                Lịch hôm nay
-              </span>
+              <span className="agenda-metric-label">Lịch hôm nay</span>
               <div className="agenda-metric-main">
                 <strong>{data.kpis.today_events}</strong>
-                <small className="is-blue">{data.kpis.upcoming_events} sắp đến</small>
+                <small>{data.kpis.upcoming_events} sắp tới</small>
               </div>
             </button>
 
@@ -408,13 +401,10 @@ export function DashboardView({
                 )
               }
             >
-              <span className="agenda-metric-label">
-                <i className="agenda-dot is-indigo" />
-                Việc cần xếp giờ
-              </span>
+              <span className="agenda-metric-label">Cần xếp lịch</span>
               <div className="agenda-metric-main">
                 <strong>{pendingActionTasks}</strong>
-                <small>{data.unscheduled.total} chưa xếp lịch</small>
+                <small>{data.unscheduled.total} chưa xếp</small>
               </div>
             </button>
 
@@ -426,68 +416,87 @@ export function DashboardView({
                 setCustomerQueueTab('priority');
               }}
             >
-              <span className="agenda-metric-label">
-                <i className="agenda-dot is-teal" />
-                Ngân sách dự kiến
-              </span>
+              <span className="agenda-metric-label">Dự kiến cọc</span>
               <div className="agenda-metric-main">
                 <strong className="is-money">
-                  {data.kpis.pipeline_budget_vnd > 0 ? formatCompactMoney(data.kpis.pipeline_budget_vnd) : '0 ₫'}
+                  {data.kpis.pipeline_budget_vnd > 0
+                    ? formatCompactMoney(data.kpis.pipeline_budget_vnd)
+                    : '0 ₫'}
                 </strong>
-                <small>{data.kpis.completed_tasks}/{data.kpis.total_tasks} việc xong</small>
+                <small>
+                  {data.kpis.completed_tasks}/{data.kpis.total_tasks} việc xong
+                </small>
               </div>
             </button>
           </section>
 
-          {/* ROW 2 (TOP OF PAGE): CUSTOMER STAGE FUNNEL */}
-          <Panel
-            id="agenda-stages"
-            className="agenda-funnel-top-panel"
-            title="Phễu giai đoạn khách hàng"
-            subtitle="Phân bổ trạng thái chuyển đổi trong danh sách phụ trách"
-            action={
-              selectedStage ? (
+          {/* ROW 2: SLEEK SEGMENTED PIPELINE (REPLACES 9 CHUNKY BOXES) */}
+          <section className="agenda-pipeline-card" aria-label="Phễu bán hàng">
+            <div className="agenda-pipeline-header">
+              <div className="agenda-pipeline-title-group">
+                <span className="agenda-pipeline-title">Phễu bán hàng</span>
+                <span className="agenda-pipeline-count">Tổng {totalCustomers} khách</span>
+              </div>
+              {selectedStage && (
                 <button
                   type="button"
-                  className="agenda-btn-minimal"
+                  className="agenda-pill-clear"
                   onClick={() => setSelectedStage(null)}
                 >
                   <X size={12} /> Bỏ lọc: {getStageLabel(selectedStage)}
                 </button>
-              ) : (
-                <span className="agenda-muted-caption">Tổng {data.customers.length} khách hàng</span>
-              )
-            }
-          >
-            <div className="agenda-stage-funnel-grid">
-              {data.stage_distribution.map((item) => {
-                const total = Math.max(1, data.customers.length);
-                const pct = Math.round((item.count / total) * 100);
-                const isSelected = selectedStage === item.stage;
-                const tone = getStageTone(item.stage);
-                return (
-                  <button
-                    type="button"
-                    key={item.stage}
-                    className={`agenda-funnel-step ${isSelected ? 'is-selected' : ''}`}
-                    onClick={() => setSelectedStage(isSelected ? null : item.stage)}
-                  >
-                    <div className="agenda-funnel-step-top">
-                      <span className="agenda-funnel-label">
-                        <i className={`agenda-dot is-${tone}`} />
-                        {getStageLabel(item.stage)}
-                      </span>
-                      <span className="agenda-funnel-pct">{pct}%</span>
-                    </div>
-                    <strong className="agenda-funnel-count">{item.count}</strong>
-                    <div className="agenda-bar-track">
-                      <span className={`tone-${tone}`} style={{ width: `${Math.max(4, pct)}%` }} />
-                    </div>
-                  </button>
-                );
-              })}
+              )}
             </div>
-          </Panel>
+
+            {/* Continuous segmented progress bar */}
+            <div className="agenda-pipeline-bar" role="meter" aria-label="Tiến độ phễu khách hàng">
+              {data.stage_distribution
+                .filter((item) => item.count > 0)
+                .map((item) => {
+                  const pct = Math.max(4, (item.count / Math.max(1, totalCustomers)) * 100);
+                  const isSelected = selectedStage === item.stage;
+                  const shade = STAGE_GRAY_SHADES[item.stage] || '#888888';
+                  return (
+                    <button
+                      type="button"
+                      key={item.stage}
+                      className={`agenda-pipeline-segment ${isSelected ? 'is-active' : ''}`}
+                      style={{ width: `${pct}%`, backgroundColor: shade }}
+                      title={`${getStageLabel(item.stage)}: ${item.count} khách`}
+                      onClick={() => setSelectedStage(isSelected ? null : item.stage)}
+                    />
+                  );
+                })}
+            </div>
+
+            {/* Horizontal stage filter pills */}
+            <div className="agenda-pipeline-pills" role="tablist" aria-label="Bộ lọc giai đoạn phễu">
+              <button
+                type="button"
+                className={`agenda-stage-pill ${!selectedStage ? 'is-active' : ''}`}
+                onClick={() => setSelectedStage(null)}
+              >
+                <span>Tất cả</span>
+                <em>{totalCustomers}</em>
+              </button>
+              {data.stage_distribution
+                .filter((item) => item.count > 0)
+                .map((item) => {
+                  const isSelected = selectedStage === item.stage;
+                  return (
+                    <button
+                      type="button"
+                      key={item.stage}
+                      className={`agenda-stage-pill ${isSelected ? 'is-active' : ''}`}
+                      onClick={() => setSelectedStage(isSelected ? null : item.stage)}
+                    >
+                      <span>{getStageLabel(item.stage)}</span>
+                      <em>{item.count}</em>
+                    </button>
+                  );
+                })}
+            </div>
+          </section>
 
           {focusedTask && (
             <Panel
@@ -504,7 +513,7 @@ export function DashboardView({
 
           {/* ROW 3: PRIMARY 2-COLUMN WORKSPACE (CUSTOMERS + TASKS) */}
           <div className="agenda-main-grid">
-            {/* LEFT: MINIMALIST 2-LINE CUSTOMER LIST */}
+            {/* LEFT: CUSTOMER LIST (MINIMALIST WITH HIGH-VALUE DETAILS) */}
             <div className="agenda-column" id="agenda-primary-queue">
               <section className="agenda-panel">
                 <div className="agenda-queue-header">
@@ -532,7 +541,7 @@ export function DashboardView({
                         setCustomerQueueTab('priority');
                       }}
                     >
-                      <span>Cơ hội trọng điểm</span>
+                      <span>Trọng điểm</span>
                       <em>{(data.priority_customers || []).length}</em>
                     </button>
                     <button
@@ -545,7 +554,7 @@ export function DashboardView({
                         setCustomerQueueTab('intelligence');
                       }}
                     >
-                      <span>Băn khoăn & Cam kết</span>
+                      <span>Băn khoăn</span>
                       <em>{(data.customer_intelligence || []).length}</em>
                     </button>
                   </div>
@@ -561,12 +570,12 @@ export function DashboardView({
                         ? `So sánh ${customer.competitor_models[0]}`
                         : null;
                       const waitText = customer.waiting_since
-                        ? waitingDuration(customer.waiting_since, now)
+                        ? compactWaiting(customer.waiting_since, now)
                         : null;
 
                       const facts = [stageLabel, budgetText, competitorText].filter(Boolean);
 
-                      const singleNote = cleanDemoLabel(
+                      const singleNote = cleanDemoText(
                         customerQueueTab === 'waiting' && !selectedStage
                           ? customer.last_message || customer.issues?.[0] || customer.buying_signals?.[0]
                           : customerQueueTab === 'intelligence' && !selectedStage
@@ -586,27 +595,34 @@ export function DashboardView({
                                 className="agenda-customer-name-btn"
                                 onClick={() => onCustomer(customer)}
                               >
-                                {customer.customer_name}
+                                {cleanDemoText(customer.customer_name)}
                               </button>
                               {modelText && <span className="agenda-model-tag">{modelText}</span>}
                               <span className="agenda-minimal-meta">{facts.join(' · ')}</span>
                             </div>
-                            {singleNote && <p className="agenda-minimal-line2">{singleNote}</p>}
+                            {/* Rich customer message/issue - prominent & readable */}
+                            {singleNote && (
+                              <p className="agenda-customer-note">
+                                “{cleanDemoText(singleNote)}”
+                              </p>
+                            )}
                           </div>
 
                           <div className="agenda-minimal-row-right">
                             {waitText && <span className="agenda-minimal-time">{waitText}</span>}
                             <button
                               type="button"
-                              className="agenda-btn-minimal is-accent-hover"
+                              className="agenda-btn-primary-action"
                               onClick={() => onCustomer(customer)}
                             >
-                              Trả lời
+                              <span>Hội thoại</span>
+                              <ArrowRight size={12} />
                             </button>
                             <button
                               type="button"
-                              className="agenda-btn-minimal is-muted"
+                              className="agenda-btn-subtle"
                               onClick={() => onCustomer({ ...customer, tool: 'summary' })}
+                              title="Xem hồ sơ"
                             >
                               Hồ sơ
                             </button>
@@ -637,7 +653,7 @@ export function DashboardView({
             <div className="agenda-column">
               <Panel
                 id="agenda-work-panel"
-                title="Lịch trình & Công việc"
+                title="Công việc & Lịch"
                 action={<span className="agenda-muted-caption">{data.work_items.total} mục</span>}
               >
                 <div className="agenda-filter-tabs" aria-label="Lọc công việc">
@@ -715,7 +731,7 @@ export function DashboardView({
               </Panel>
 
               <Panel
-                title="Sự kiện sắp đến"
+                title="Lịch sắp tới"
                 action={
                   <button type="button" className="agenda-inline-link" onClick={() => onCalendar()}>
                     Lịch tuần <ArrowRight size={12} />
@@ -732,10 +748,10 @@ export function DashboardView({
                         onClick={() => onCalendar(item.starts_at)}
                       >
                         <span className="agenda-upcoming-body">
-                          <strong>{item.title}</strong>
+                          <strong>{cleanDemoText(item.title)}</strong>
                           <small>
-                            <Clock3 size={11} /> {formatDateTime(item.starts_at)} ·{' '}
-                            {item.customer_name || 'Cá nhân'}
+                            <Clock3 size={11} /> {formatTimeRange(item.starts_at, item.ends_at, now)} ·{' '}
+                            {cleanDemoText(item.customer_name) || 'Cá nhân'}
                             {item.location ? ` · ${item.location}` : ''}
                           </small>
                         </span>

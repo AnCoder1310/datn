@@ -11,9 +11,13 @@ from typing import Protocol
 
 from pydantic import BaseModel, ConfigDict
 
+from src.agents.roleplay.contracts import ScenarioContract
 from src.agents.roleplay.scenario_loader import ScenarioSummary
 from src.agents.roleplay.state import EvaluationStatus
+from src.integrations.audit_repository import AuditLogListResponse
 from src.models.auth import AuthenticatedUser
+from src.services.audit_service import SalesAuditService
+from src.services.deal_diagnostic import DealDiagnosticResult, DealDiagnosticService
 from src.services.practice import (
     PracticeEvaluationUnavailableError,
     PracticeResultView,
@@ -35,6 +39,7 @@ from src.services.practice_records import (
     PracticeRecordsRepository,
     TeamOverview,
 )
+from src.services.scenario_generator import ScenarioGeneratorService
 
 
 class AdvisorDirectory(Protocol):
@@ -58,10 +63,16 @@ class RecordedPracticeService:
         practice: PracticeService,
         records: PracticeRecordsRepository,
         advisors: AdvisorDirectory | None = None,
+        audit_service: SalesAuditService | None = None,
+        scenario_generator: ScenarioGeneratorService | None = None,
+        deal_diagnostic: DealDiagnosticService | None = None,
     ) -> None:
         self._practice = practice
         self._records = records
         self._advisors = advisors
+        self._audit = audit_service
+        self._scenario_generator = scenario_generator
+        self._deal_diagnostic = deal_diagnostic
 
     def list_scenarios(self) -> list[ScenarioSummary]:
         return self._practice.list_scenarios()
@@ -99,7 +110,16 @@ class RecordedPracticeService:
             raise AssignmentConflictError("Practice scenario was not found.")
         if payload.due_date and payload.due_date < datetime.now(UTC).date():
             raise AssignmentConflictError("Due date cannot be in the past.")
-        return await self._records.create_assignment(manager_id, payload)
+        record = await self._records.create_assignment(manager_id, payload)
+        if self._audit:
+            await self._audit.log_assignment_created(
+                manager_id=manager_id,
+                assignment_id=record.assignment_id,
+                advisor_id=record.advisor_id,
+                scenario_id=record.scenario_id,
+                title=record.title,
+            )
+        return record
 
     async def advisor_performance(self) -> list[AdvisorPerformance]:
         if self._advisors is None:
@@ -210,7 +230,22 @@ class RecordedPracticeService:
         )
 
     async def approve(self, session_id: str, manager_id: str, decision: ManagerReviewDecision) -> ManagerReviewRecord:
-        return await self._records.approve(session_id, manager_id, decision)
+        record = await self._records.approve(session_id, manager_id, decision)
+        if self._audit:
+            if decision.score_overrides:
+                await self._audit.log_score_override(
+                    manager_id=manager_id,
+                    session_id=session_id,
+                    reason=decision.change_reason,
+                    score_overrides=[so.model_dump() for so in decision.score_overrides],
+                )
+            else:
+                await self._audit.log_review_approval(
+                    manager_id=manager_id,
+                    session_id=session_id,
+                    reason=decision.change_reason,
+                )
+        return record
 
     async def manager_dashboard(self, weeks: int = 8, now: datetime | None = None) -> ManagerDashboard:
         now = now or datetime.now(UTC)
@@ -235,3 +270,71 @@ class RecordedPracticeService:
 
     async def set_todo_done(self, manager_id: str, todo_id: str, done: bool) -> ManagerTodo:
         return await self._records.set_todo_done(manager_id, todo_id, done)
+
+    async def generate_scenario(
+        self, manager_id: str, prompt: str, difficulty: str = "Medium"
+    ) -> ScenarioContract:
+        if self._scenario_generator is None:
+            self._scenario_generator = ScenarioGeneratorService()
+        scenario = await self._scenario_generator.generate(prompt, difficulty)
+        if self._audit:
+            await self._audit.log_scenario_generated(manager_id, prompt, scenario.scenario_id)
+        return scenario
+
+    async def create_scenario(self, manager_id: str, scenario: ScenarioContract) -> ScenarioSummary:
+        summary = self._practice.register_scenario(scenario, persist=True)
+        if self._audit:
+            await self._audit.log_scenario_created(
+                manager_id=manager_id,
+                scenario_id=scenario.scenario_id,
+                title=scenario.title,
+                difficulty=scenario.difficulty,
+            )
+        return summary
+
+    async def delete_scenario(self, manager_id: str, scenario_id: str) -> bool:
+        deleted = self._practice.delete_scenario(scenario_id)
+        if self._audit and deleted:
+            await self._audit.log_scenario_deleted(
+                manager_id=manager_id,
+                scenario_id=scenario_id,
+            )
+        return deleted
+
+    async def diagnose_session(
+        self, session_id: str, user_id: str, *, is_manager: bool = False
+    ) -> DealDiagnosticResult:
+        if not is_manager:
+            await self._records.owned_attempt(session_id, user_id)
+        detail = await (self.manager_detail(session_id) if is_manager else self.advisor_detail(session_id, user_id))
+        scenario = self._practice.get_scenario(detail.session.scenario_id)
+        if self._deal_diagnostic is None:
+            self._deal_diagnostic = DealDiagnosticService()
+        return await self._deal_diagnostic.diagnose(
+            session_id=session_id,
+            scenario=scenario,
+            session=detail.session,
+            evaluation=detail.ai_evaluation.result if detail.ai_evaluation else None,
+            attempt=detail.attempt,
+        )
+
+    async def list_audit_logs(
+        self,
+        *,
+        page: int = 1,
+        page_size: int = 50,
+        action: str | None = None,
+        actor_id: str | None = None,
+        date_from: str | None = None,
+        date_to: str | None = None,
+    ) -> AuditLogListResponse:
+        if self._audit is None:
+            return AuditLogListResponse(items=[], page=page, page_size=page_size, total_items=0, total_pages=0)
+        return await self._audit.list_logs(
+            page=page,
+            page_size=page_size,
+            action=action,
+            actor_id=actor_id,
+            date_from=date_from,
+            date_to=date_to,
+        )

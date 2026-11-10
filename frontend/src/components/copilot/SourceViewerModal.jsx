@@ -117,7 +117,7 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
                 height: 34,
                 borderRadius: 8,
                 backgroundColor: '#EFF6FF',
-                color: '#1D4ED8',
+                color: '#111111',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -244,7 +244,7 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
               style={{
                 fontSize: '0.82rem',
                 fontWeight: 600,
-                color: '#2563EB',
+                color: '#111111',
                 backgroundColor: 'transparent',
                 border: 'none',
                 cursor: 'pointer',

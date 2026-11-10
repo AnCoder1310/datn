@@ -19,6 +19,7 @@ import {
   formatDateTime,
   itemLabel,
   layoutDay,
+  cleanDemoText,
   localInput,
   mondayOf,
   taskState,
@@ -281,7 +282,7 @@ export function CalendarView({
                         zIndex: height < 35 ? 3 : 2,
                       }}
                       onClick={() => setSelected(item)}
-                      title={`${item.title} · ${formatDateTime(item.starts_at)} – ${formatDateTime(item.ends_at)} · ${itemLabel(item)}`}
+                      title={`${cleanDemoText(item.title)} · ${formatDateTime(item.starts_at)} – ${formatDateTime(item.ends_at)} · ${itemLabel(item)}`}
                     >
                       {isCompact ? (
                         <div className="agenda-event-compact-row">
@@ -290,19 +291,19 @@ export function CalendarView({
                           </span>
                           <strong>
                             {item.status === 'completed' && <Check size={11} />}
-                            {item.title}
+                            {cleanDemoText(item.title)}
                           </strong>
                         </div>
                       ) : (
                         <>
                           <strong>
                             {item.status === 'completed' && <Check size={11} />}
-                            {item.title}
+                            {cleanDemoText(item.title)}
                           </strong>
                           <small className="agenda-event-time">{timeRange}</small>
                           {height >= 56 && (
                             <small className="agenda-event-sub">
-                              {item.customer_name || 'Cá nhân'} · {itemLabel(item)}
+                              {cleanDemoText(item.customer_name) || 'Cá nhân'} · {itemLabel(item)}
                             </small>
                           )}
                         </>
@@ -342,14 +343,14 @@ export function CalendarView({
                     : 'Trung bình'}
               </span>
             </div>
-            <h3>{shown.title}</h3>
+            <h3>{cleanDemoText(shown.title)}</h3>
             <div className="agenda-event-detail-meta">
               <p>
                 <Clock3 size={14} /> {formatDateTime(shown.starts_at)} –{' '}
                 {formatDateTime(shown.ends_at)}
               </p>
               <p>
-                <UserRound size={14} /> {shown.customer_name || 'Cá nhân · Không gắn khách hàng'}
+                <UserRound size={14} /> {cleanDemoText(shown.customer_name) || 'Cá nhân · Không gắn khách hàng'}
               </p>
               {shown.location && (
                 <p>

@@ -29,9 +29,8 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 640 }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.65)',
-        backdropFilter: 'blur(4px)',
-        padding: 16,
+        backgroundColor: 'rgba(17, 17, 17, 0.45)',
+                padding: 16,
       }}
       onClick={onClose}
     >

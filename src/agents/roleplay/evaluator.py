@@ -109,6 +109,9 @@ class RoleplayEvaluator:
             else {item.scenario_id for item in ScenarioRepository().list_public()}
         )
 
+    def register_scenario_id(self, scenario_id: str) -> None:
+        self._scenario_ids.add(scenario_id)
+
     async def evaluate(
         self,
         scenario: ScenarioContract,

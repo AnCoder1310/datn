@@ -1,9 +1,9 @@
-import { useEffect, useId, useRef, useState } from 'react';
-import { ChevronDown, LogoutIcon } from '../common/Icons';
-import './accountMenu.css';
+import { useEffect, useId, useRef, useState } from "react";
+import { ChevronDown, LogoutIcon, UsersIcon } from "../common/Icons";
+import "./accountMenu.css";
 
 // Shared by the advisor and manager top bars: the avatar opens a small account card.
-export function AccountMenu({ name, username, roleLabel, onLogout }) {
+export function AccountMenu({ name, username, roleLabel, onLogout, onSwitchRole }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
   const triggerRef = useRef(null);
@@ -16,16 +16,16 @@ export function AccountMenu({ name, username, roleLabel, onLogout }) {
       if (!rootRef.current?.contains(event.target)) setOpen(false);
     };
     const onKeyDown = (event) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setOpen(false);
         triggerRef.current?.focus();
       }
     };
-    document.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
 
@@ -34,7 +34,7 @@ export function AccountMenu({ name, username, roleLabel, onLogout }) {
       <button
         ref={triggerRef}
         type="button"
-        className={`account-menu-trigger ${open ? 'is-open' : ''}`}
+        className={`account-menu-trigger ${open ? "is-open" : ""}`}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={open ? cardId : undefined}
@@ -61,6 +61,21 @@ export function AccountMenu({ name, username, roleLabel, onLogout }) {
             <dt>Vai trò</dt>
             <dd>{roleLabel}</dd>
           </dl>
+
+          {onSwitchRole && (
+            <button
+              type="button"
+              className="account-menu-switch"
+              onClick={() => {
+                setOpen(false);
+                onSwitchRole(username === "advisor.demo" ? "manager" : "advisor");
+              }}
+            >
+              <UsersIcon aria-hidden="true" style={{ width: 15, height: 15 }} />
+              {username === "advisor.demo" ? "Chuyển sang Quản lý" : "Chuyển sang Tư vấn viên"}
+            </button>
+          )}
+
           <button type="button" className="account-menu-logout" onClick={onLogout}>
             <LogoutIcon aria-hidden="true" />
             Đăng xuất

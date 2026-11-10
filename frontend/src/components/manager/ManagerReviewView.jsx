@@ -7,6 +7,8 @@ import { ManagerTopNav } from "../layout/ManagerTopNav";
 import { ManagerReviewModal } from "./ManagerReviewModal";
 import { ManagerAssignmentsView } from "./ManagerAssignmentsView";
 import { ManagerAccountsView } from "./ManagerAccountsView";
+import { ManagerScenariosView } from "./ManagerScenariosView";
+import { ManagerAuditView } from "./ManagerAuditView";
 import { ManagerDashboard } from "./ManagerDashboard";
 import "./managerDashboard.css";
 
@@ -81,7 +83,7 @@ function HistoryTable({ history, advisorNames, scenarioNames, onOpenReview }) {
   );
 }
 
-export function ManagerReviewView({ currentUser, onLogout }) {
+export function ManagerReviewView({ currentUser, onLogout, onSwitchRole }) {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [selected, setSelected] = useState(null);
   const [actionError, setActionError] = useState("");
@@ -141,6 +143,7 @@ export function ManagerReviewView({ currentUser, onLogout }) {
         currentUser={currentUser}
         pendingCount={queue.length}
         onLogout={onLogout}
+        onSwitchRole={onSwitchRole}
       />
       <main className="manager-app-content">
         {actionError && (
@@ -150,6 +153,8 @@ export function ManagerReviewView({ currentUser, onLogout }) {
         )}
         {activeTab === "assignments" && <ManagerAssignmentsView onNavigateTab={setActiveTab} />}
         {activeTab === "accounts" && <ManagerAccountsView />}
+        {activeTab === "scenarios" && <ManagerScenariosView />}
+        {activeTab === "audit" && <ManagerAuditView />}
         {activeTab === "dashboard" && (
           <ManagerDashboard
             queue={queue}

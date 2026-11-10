@@ -21,23 +21,23 @@ export function VinFastLogo({ className = 'w-6 h-6', variant = 'chrome', ...prop
       <defs>
         <linearGradient id="vf-chrome-highlight" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#FFFFFF" />
-          <stop offset="35%" stopColor="#E2E8F0" />
-          <stop offset="70%" stopColor="#94A3B8" />
-          <stop offset="100%" stopColor="#475569" />
+          <stop offset="35%" stopColor="#E5E5E5" />
+          <stop offset="70%" stopColor="#808080" />
+          <stop offset="100%" stopColor="#666666" />
         </linearGradient>
 
         <linearGradient id="vf-chrome-shadow" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#CBD5E1" />
-          <stop offset="45%" stopColor="#64748B" />
-          <stop offset="85%" stopColor="#1E293B" />
-          <stop offset="100%" stopColor="#0F172A" />
+          <stop offset="0%" stopColor="#CCCCCC" />
+          <stop offset="45%" stopColor="#808080" />
+          <stop offset="85%" stopColor="#111111" />
+          <stop offset="100%" stopColor="#111111" />
         </linearGradient>
 
         <linearGradient id="vf-chrome-inner" x1="50%" y1="0%" x2="50%" y2="100%">
           <stop offset="0%" stopColor="#FFFFFF" />
           <stop offset="40%" stopColor="#F1F5F9" />
-          <stop offset="80%" stopColor="#64748B" />
-          <stop offset="100%" stopColor="#334155" />
+          <stop offset="80%" stopColor="#808080" />
+          <stop offset="100%" stopColor="#333333" />
         </linearGradient>
       </defs>
 

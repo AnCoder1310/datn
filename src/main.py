@@ -13,6 +13,7 @@ from src.api.recorded_practice import create_recorded_practice_routers
 from src.api.routes import router
 from src.api.sales_copilot import router as sales_copilot_router
 from src.config import get_settings
+from src.integrations.audit_repository import SQLSalesAuditRepository
 from src.integrations.copilot_sessions import SQLCopilotSessionsRepository
 from src.integrations.practice_records import SQLPracticeRecordsRepository
 from src.integrations.practice_runtime import build_practice_service
@@ -22,10 +23,13 @@ from src.knowledge.index_readiness import check_copilot_index
 from src.knowledge.retrieval_service import get_retrieval_service
 from src.observability import CopilotTelemetryMiddleware, TelemetryService, configure_logging
 from src.roleplay_tracing import get_roleplay_tracing
+from src.services.audit_service import SalesAuditService
+from src.services.deal_diagnostic import DealDiagnosticService
 from src.services.recorded_practice import RecordedPracticeService
 from src.services.sales_conversation_service import SalesConversationService
 from src.services.sales_copilot_analyzer import SalesCopilotAnalyzer
 from src.services.sales_copilot_assistant import SalesCopilotAssistant
+from src.services.scenario_generator import ScenarioGeneratorService
 from src.services.voice import VoiceService
 
 logger = logging.getLogger(__name__)
@@ -107,11 +111,21 @@ app.state.copilot_sessions = SQLCopilotSessionsRepository(
 )
 
 
+audit_repo = SQLSalesAuditRepository(settings.database_url)
+audit_service = SalesAuditService(audit_repo)
+scenario_generator = ScenarioGeneratorService(settings)
+deal_diagnostic = DealDiagnosticService(settings)
+
 recorded_practice = RecordedPracticeService(
     build_practice_service(retrieval_service=LazyKnowledgeRetriever()),
     SQLPracticeRecordsRepository(settings.database_url),
     auth_service,
+    audit_service=audit_service,
+    scenario_generator=scenario_generator,
+    deal_diagnostic=deal_diagnostic,
 )
+app.state.audit_repository = audit_repo
+app.state.audit_service = audit_service
 voice_service = VoiceService(recorded_practice, SQLVoiceUsageRepository(settings.database_url), settings)
 practice_router, manager_router = create_recorded_practice_routers(recorded_practice, current_user, voice_service)
 

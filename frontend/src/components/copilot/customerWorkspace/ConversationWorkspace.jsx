@@ -9,8 +9,7 @@ import { replySuggestionsAvailable } from './workspaceFeatures';
 
 function ConversationViewer({ customer, highlight, onLoadOlder, loadingOlder, onSuggestTaskFromMessage, suggestingMessageId, onAskCopilotFromMessage }) {
   const scrollRef = useRef(null);
-  const messageRefs = useRef(null);
-  if (!messageRefs.current) messageRefs.current = new Map();
+  const messageRefs = useRef(new Map());
   const [selectedMsgId, setSelectedMsgId] = useState(null);
   const lastMessageId = customer.messages.at(-1)?.id;
   useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight; }, [lastMessageId]);
@@ -151,14 +150,37 @@ export function ConversationWorkspace({ customer, onStar, highlight, composerVal
   function openTool(type) { setStageOpen(false); onShowTool(type); }
   return <section className="sw-conversation" aria-label={`Không gian tư vấn ${customer.name}`}>
     <div className="sw-customer-header">
-      <IconButton label="Về danh sách khách hàng" className="sw-mobile-back-button" onClick={onBack}><ArrowLeft size={17} /></IconButton>
-      <button type="button" className="sw-profile-avatar" aria-label="Mở bối cảnh khách hàng" disabled={!customer.loaded} onClick={() => openTool(summaryOpen ? null : 'summary')}><Avatar customer={customer} /></button>
-      <div className="sw-customer-identity"><div className="sw-customer-title"><button type="button" className="sw-customer-name" disabled={!customer.loaded} onClick={() => openTool(summaryOpen ? null : 'summary')}><h1>{customer.name}</h1></button>
-        <div className="sw-stage-wrap"><button ref={stageTrigger} type="button" className="sw-stage-trigger" aria-label={`Giai đoạn: ${customer.stage}`} aria-expanded={stageOpen} disabled={!customer.loaded} onClick={() => setStageOpen(!stageOpen)}><StageBadge customer={customer} /><ChevronDown size={12} /></button>
-          {stageOpen && <section className="sw-stage-popover" ref={stageRef} role="dialog" aria-label="Sửa giai đoạn"><div className="sw-inline-heading"><strong>Giai đoạn bán hàng</strong><IconButton label="Đóng giai đoạn" onClick={() => { setStageOpen(false); stageTrigger.current?.focus(); }}><X size={16} /></IconButton></div><LeadStageEditor customer={customer} busy={stageBusy} onSave={async (...args) => { await onSaveStage(...args); setStageOpen(false); stageTrigger.current?.focus(); }} /></section>}
+      <div className="sw-customer-header-left">
+        <IconButton label="Về danh sách khách hàng" className="sw-mobile-back-button" onClick={onBack}><ArrowLeft size={17} /></IconButton>
+        <button type="button" className="sw-profile-avatar" aria-label="Mở bối cảnh khách hàng" disabled={!customer.loaded} onClick={() => openTool(summaryOpen ? null : 'summary')}>
+          <Avatar customer={customer} />
+        </button>
+        <div className="sw-customer-identity">
+          <button type="button" className="sw-customer-name" disabled={!customer.loaded} onClick={() => openTool(summaryOpen ? null : 'summary')}>
+            <h1>{customer.name}</h1>
+          </button>
+          <div className="sw-stage-wrap">
+            <button ref={stageTrigger} type="button" className="sw-stage-trigger" aria-label={`Giai đoạn: ${customer.stage}`} aria-expanded={stageOpen} disabled={!customer.loaded} onClick={() => setStageOpen(!stageOpen)}>
+              <StageBadge customer={customer} />
+              <ChevronDown size={12} />
+            </button>
+            {stageOpen && (
+              <section className="sw-stage-popover" ref={stageRef} role="dialog" aria-label="Sửa giai đoạn">
+                <div className="sw-inline-heading">
+                  <strong>Giai đoạn bán hàng</strong>
+                  <IconButton label="Đóng giai đoạn" onClick={() => { setStageOpen(false); stageTrigger.current?.focus(); }}><X size={16} /></IconButton>
+                </div>
+                <LeadStageEditor customer={customer} busy={stageBusy} onSave={async (...args) => { await onSaveStage(...args); setStageOpen(false); stageTrigger.current?.focus(); }} />
+              </section>
+            )}
+          </div>
         </div>
-        <IconButton label={customer.starred ? 'Bỏ đánh dấu khách hàng' : 'Đánh dấu khách hàng'} className={customer.starred ? 'sw-starred' : ''} aria-pressed={customer.starred} onClick={onStar}><Star size={14} fill={customer.starred ? 'currentColor' : 'none'} /></IconButton>
-      </div></div>
+      </div>
+      <div className="sw-customer-header-actions">
+        <IconButton label={customer.starred ? 'Bỏ đánh dấu khách hàng' : 'Đánh dấu khách hàng'} className={customer.starred ? 'sw-starred' : ''} aria-pressed={customer.starred} onClick={onStar}>
+          <Star size={15} fill={customer.starred ? 'currentColor' : 'none'} />
+        </IconButton>
+      </div>
     </div>
     <div className="sw-tab-panel">
       {error && <div className="sw-error-banner" role="alert"><span>{error}</span><button type="button" className="sw-text-button" onClick={onRetry}>Thử lại</button></div>}

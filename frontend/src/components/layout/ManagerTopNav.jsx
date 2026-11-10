@@ -4,21 +4,25 @@ import {
   CheckCircleIcon,
   ClipboardIcon,
   UsersIcon,
+  SparkleIcon,
+  ShieldCheckIcon,
 } from "../common/Icons";
 import { AccountMenu } from "./AccountMenu";
 
-// Same markup and classes as the advisor Header, so both portals share one top bar.
 export function ManagerTopNav({
   activeTab,
   onTabChange,
   currentUser,
   pendingCount = 0,
   onLogout,
+  onSwitchRole,
 }) {
   const menuItems = [
     { id: "dashboard", label: "Tổng quan", icon: DashboardIcon },
     { id: "assignments", label: "Giao bài", icon: ClipboardIcon },
     { id: "reports", label: "Lịch sử luyện tập", icon: CheckCircleIcon, badge: pendingCount > 0 ? pendingCount : null },
+    { id: "scenarios", label: "Kịch bản AI", icon: SparkleIcon },
+    { id: "audit", label: "Kiểm toán", icon: ShieldCheckIcon },
     { id: "accounts", label: "Tài khoản", icon: UsersIcon },
   ];
 
@@ -35,7 +39,7 @@ export function ManagerTopNav({
         onClick={() => onTabChange(item.id)}
         aria-current={isActive ? "page" : undefined}
       >
-        <Icon style={{ width: 18, height: 18 }} />
+        <Icon style={{ width: 16, height: 16 }} />
         <span>{item.label}</span>
         {item.badge && (
           <span className="nav-tab-badge" aria-label={`${item.badge} bài chờ duyệt`}>
@@ -50,10 +54,12 @@ export function ManagerTopNav({
     <header className="top-header">
       <div className="top-header-inner">
         <button className="brand-section" type="button" onClick={() => onTabChange("dashboard")}>
-          <span className="header-brand-logo"><img src="/vinfast-official-logo.png?v=silver" alt="VinFast" /></span>
+          <span className="header-brand-logo">
+            <img src="/vinfast-official-logo.png?v=silver" alt="VinFast" />
+          </span>
           <div className="brand-info">
-            <span className="brand-title">AI Sales Coach &amp; Co-pilot</span>
-            <span className="brand-subtitle">Nền tảng đào tạo và hỗ trợ tư vấn bán hàng ô tô</span>
+            <span className="brand-title">VinFast AI Sales</span>
+            <span className="brand-subtitle">Manager Portal</span>
           </div>
         </button>
 
@@ -67,6 +73,7 @@ export function ManagerTopNav({
             username={currentUser?.username}
             roleLabel="Quản lý"
             onLogout={onLogout}
+            onSwitchRole={onSwitchRole}
           />
         </div>
       </div>

@@ -125,6 +125,18 @@ class PracticeService:
     def list_scenarios(self) -> list[ScenarioSummary]:
         return self._scenarios.list_public()
 
+    def get_scenario(self, scenario_id: str) -> ScenarioContract:
+        return self._scenarios.get(scenario_id)
+
+    def register_scenario(self, scenario: ScenarioContract, persist: bool = True) -> ScenarioSummary:
+        summary = self._scenarios.register(scenario, persist=persist)
+        if self._evaluator and hasattr(self._evaluator, 'register_scenario_id'):
+            self._evaluator.register_scenario_id(scenario.scenario_id)
+        return summary
+
+    def delete_scenario(self, scenario_id: str) -> bool:
+        return self._scenarios.delete_custom(scenario_id)
+
     async def start_session(self, scenario_id: str, max_turns: int | None = None) -> PracticeSessionView:
         session_id = self._session_id_factory()
         with self._trace("practice.start", session_id=session_id, scenario_id=scenario_id):

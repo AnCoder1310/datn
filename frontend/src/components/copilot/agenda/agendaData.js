@@ -1,34 +1,133 @@
 export const TIMEZONE = 'Asia/Ho_Chi_Minh';
-export const filters = { today: 'Hôm nay', upcoming: 'Sắp đến', stale: 'Cần cập nhật', unscheduled: 'Cần xếp lịch', review: 'Cần duyệt', completed: 'Hoàn thành' };
-export const itemLabel = (task) => task.item_type === 'appointment' ? 'Lịch hẹn' : 'Công việc';
+export const filters = {
+  today: 'Hôm nay',
+  upcoming: 'Sắp đến',
+  stale: 'Cần cập nhật',
+  unscheduled: 'Cần xếp lịch',
+  review: 'Cần duyệt',
+  completed: 'Hoàn thành',
+};
+
+export const itemLabel = (task) => (task.item_type === 'appointment' ? 'Lịch hẹn' : 'Công việc');
+
+export function cleanDemoText(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/^\[(?:Mẫu|Demo|Sample)\]\s*/i, '')
+    .replace(/\[(?:Mẫu|Demo|Sample)\]\s*/gi, '')
+    .trim();
+}
+
 export function localInput(value) {
   if (!value) return '';
   const parsed = new Date(/T.*(?:Z|[+-]\d\d:\d\d)$/.test(value) ? value : `${value}Z`);
   if (!Number.isFinite(parsed.getTime())) return '';
-  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(parsed).map(({ type, value: part }) => [type, part]));
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone: TIMEZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    })
+      .formatToParts(parsed)
+      .map(({ type, value: part }) => [type, part])
+  );
   return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
 }
-export const toUTC = (value) => value ? new Date(`${value}:00+07:00`).toISOString() : null;
+
+export const toUTC = (value) => (value ? new Date(`${value}:00+07:00`).toISOString() : null);
 export const dateKey = (value = new Date().toISOString()) => localInput(value).slice(0, 10);
+
 export function addDays(day, count) {
-  const value = new Date(`${day}T00:00:00Z`); value.setUTCDate(value.getUTCDate() + count); return value.toISOString().slice(0, 10);
+  const value = new Date(`${day}T00:00:00Z`);
+  value.setUTCDate(value.getUTCDate() + count);
+  return value.toISOString().slice(0, 10);
 }
+
 export function mondayOf(day = dateKey()) {
-  const dow = new Date(`${day}T00:00:00Z`).getUTCDay(); return addDays(day, -((dow + 6) % 7));
+  const dow = new Date(`${day}T00:00:00Z`).getUTCDay();
+  return addDays(day, -((dow + 6) % 7));
 }
+
 export function formatDateTime(value, date = true) {
   if (!value) return 'Cần xếp lịch';
-  return new Intl.DateTimeFormat('vi-VN', { timeZone: TIMEZONE, hour: '2-digit', minute: '2-digit', ...(date ? { day: '2-digit', month: '2-digit' } : {}) }).format(new Date(value));
+  return new Intl.DateTimeFormat('vi-VN', {
+    timeZone: TIMEZONE,
+    hour: '2-digit',
+    minute: '2-digit',
+    ...(date ? { day: '2-digit', month: '2-digit' } : {}),
+  }).format(new Date(value));
 }
+
+export function formatTimeRange(startValue, endValue, now = Date.now()) {
+  if (!startValue) return 'Chưa xếp giờ';
+  const start = new Date(startValue);
+  const end = endValue ? new Date(endValue) : null;
+  const nowDate = new Date(now);
+
+  const startDay = new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIMEZONE,
+    month: '2-digit',
+    day: '2-digit',
+  }).format(start);
+  const nowDay = new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIMEZONE,
+    month: '2-digit',
+    day: '2-digit',
+  }).format(nowDate);
+  const isToday = startDay === nowDay;
+
+  const timeFmt = new Intl.DateTimeFormat('vi-VN', {
+    timeZone: TIMEZONE,
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  const startTime = timeFmt.format(start);
+  const endTime = end ? timeFmt.format(end) : null;
+  const range = endTime ? `${startTime} - ${endTime}` : startTime;
+
+  if (isToday) {
+    return `Hôm nay · ${range}`;
+  }
+  const dateFmt = new Intl.DateTimeFormat('vi-VN', {
+    timeZone: TIMEZONE,
+    day: '2-digit',
+    month: '2-digit',
+  }).format(start);
+  return `${dateFmt} · ${range}`;
+}
+
+export function compactWaiting(value, now = Date.now()) {
+  if (!value) return 'Đã phản hồi';
+  const since = new Date(value).getTime();
+  if (!Number.isFinite(since)) return 'Đã phản hồi';
+  const minutes = Math.max(0, Math.floor((now - since) / 60000));
+  if (minutes < 1) return '< 1p';
+  if (minutes < 60) return `Chờ ${minutes}p`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) {
+    const remM = minutes % 60;
+    return remM > 0 ? `Chờ ${hours}h ${remM}p` : `Chờ ${hours}h`;
+  }
+  const days = Math.floor(hours / 24);
+  const remH = hours % 24;
+  return remH > 0 ? `Chờ ${days}d ${remH}h` : `Chờ ${days}d`;
+}
+
 export function defaultTaskWindow(kind = 'task', offsetMinutes = 0) {
   const durationMinutes = kind === 'appointment' ? 60 : 30;
   const now = new Date();
   const slotMs = 30 * 60 * 1000;
-  const roundedStartMs = Math.ceil((now.getTime() + 5 * 60 * 1000) / slotMs) * slotMs + offsetMinutes * 60 * 1000;
+  const roundedStartMs =
+    Math.ceil((now.getTime() + 5 * 60 * 1000) / slotMs) * slotMs + offsetMinutes * 60 * 1000;
   const startIso = new Date(roundedStartMs).toISOString();
   const endIso = new Date(roundedStartMs + durationMinutes * 60 * 1000).toISOString();
   return { start: localInput(startIso), end: localInput(endIso) };
 }
+
 export function waitingDuration(value, now = Date.now()) {
   const since = new Date(value).getTime();
   if (!value || !Number.isFinite(since)) return 'Đang chờ phản hồi';
@@ -39,6 +138,7 @@ export function waitingDuration(value, now = Date.now()) {
   if (hours < 24) return `Chờ ${hours} giờ ${minutes % 60} phút`;
   return `Chờ ${Math.floor(hours / 24)} ngày ${hours % 24} giờ`;
 }
+
 export function taskState(task, now = Date.now()) {
   if (task.status === 'completed') return 'Hoàn thành';
   if (task.status === 'cancelled') return 'Đã hủy';
@@ -50,18 +150,47 @@ export function taskState(task, now = Date.now()) {
 
 /** Clip across midnight, then assign columns per connected group of overlapping intervals. */
 export function layoutDay(items, day) {
-  const start = new Date(`${day}T00:00:00+07:00`).getTime(); const end = start + 86400000;
-  const segments = items.filter((item) => new Date(item.starts_at).getTime() < end && new Date(item.ends_at).getTime() > start).map((item) => ({ item, start: Math.max(start, new Date(item.starts_at).getTime()), end: Math.min(end, new Date(item.ends_at).getTime()) })).sort((a, b) => a.start - b.start || b.end - a.end || a.item.id.localeCompare(b.item.id));
-  let group = []; let groupEnd = 0;
+  const start = new Date(`${day}T00:00:00+07:00`).getTime();
+  const end = start + 86400000;
+  const segments = items
+    .filter(
+      (item) =>
+        new Date(item.starts_at).getTime() < end && new Date(item.ends_at).getTime() > start
+    )
+    .map((item) => ({
+      item,
+      start: Math.max(start, new Date(item.starts_at).getTime()),
+      end: Math.min(end, new Date(item.ends_at).getTime()),
+    }))
+    .sort(
+      (a, b) =>
+        a.start - b.start || b.end - a.end || a.item.id.localeCompare(b.item.id)
+    );
+  let group = [];
+  let groupEnd = 0;
   function flush() {
     const columns = [];
-    for (const segment of group) { let col = columns.findIndex((until) => until <= segment.start); if (col === -1) col = columns.length; columns[col] = segment.end; segment.column = col; }
+    for (const segment of group) {
+      let col = columns.findIndex((until) => until <= segment.start);
+      if (col === -1) col = columns.length;
+      columns[col] = segment.end;
+      segment.column = col;
+    }
     for (const segment of group) segment.columns = columns.length;
   }
   for (const segment of segments) {
-    if (group.length && segment.start >= groupEnd) { flush(); group = []; groupEnd = 0; }
-    group.push(segment); groupEnd = Math.max(groupEnd, segment.end);
+    if (group.length && segment.start >= groupEnd) {
+      flush();
+      group = [];
+      groupEnd = 0;
+    }
+    group.push(segment);
+    groupEnd = Math.max(groupEnd, segment.end);
   }
   flush();
-  return segments.map((segment) => ({ ...segment, top: (segment.start - start) / 60000, height: (segment.end - segment.start) / 60000 }));
+  return segments.map((segment) => ({
+    ...segment,
+    top: (segment.start - start) / 60000,
+    height: (segment.end - segment.start) / 60000,
+  }));
 }

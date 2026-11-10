@@ -431,7 +431,7 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
           display: 'flex',
           gap: 8,
           padding: '5px',
-          backgroundColor: '#E2E8F0',
+          backgroundColor: '#E5E5E5',
           borderRadius: 10,
           width: 'fit-content',
           flexShrink: 0,
@@ -450,14 +450,14 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
             fontSize: '0.86rem',
             fontWeight: copilotMode === 'customer_sales' ? 700 : 500,
             backgroundColor: copilotMode === 'customer_sales' ? '#FFFFFF' : 'transparent',
-            color: copilotMode === 'customer_sales' ? '#1D4ED8' : '#475569',
+            color: copilotMode === 'customer_sales' ? '#111111' : '#666666',
             boxShadow: copilotMode === 'customer_sales' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
           }}
         >
           <span>🤝 Trợ lý bán hàng theo khách hàng</span>
-          <span style={{ fontSize: '0.7rem', backgroundColor: '#FEF3C7', color: '#92400E', padding: '1px 6px', borderRadius: 4, fontWeight: 700 }}>
+          <span style={{ fontSize: '0.7rem', backgroundColor: '#F5F5F5', color: '#111111', padding: '1px 6px', borderRadius: 4, fontWeight: 700 }}>
             Mới
           </span>
         </button>
@@ -475,7 +475,7 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
             fontSize: '0.86rem',
             fontWeight: copilotMode === 'product_knowledge' ? 700 : 500,
             backgroundColor: copilotMode === 'product_knowledge' ? '#FFFFFF' : 'transparent',
-            color: copilotMode === 'product_knowledge' ? '#1D4ED8' : '#475569',
+            color: copilotMode === 'product_knowledge' ? '#111111' : '#666666',
             boxShadow: copilotMode === 'product_knowledge' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
@@ -529,7 +529,7 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: '0.92rem', color: '#111827' }}>
-              <ChatIcon style={{ width: 16, height: 16, color: '#2563EB' }} />
+              <ChatIcon style={{ width: 16, height: 16, color: '#111111' }} />
               <span>Lịch sử tư vấn</span>
             </div>
             <span
@@ -558,7 +558,7 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
                 justifyContent: 'center',
                 gap: 6,
                 padding: '9px 12px',
-                backgroundColor: '#1D4ED8',
+                backgroundColor: '#111111',
                 color: '#FFFFFF',
                 border: 'none',
                 borderRadius: 8,
@@ -598,7 +598,7 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
                       borderRadius: 8,
                       cursor: 'pointer',
                       border: isActive ? '1px solid #3B82F6' : '1px solid #E5E7EB',
-                      backgroundColor: isActive ? '#EFF6FF' : '#FAFAFA',
+                      backgroundColor: isActive ? '#F5F5F5' : '#FAFAFA',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: 4,
@@ -610,7 +610,7 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
                         style={{
                           fontSize: '0.82rem',
                           fontWeight: isActive ? 700 : 500,
-                          color: isActive ? '#1D4ED8' : '#1F2937',
+                          color: isActive ? '#111111' : '#1F2937',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap',
@@ -719,7 +719,7 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
                       width: 6,
                       height: 6,
                       borderRadius: '50%',
-                      backgroundColor: '#166534',
+                      backgroundColor: '#111111',
                       marginRight: 4,
                     }}
                   />
@@ -846,17 +846,17 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
 
 
                   {msg.status === 'needs_clarification' && (
-                    <p style={{ marginBottom: 8, fontSize: '0.8rem', color: '#92400E', fontWeight: 600 }}>
+                    <p style={{ marginBottom: 8, fontSize: '0.8rem', color: '#111111', fontWeight: 600 }}>
                       ⚠️ Cần bạn bổ sung thông tin
                     </p>
                   )}
                   {msg.status === 'partial' && (
-                    <p style={{ marginBottom: 8, fontSize: '0.8rem', color: '#92400E', fontWeight: 600 }}>
+                    <p style={{ marginBottom: 8, fontSize: '0.8rem', color: '#111111', fontWeight: 600 }}>
                       ℹ️ Đã xác minh được một phần
                     </p>
                   )}
                   {copilotReason(msg.reason_code) && (
-                    <p role="status" style={{ fontSize: '0.8rem', color: '#92400E', marginBottom: 8 }}>
+                    <p role="status" style={{ fontSize: '0.8rem', color: '#111111', marginBottom: 8 }}>
                       {copilotReason(msg.reason_code)}
                     </p>
                   )}
@@ -969,7 +969,7 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
                           cursor: 'pointer',
                         }}
                       >
-                        <ArrowRight style={{ width: 13, height: 13, color: '#0F172A', display: 'inline', verticalAlign: '-2px', marginRight: 4 }} /> Gợi ý hỏi tiếp: <strong>{msg.suggested_next_question}</strong>
+                        <ArrowRight style={{ width: 13, height: 13, color: '#111111', display: 'inline', verticalAlign: '-2px', marginRight: 4 }} /> Gợi ý hỏi tiếp: <strong>{msg.suggested_next_question}</strong>
                       </button>
                     </div>
                   )}
@@ -1044,7 +1044,7 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
 
         {/* BOTTOM INPUT BAR */}
         <div className="copilot-composer">
-          {error && <p role="alert" style={{ color: '#991B1B', fontSize: '0.82rem', marginBottom: 8 }}>{error}</p>}
+          {error && <p role="alert" style={{ color: '#111111', fontSize: '0.82rem', marginBottom: 8 }}>{error}</p>}
           <form
             className="copilot-composer-form"
             onSubmit={(e) => {

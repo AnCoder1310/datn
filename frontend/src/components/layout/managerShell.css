@@ -1,38 +1,48 @@
-/* Manager page frame (the top bar reuses the advisor .top-header styles) in the Midnight Showroom Light tokens. Overrides the legacy dark rules in index.css. */
+/* VINFAST AUTOMOTIVE MONOCHROME — MANAGER SHELL */
 .manager-app-layout {
-  background: var(--app-bg);
-  color: var(--app-ink);
-  font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+  background: #FFFFFF;
+  color: #111111;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
 }
 
-/* Pending-review count on the shared top bar's "Lịch sử luyện tập" tab */
+/* Pending-review count on the shared top bar */
 .manager-app-layout .nav-tab-badge {
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
   display: inline-grid;
   place-items: center;
-  border-radius: 10px;
-  background: var(--app-blue);
-  color: #fff;
+  border-radius: 999px;
+  background: #111111;
+  color: #FFFFFF;
   font-size: 0.7rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-.manager-app-layout .manager-app-content {
-  max-width: 1360px;
-  padding: 28px 24px 56px;
+.manager-app-layout .nav-tab-item.active .nav-tab-badge {
+  background: #FFFFFF;
+  color: #111111;
 }
 
-/* Existing manager tabs (assignments, accounts) pick up the light surface */
+.manager-app-layout .manager-app-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 28px 24px 56px;
+  background: #FFFFFF;
+}
+
 .manager-app-layout .card-white,
 .manager-app-layout .manager-queue-card {
-  border-color: var(--app-border);
-  border-radius: 16px;
-  box-shadow: none;
+  background: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 @media (max-width: 768px) {
-  .manager-app-layout .manager-app-content { padding: 20px 16px 40px; }
+  .manager-app-layout .manager-app-content {
+    padding: 20px 16px 40px;
+  }
 }

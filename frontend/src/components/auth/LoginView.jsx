@@ -5,7 +5,7 @@ const DEMO_ACCOUNTS = [
   { role: 'manager', label: 'Quản lý', username: 'manager.demo', password: 'DemoManager123!' },
 ];
 
-function Icon({ name, size = 18, strokeWidth = 1.8 }) {
+function Icon({ name, size = 16, strokeWidth = 1.8 }) {
   const paths = {
     mail: (
       <>
@@ -75,17 +75,24 @@ function Icon({ name, size = 18, strokeWidth = 1.8 }) {
 }
 
 export function LoginView({ onLogin }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('advisor.demo');
+  const [password, setPassword] = useState('DemoAdvisor123!');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const selectDemoAccount = (demoUsername, demoPassword) => {
+  const selectAndLogin = async (demoUsername, demoPassword) => {
     setUsername(demoUsername);
     setPassword(demoPassword);
-    setShowPassword(false);
     setError('');
+    setIsLoading(true);
+    try {
+      await onLogin(demoUsername, demoPassword);
+    } catch (loginError) {
+      setError(loginError.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const submit = async (event) => {
@@ -107,14 +114,17 @@ export function LoginView({ onLogin }) {
 
   return (
     <main className="login-shell">
+      {/* SHOWCASE PANEL */}
       <section className="login-showcase" aria-label="Giới thiệu AI Sales Coach">
         <img className="login-showcase-car" src="/login-car-showroom.jpg" alt="" />
 
         <div className="login-brand">
-          <span className="login-logo"><img src="/vinfast-official-logo.png?v=silver" alt="VinFast" /></span>
+          <span className="login-logo">
+            <img src="/vinfast-official-logo.png?v=silver" alt="VinFast" />
+          </span>
           <div>
             <div className="login-brand-title">AI Sales Coach &amp; Co-pilot</div>
-            <p>Nền tảng đào tạo và hỗ trợ tư vấn bán hàng ô tô</p>
+            <p>Nền tảng đào tạo và hỗ trợ tư vấn bán hàng ô tô điện</p>
           </div>
         </div>
 
@@ -124,33 +134,69 @@ export function LoginView({ onLogin }) {
           <p>Mô phỏng hội thoại khách hàng, tra cứu thông tin có nguồn và đánh giá kỹ năng trong một hệ thống thống nhất.</p>
           <div className="login-features">
             <article>
-              <span className="login-feature-icon"><Icon name="lookup" size={28} strokeWidth={1.5} /></span>
+              <span className="login-feature-icon"><Icon name="lookup" size={24} strokeWidth={1.5} /></span>
               <strong>Tra cứu<br />có nguồn</strong>
             </article>
             <article>
-              <span className="login-feature-icon"><Icon name="practice" size={28} strokeWidth={1.5} /></span>
+              <span className="login-feature-icon"><Icon name="practice" size={24} strokeWidth={1.5} /></span>
               <strong>Luyện tập<br />theo tình huống</strong>
             </article>
             <article>
-              <span className="login-feature-icon"><Icon name="evaluate" size={28} strokeWidth={1.5} /></span>
+              <span className="login-feature-icon"><Icon name="evaluate" size={24} strokeWidth={1.5} /></span>
               <strong>Đánh giá<br />kỹ năng</strong>
             </article>
           </div>
         </div>
       </section>
 
+      {/* LOGIN FORM PANEL */}
       <section className="login-panel">
         <div className="login-form-wrap">
           <div className="login-mobile-brand">
-            <span className="login-logo"><img src="/vinfast-official-logo.png?v=silver" alt="VinFast" /></span>
+            <span className="login-logo">
+              <img src="/vinfast-official-logo.png?v=silver" alt="VinFast" />
+            </span>
             <strong>AI Sales Coach &amp; Co-pilot</strong>
           </div>
+
           <header>
-            <h2>Chào mừng bạn trở lại</h2>
-            <p>Đăng nhập để tiếp tục sử dụng hệ thống.</p>
+            <h2>Đăng nhập hệ thống</h2>
+            <p>Nền tảng hỗ trợ bán hàng và đào tạo thông minh VinFast</p>
           </header>
 
           {error && <div className="login-error" role="alert">{error}</div>}
+
+          {/* QUICK 1-CLICK DEMO CARDS */}
+          <div className="login-demo">
+            <div className="login-demo-header">
+              <h3>Dùng thử nhanh</h3>
+              <span>1-click đăng nhập ngay</span>
+            </div>
+            <div className="login-demo-cards">
+              {DEMO_ACCOUNTS.map((account) => {
+                const selected = username === account.username;
+                return (
+                  <button
+                    key={account.role}
+                    type="button"
+                    className={`login-demo-card ${account.role}${selected ? ' selected' : ''}`}
+                    onClick={() => selectAndLogin(account.username, account.password)}
+                    disabled={isLoading}
+                  >
+                    <span className="login-demo-card-heading">
+                      <strong><Icon name={account.role} />{account.label}</strong>
+                      <Icon name="arrow" size={14} strokeWidth={2} />
+                    </span>
+                    <span className="login-demo-card-details">
+                      <span>{account.username}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="login-divider" aria-hidden="true"><span>Hoặc đăng nhập mật khẩu</span></div>
 
           <form onSubmit={submit} className="login-form">
             <label>
@@ -194,37 +240,6 @@ export function LoginView({ onLogin }) {
               {isLoading ? 'Đang đăng nhập…' : <>Đăng nhập <Icon name="arrow" strokeWidth={2} /></>}
             </button>
           </form>
-
-          <div className="login-divider" aria-hidden="true"><span>Hoặc</span></div>
-
-          <div className="login-demo">
-            <h3>Dùng thử nhanh</h3>
-            <p>Chọn tài khoản mẫu theo vai trò.</p>
-            <div className="login-demo-cards">
-              {DEMO_ACCOUNTS.map((account) => {
-                const selected = username === account.username && password === account.password;
-                return (
-                  <button
-                    key={account.role}
-                    type="button"
-                    className={`login-demo-card ${account.role}${selected ? ' selected' : ''}`}
-                    aria-pressed={selected}
-                    onClick={() => selectDemoAccount(account.username, account.password)}
-                    disabled={isLoading}
-                  >
-                    <span className="login-demo-card-heading">
-                      <strong><Icon name={account.role} />{account.label}</strong>
-                      <Icon name="chevron" size={16} strokeWidth={2} />
-                    </span>
-                    <span className="login-demo-card-details">
-                      <span>Tài khoản:</span><span>{account.username}</span>
-                      <span>Mật khẩu:</span><span>{account.password}</span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
         </div>
       </section>
     </main>

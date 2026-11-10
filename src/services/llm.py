@@ -92,8 +92,13 @@ def get_llm(
 
         api_key = settings.openrouter_api_key
         target_model = model or settings.model_name
+        base_url = settings.openrouter_base_url or "https://openrouter.ai/api/v1"
+        is_9router = "9router" in base_url or "127.0.0.1:20128" in base_url
+
         if "/" not in target_model:
-            if "gemini" in target_model.lower():
+            if is_9router:
+                model_name = f"ag/{target_model}"
+            elif "gemini" in target_model.lower():
                 model_name = f"google/{target_model}"
             else:
                 model_name = f"openai/{target_model}"
@@ -102,7 +107,7 @@ def get_llm(
         return (CopilotChatOpenAI if copilot_provider_errors else ChatOpenAI)(
             model=model_name,
             api_key=api_key,
-            base_url="https://openrouter.ai/api/v1",
+            base_url=base_url,
             extra_body={"reasoning": {"effort": openrouter_reasoning_effort}} if openrouter_reasoning_effort else None,
             temperature=temp,
             timeout=settings.llm_timeout_seconds,
@@ -174,7 +179,7 @@ def get_embeddings() -> Embeddings:
         return OpenAIEmbeddings(
             model=model if "/" in model else f"openai/{model}",
             api_key=settings.openrouter_api_key,
-            base_url="https://openrouter.ai/api/v1",
+            base_url=settings.openrouter_base_url or "https://openrouter.ai/api/v1",
             check_embedding_ctx_length=False,
             request_timeout=settings.retrieval_timeout_seconds,
             max_retries=2,
