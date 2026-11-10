@@ -24,10 +24,10 @@ export function HistoryModal({ isOpen, onClose, attempts, status, error, onRetry
             <button
               key={item.session_id}
               onClick={() => onSelectSession(item.session_id)}
-              style={{ padding: 16, textAlign: 'left', border: '1px solid #E5EAEE', borderRadius: 10, background: '#F5F8FA', cursor: 'pointer' }}
+              style={{ padding: 16, textAlign: 'left', border: '1px solid #E5E5E5', borderRadius: 10, background: '#FFFFFF', cursor: 'pointer' }}
             >
               <strong>{new Date(item.completed_at).toLocaleString('vi-VN')}</strong>
-              <span style={{ display: 'block', fontSize: '0.82rem', color: '#64748B' }}>{reviewLabel(item)}</span>
+              <span style={{ display: 'block', fontSize: '0.82rem', color: '#666666' }}>{reviewLabel(item)}</span>
               <span style={{ display: 'block', marginTop: 4 }}>
                 {item.approved_score ?? item.ai_score ?? '—'} / 3
               </span>

@@ -36,9 +36,9 @@ export function renderInlineWithCitations(text, citations = [], onCitationClick)
             padding: '1px 6px',
             margin: '0 3px',
             borderRadius: 5,
-            backgroundColor: '#F5F8FA',
-            border: '1px solid #E5EAEE',
-            color: '#172B3A',
+            backgroundColor: '#FFFFFF',
+            border: '1px solid #E5E5E5',
+            color: '#111111',
             fontSize: '0.76rem',
             fontWeight: 600,
             cursor: 'pointer',
@@ -71,7 +71,7 @@ export function renderFormattedText(text, keyPrefix) {
           <code
             key={`${keyPrefix}-c-${cIdx}`}
             style={{
-              backgroundColor: '#E5EAEE',
+              backgroundColor: '#E5E5E5',
               padding: '1px 5px',
               borderRadius: 4,
               fontSize: '0.85em',
@@ -117,20 +117,20 @@ export function renderMarkdownWithCitations(content, citations = [], onCitationC
               width: '100%',
               borderCollapse: 'collapse',
               fontSize: '0.84rem',
-              border: '1px solid #E5EAEE',
+              border: '1px solid #E5E5E5',
             }}
           >
             <thead>
-              <tr style={{ backgroundColor: '#F5F8FA' }}>
+              <tr style={{ backgroundColor: '#FFFFFF' }}>
                 {headers.map((h, i) => (
                   <th
                     key={i}
                     style={{
                       padding: '8px 12px',
-                      border: '1px solid #E5EAEE',
+                      border: '1px solid #E5E5E5',
                       textAlign: 'left',
                       fontWeight: 700,
-                      color: '#172B3A',
+                      color: '#111111',
                     }}
                   >
                     {renderInlineWithCitations(h, citations, onCitationClick)}
@@ -142,14 +142,14 @@ export function renderMarkdownWithCitations(content, citations = [], onCitationC
               {bodyRows.map((r, rIdx) => {
                 const cells = parseCells(r);
                 return (
-                  <tr key={rIdx} style={{ backgroundColor: rIdx % 2 === 1 ? '#F5F8FA' : '#FFFFFF' }}>
+                  <tr key={rIdx} style={{ backgroundColor: rIdx % 2 === 1 ? '#FFFFFF' : '#FFFFFF' }}>
                     {cells.map((cell, cIdx) => (
                       <td
                         key={cIdx}
                         style={{
                           padding: '8px 12px',
-                          border: '1px solid #E5EAEE',
-                          color: '#172B3A',
+                          border: '1px solid #E5E5E5',
+                          color: '#111111',
                         }}
                       >
                         {renderInlineWithCitations(cell, citations, onCitationClick)}
@@ -228,7 +228,7 @@ export function renderMarkdownWithCitations(content, citations = [], onCitationC
 
     if (trimmed.startsWith('### ')) {
       elements.push(
-        <h4 key={`h4-${elements.length}`} style={{ fontSize: '0.95rem', fontWeight: 700, margin: '14px 0 6px 0', color: '#172B3A' }}>
+        <h4 key={`h4-${elements.length}`} style={{ fontSize: '0.95rem', fontWeight: 700, margin: '14px 0 6px 0', color: '#111111' }}>
           {renderInlineWithCitations(trimmed.slice(4), citations, onCitationClick)}
         </h4>
       );
@@ -236,7 +236,7 @@ export function renderMarkdownWithCitations(content, citations = [], onCitationC
     }
     if (trimmed.startsWith('## ')) {
       elements.push(
-        <h3 key={`h3-${elements.length}`} style={{ fontSize: '1.02rem', fontWeight: 800, margin: '16px 0 8px 0', color: '#172B3A' }}>
+        <h3 key={`h3-${elements.length}`} style={{ fontSize: '1.02rem', fontWeight: 800, margin: '16px 0 8px 0', color: '#111111' }}>
           {renderInlineWithCitations(trimmed.slice(3), citations, onCitationClick)}
         </h3>
       );
@@ -244,7 +244,7 @@ export function renderMarkdownWithCitations(content, citations = [], onCitationC
     }
     if (trimmed.startsWith('# ')) {
       elements.push(
-        <h2 key={`h2-${elements.length}`} style={{ fontSize: '1.12rem', fontWeight: 800, margin: '18px 0 10px 0', color: '#172B3A' }}>
+        <h2 key={`h2-${elements.length}`} style={{ fontSize: '1.12rem', fontWeight: 800, margin: '18px 0 10px 0', color: '#111111' }}>
           {renderInlineWithCitations(trimmed.slice(2), citations, onCitationClick)}
         </h2>
       );

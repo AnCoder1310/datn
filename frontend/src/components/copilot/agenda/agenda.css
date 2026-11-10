@@ -1,23 +1,23 @@
 /* VINFAST AI SALES ENABLEMENT — MODERN SAAS AUTOMOTIVE DASHBOARD */
 /* Color Palette:
-   - Primary: #80E5E5 (Soft Cyan)
-   - Secondary: #172B3A (Midnight Navy)
-   - Background: #F5F8FA (Cloud White)
+   - Primary: #111111 (Soft Cyan)
+   - Secondary: #111111 (Midnight Navy)
+   - Background: #FAFAFA (Cloud White)
    - Neutral Cards: #FFFFFF
-   - Border: #E5EAEE
-   - Secondary Text: #64748B
-   - Muted Text: #94A3B8
+   - Border: #E5E5E5
+   - Secondary Text: #666666
+   - Muted Text: #999999
 */
 
 .copilot-shell {
-  --sw-primary: #80E5E5;
-  --sw-secondary: #172B3A;
-  --sw-bg: #F5F8FA;
+  --sw-primary: #111111;
+  --sw-secondary: #111111;
+  --sw-bg: #FFFFFF;
   --sw-card: #FFFFFF;
-  --sw-border: #E5EAEE;
-  --sw-text-primary: #172B3A;
-  --sw-text-secondary: #64748B;
-  --sw-text-muted: #94A3B8;
+  --sw-border: #E5E5E5;
+  --sw-text-primary: #111111;
+  --sw-text-secondary: #666666;
+  --sw-text-muted: #999999;
 
   display: flex;
   flex: 1;
@@ -71,16 +71,16 @@
 }
 
 .copilot-sidebar > button:hover {
-  background: #F5F8FA;
+  background: #FAFAFA;
   color: var(--sw-secondary);
 }
 
 .copilot-sidebar > button.is-active {
-  background: #80E5E5;
-  color: #172B3A;
+  background: #111111;
+  color: #FFFFFF;
   font-weight: 600;
-  border-color: #80E5E5;
-  box-shadow: 0 2px 6px rgba(128, 229, 229, 0.25);
+  border-color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .copilot-pages,
@@ -167,8 +167,8 @@
 }
 
 .agenda-btn-minimal:hover {
-  background: #F5F8FA;
-  border-color: #94A3B8;
+  background: #FAFAFA;
+  border-color: #999999;
   color: var(--sw-secondary);
 }
 
@@ -180,7 +180,7 @@
 
 .agenda-btn-minimal.is-muted:hover {
   color: var(--sw-secondary);
-  background: #F5F8FA;
+  background: #FAFAFA;
 }
 
 .agenda-btn-solid {
@@ -189,20 +189,20 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: 8px;
-  border: 1px solid #80E5E5;
-  background: #80E5E5;
-  color: #172B3A;
+  border: 1px solid #111111;
+  background: #111111;
+  color: #FFFFFF;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 1px 3px rgba(23, 43, 58, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: all 0.15s ease;
 }
 
 .agenda-btn-solid:hover {
-  background: #6ad6d6;
-  border-color: #6ad6d6;
+  background: #262626;
+  border-color: #262626;
 }
 
 .agenda-inline-link {
@@ -219,7 +219,7 @@
 }
 
 .agenda-inline-link:hover {
-  color: #172B3A;
+  color: #111111;
   text-decoration: underline;
 }
 
@@ -242,7 +242,7 @@
   border-radius: 14px;
   padding: 16px 20px 20px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(23, 43, 58, 0.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   position: relative;
   overflow: hidden;
 }
@@ -255,7 +255,7 @@
   overflow-x: auto;
   padding-bottom: 12px;
   margin-bottom: 14px;
-  border-bottom: 1px solid #E5EAEE;
+  border-bottom: 1px solid #E5E5E5;
   scrollbar-width: none;
 }
 
@@ -280,23 +280,23 @@
 }
 
 .vf-model-tab:hover {
-  background: #F5F8FA;
+  background: #FAFAFA;
   color: var(--sw-secondary);
-  border-color: #94A3B8;
+  border-color: #999999;
 }
 
 .vf-model-tab.is-active {
-  background: #80E5E5;
-  color: #172B3A;
-  border-color: #80E5E5;
+  background: #111111;
+  color: #FFFFFF;
+  border-color: #FFFFFF;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(128, 229, 229, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
 }
 
 .vf-model-tab-badge {
   font-size: 10.5px;
   font-weight: 700;
-  background: #172B3A;
+  background: #111111;
   color: #FFFFFF;
   padding: 1px 6px;
   border-radius: 999px;
@@ -304,8 +304,8 @@
 }
 
 .vf-model-tab.is-active .vf-model-tab-badge {
-  background: #172B3A;
-  color: #80E5E5;
+  background: #FFFFFF;
+  color: #111111;
 }
 
 /* HERO STAGE (2 COLUMNS: INFO & CAR VISUAL) */
@@ -330,12 +330,12 @@
 
 .vf-hero-segment {
   display: inline-block;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: #172B3A;
-  background: rgba(128, 229, 229, 0.22);
+  letter-spacing: 0.8px;
+  color: #FFFFFF;
+  background: #111111;
   padding: 3px 10px;
   border-radius: 999px;
   margin-bottom: 4px;
@@ -388,7 +388,7 @@
   align-items: center;
   gap: 10px;
   padding: 8px 12px;
-  background: #F5F8FA;
+  background: #FAFAFA;
   border: 1px solid var(--sw-border);
   border-radius: 10px;
   transition: all 0.12s ease;
@@ -396,15 +396,15 @@
 
 .vf-spec-tile:hover {
   background: #FFFFFF;
-  border-color: #80E5E5;
+  border-color: #111111;
 }
 
 .vf-spec-icon {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: rgba(128, 229, 229, 0.25);
-  color: #172B3A;
+  background: rgba(0, 0, 0, 0.12);
+  color: #111111;
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -449,19 +449,19 @@
   gap: 7px;
   padding: 8px 16px;
   border-radius: 8px;
-  background: #80E5E5;
-  color: #172B3A;
-  border: 1px solid #80E5E5;
+  background: #111111;
+  color: #FFFFFF;
+  border: 1px solid #111111;
   font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(128, 229, 229, 0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   transition: all 0.15s ease;
 }
 
 .vf-btn-primary:hover {
-  background: #6ad6d6;
-  border-color: #6ad6d6;
+  background: #262626;
+  border-color: #262626;
   transform: translateY(-1px);
 }
 
@@ -481,7 +481,7 @@
 }
 
 .vf-btn-secondary:hover {
-  background: #172B3A;
+  background: #111111;
   color: #FFFFFF;
 }
 
@@ -491,7 +491,7 @@
   gap: 6px;
   padding: 7px 12px;
   border-radius: 8px;
-  background: #F5F8FA;
+  background: #FAFAFA;
   color: var(--sw-secondary);
   border: 1px solid var(--sw-border);
   font-size: 12.5px;
@@ -501,13 +501,13 @@
 }
 
 .vf-btn-leads:hover {
-  background: #E5EAEE;
+  background: #E5E5E5;
 }
 
 .vf-btn-leads.is-filtering {
-  background: #172B3A;
-  color: #80E5E5;
-  border-color: #172B3A;
+  background: #111111;
+  color: #FFFFFF;
+  border-color: #FFFFFF;
 }
 
 /* VEHICLE VISUAL STAGE */
@@ -523,7 +523,7 @@
 .vf-visual-backdrop {
   position: absolute;
   inset: 10% 5%;
-  background: radial-gradient(ellipse at center, rgba(128, 229, 229, 0.18) 0%, rgba(245, 248, 250, 0) 70%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.04) 0%, rgba(245, 248, 250, 0) 70%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
@@ -535,7 +535,7 @@
   max-width: 100%;
   max-height: 250px;
   object-fit: contain;
-  filter: drop-shadow(0 12px 24px rgba(23, 43, 58, 0.12));
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.12));
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -549,7 +549,7 @@
   left: 15%;
   right: 15%;
   height: 18px;
-  background: radial-gradient(ellipse at center, rgba(23, 43, 58, 0.22) 0%, rgba(23, 43, 58, 0) 70%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0) 70%);
   border-radius: 50%;
   z-index: 0;
 }
@@ -581,7 +581,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  box-shadow: 0 1px 3px rgba(23, 43, 58, 0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   transition: all 0.15s ease;
   position: relative;
   overflow: hidden;
@@ -594,14 +594,14 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: #80E5E5;
+  background: #111111;
   opacity: 0;
   transition: opacity 0.15s ease;
 }
 
 .agenda-metric-cell:hover {
-  border-color: #80E5E5;
-  box-shadow: 0 4px 12px rgba(23, 43, 58, 0.05);
+  border-color: #111111;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transform: translateY(-1px);
 }
 
@@ -657,7 +657,7 @@
   border-radius: 12px;
   padding: 14px 18px 16px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(23, 43, 58, 0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .agenda-pipeline-header {
@@ -690,7 +690,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: #F5F8FA;
+  background: #FAFAFA;
   border: 1px solid var(--sw-border);
   border-radius: 6px;
   padding: 3px 10px;
@@ -702,7 +702,7 @@
 }
 
 .agenda-pill-clear:hover {
-  background: #E5EAEE;
+  background: #E5E5E5;
 }
 
 .agenda-pipeline-bar {
@@ -710,7 +710,7 @@
   height: 8px;
   border-radius: 4px;
   overflow: hidden;
-  background: #E5EAEE;
+  background: #E5E5E5;
   gap: 2px;
   margin-bottom: 10px;
 }
@@ -728,7 +728,7 @@
 }
 
 .agenda-pipeline-segment.is-active {
-  outline: 2px solid #172B3A;
+  outline: 2px solid #111111;
   outline-offset: 1px;
 }
 
@@ -754,15 +754,15 @@
 }
 
 .agenda-stage-pill:hover {
-  background: #F5F8FA;
+  background: #FAFAFA;
   color: var(--sw-secondary);
-  border-color: #94A3B8;
+  border-color: #999999;
 }
 
 .agenda-stage-pill.is-active {
-  background: #172B3A;
-  color: #80E5E5;
-  border-color: #172B3A;
+  background: #111111;
+  color: #FFFFFF;
+  border-color: #FFFFFF;
   font-weight: 700;
 }
 
@@ -782,7 +782,7 @@
   border-radius: 12px;
   padding: 16px 18px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(23, 43, 58, 0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   min-width: 0;
 }
 
@@ -853,7 +853,7 @@
   color: var(--sw-text-muted);
   text-align: center;
   font-size: 13px;
-  background: #F5F8FA;
+  background: #FAFAFA;
   border-radius: 8px;
 }
 
@@ -895,14 +895,14 @@
 
 .agenda-queue-tabs button:hover,
 .agenda-filter-tabs button:hover {
-  background: #F5F8FA;
+  background: #FAFAFA;
   color: var(--sw-secondary);
 }
 
 .agenda-queue-tabs button.is-active,
 .agenda-filter-tabs button.is-active {
   background: rgba(128, 229, 229, 0.22);
-  color: #172B3A;
+  color: #111111;
   font-weight: 700;
 }
 
@@ -913,14 +913,14 @@
   font-weight: 700;
   padding: 1px 6px;
   border-radius: 999px;
-  background: #E5EAEE;
+  background: #E5E5E5;
   color: var(--sw-secondary);
 }
 
 .agenda-queue-tabs button.is-active em,
 .agenda-filter-tabs button.is-active em {
-  background: #172B3A;
-  color: #80E5E5;
+  background: #111111;
+  color: #FFFFFF;
 }
 
 /* CUSTOMER LIST ROWS */
@@ -936,7 +936,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 11px 4px;
-  border-bottom: 1px solid #E5EAEE;
+  border-bottom: 1px solid #E5E5E5;
 }
 
 .agenda-minimal-row:last-child,
@@ -973,15 +973,15 @@
 }
 
 .agenda-customer-name-btn:hover {
-  color: #172B3A;
+  color: #111111;
   text-decoration: underline;
 }
 
 .agenda-model-tag {
   font-size: 11.5px;
   font-weight: 700;
-  color: #172B3A;
-  background: #80E5E5;
+  color: #FFFFFF;
+  background: #111111;
   padding: 2px 7px;
   border-radius: 4px;
 }
@@ -989,7 +989,7 @@
 .agenda-stage-tag {
   font-size: 11.5px;
   color: var(--sw-text-secondary);
-  background: #F5F8FA;
+  background: #FAFAFA;
   padding: 2px 7px;
   border-radius: 4px;
 }
@@ -1029,21 +1029,21 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 6px;
-  background: #80E5E5;
-  color: #172B3A;
-  border: 1px solid #80E5E5;
+  background: #111111;
+  color: #FFFFFF;
+  border: 1px solid #111111;
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(128, 229, 229, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   transition: all 0.12s ease;
 }
 
 .agenda-btn-primary-action:hover {
-  background: #6ad6d6;
-  border-color: #6ad6d6;
+  background: #262626;
+  border-color: #262626;
 }
 
 .agenda-btn-subtle {
@@ -1061,7 +1061,7 @@
 }
 
 .agenda-btn-subtle:hover {
-  background: #F5F8FA;
+  background: #FAFAFA;
   color: var(--sw-secondary);
 }
 
@@ -1069,7 +1069,7 @@
   width: 100%;
   padding: 9px;
   margin-top: 8px;
-  background: #F5F8FA;
+  background: #FAFAFA;
   border: 1px dashed var(--sw-border);
   border-radius: 8px;
   color: var(--sw-secondary);
@@ -1080,7 +1080,7 @@
 }
 
 .agenda-expand-btn:hover {
-  background: #F5F8FA;
+  background: #FAFAFA;
 }
 
 /* TASK ROWS */
@@ -1095,11 +1095,11 @@
 }
 
 .agenda-task-toggle:hover {
-  color: #80E5E5;
+  color: #111111;
 }
 
 .agenda-task-toggle.is-done {
-  color: #172B3A;
+  color: #111111;
 }
 
 .agenda-task-header-line {
@@ -1123,13 +1123,13 @@
 }
 
 .agenda-task-pill.is-high {
-  background: #172B3A;
-  color: #172B3A;
+  background: #111111;
+  color: #FFFFFF;
 }
 
 .agenda-task-pill.is-overdue {
-  background: #172B3A;
-  color: #172B3A;
+  background: #111111;
+  color: #FFFFFF;
 }
 
 .agenda-task-details {
@@ -1150,7 +1150,7 @@
   text-align: left;
   cursor: pointer;
   color: var(--sw-secondary);
-  border-bottom: 1px solid #E5EAEE;
+  border-bottom: 1px solid #E5E5E5;
   transition: background-color 0.12s ease;
 }
 
@@ -1159,7 +1159,7 @@
 }
 
 .agenda-upcoming:hover {
-  background: #F5F8FA;
+  background: #FAFAFA;
 }
 
 .agenda-upcoming-body {
@@ -1209,11 +1209,11 @@
 }
 
 .agenda-bar-row:hover {
-  background: #F5F8FA;
+  background: #FAFAFA;
 }
 
 .agenda-bar-row.is-selected {
-  background: rgba(128, 229, 229, 0.18);
+  background: rgba(0, 0, 0, 0.04);
   border-radius: 6px;
 }
 
@@ -1238,7 +1238,7 @@
 
 .agenda-bar-track {
   height: 6px;
-  background: #E5EAEE;
+  background: #E5E5E5;
   border-radius: 3px;
   overflow: hidden;
 }
@@ -1246,13 +1246,13 @@
 .agenda-bar-track span {
   display: block;
   height: 100%;
-  background: #80E5E5;
+  background: #111111;
   border-radius: 3px;
   transition: width 0.3s ease;
 }
 
 .agenda-bar-row.is-selected .agenda-bar-track span {
-  background: #172B3A;
+  background: #111111;
 }
 
 /* MESSAGE ACTIVITY CHART */
@@ -1284,11 +1284,11 @@
 }
 
 .agenda-legend i.customer {
-  background: #80E5E5;
+  background: #111111;
 }
 
 .agenda-legend i.sales {
-  background: #172B3A;
+  background: #111111;
 }
 
 .agenda-activity-chart {
@@ -1325,12 +1325,12 @@
 }
 
 .agenda-activity-stack .customer {
-  background: #80E5E5;
+  background: #111111;
   width: 100%;
 }
 
 .agenda-activity-stack .sales {
-  background: #172B3A;
+  background: #111111;
   width: 100%;
 }
 
@@ -1352,9 +1352,9 @@
 
 /* ERROR BANNER */
 .sw-error-banner {
-  background: #172B3A;
-  border: 1px solid #172B3A;
-  color: #172B3A;
+  background: #111111;
+  border: 1px solid #111111;
+  color: #FFFFFF;
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 13px;
@@ -1367,7 +1367,7 @@
 .sw-text-button {
   background: none;
   border: 0;
-  color: #172B3A;
+  color: #111111;
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
@@ -1395,7 +1395,7 @@
   border: 1px solid var(--sw-border);
   border-radius: 10px;
   flex-shrink: 0;
-  box-shadow: 0 1px 3px rgba(23, 43, 58, 0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .agenda-calendar-topbar-left {
@@ -1442,9 +1442,9 @@
 }
 
 .agenda-calendar-nav-buttons .is-current-week {
-  background: rgba(128, 229, 229, 0.2);
-  border-color: #80E5E5;
-  color: #172B3A;
+  background: rgba(0, 0, 0, 0.06);
+  border-color: #111111;
+  color: #111111;
   font-weight: 600;
 }
 
@@ -1492,7 +1492,7 @@
   background: #FFFFFF;
   border: 1px solid var(--sw-border);
   border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(23, 43, 58, 0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .agenda-calendar-grid {
@@ -1530,7 +1530,7 @@
 .agenda-calendar-corner {
   left: 0;
   z-index: 12;
-  background: #F5F8FA;
+  background: #FAFAFA;
   font-size: 10px;
   gap: 2px;
 }
@@ -1573,26 +1573,26 @@
   height: 18px;
   padding: 0 5px;
   border-radius: 4px;
-  background: #172B3A;
-  color: #80E5E5;
+  background: #111111;
+  color: #FFFFFF;
   font-size: 10.5px;
   font-weight: 700;
   line-height: 1;
 }
 
 .agenda-calendar-day-heading.is-today {
-  background: #F5F8FA;
-  box-shadow: inset 0 2px 0 #80E5E5;
+  background: #FAFAFA;
+  box-shadow: inset 0 2px 0 #111111;
 }
 
 .agenda-calendar-day-heading.is-today .agenda-day-name {
-  color: #172B3A;
+  color: #111111;
   font-weight: 700;
 }
 
 .agenda-calendar-day-heading.is-today .agenda-day-date {
-  background: #80E5E5;
-  color: #172B3A;
+  background: #111111;
+  color: #FFFFFF;
   padding: 2px 8px;
   border-radius: 4px;
   font-weight: 800;
@@ -1609,8 +1609,8 @@
     to bottom,
     transparent 0,
     transparent 59px,
-    #E5EAEE 59px,
-    #E5EAEE 60px
+    #E5E5E5 59px,
+    #E5E5E5 60px
   );
 }
 
@@ -1634,17 +1634,17 @@
     to bottom,
     transparent 0,
     transparent 29px,
-    #FAFCFD 29px,
-    #FAFCFD 30px,
+    #FAFAFA 29px,
+    #FAFAFA 30px,
     transparent 30px,
     transparent 59px,
-    #E5EAEE 59px,
-    #E5EAEE 60px
+    #E5E5E5 59px,
+    #E5E5E5 60px
   );
 }
 
 .agenda-calendar-day.is-today {
-  background-color: #F5F8FA;
+  background-color: #FAFAFA;
 }
 
 .agenda-calendar-event {
@@ -1655,24 +1655,24 @@
   gap: 2px;
   text-align: left;
   border: 1px solid var(--sw-border);
-  border-left: 3px solid #80E5E5;
+  border-left: 3px solid #111111;
   border-radius: 6px;
   background: #FFFFFF;
   color: var(--sw-secondary);
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(23, 43, 58, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: all 0.12s ease;
 }
 
 .agenda-calendar-event:hover {
   z-index: 8 !important;
-  background: #F5F8FA;
-  border-color: #80E5E5;
+  background: #FAFAFA;
+  border-color: #111111;
 }
 
 .agenda-calendar-event.appointment {
-  border-left-color: #172B3A;
+  border-left-color: #111111;
 }
 
 .agenda-calendar-event.is-completed {
@@ -1723,7 +1723,7 @@
 }
 
 .agenda-calendar-event:focus-visible {
-  outline: 2px solid #80E5E5;
+  outline: 2px solid #111111;
   outline-offset: 1px;
   z-index: 9 !important;
   height: auto !important;
@@ -1734,7 +1734,7 @@
   position: absolute;
   height: 2px;
   width: 100%;
-  background: #80E5E5;
+  background: #111111;
   z-index: 4;
   pointer-events: none;
 }
@@ -1747,16 +1747,16 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #172B3A;
-  border: 1.5px solid #80E5E5;
+  background: #111111;
+  border: 1.5px solid #111111;
 }
 
 .agenda-now-badge {
   position: absolute;
   right: 4px;
   top: -10px;
-  background: #172B3A;
-  color: #80E5E5;
+  background: #111111;
+  color: #FFFFFF;
   font-size: 9.5px;
   font-weight: 700;
   padding: 1px 5px;
@@ -1818,7 +1818,7 @@
 }
 
 .agenda-highlight-task {
-  outline: 2px solid #80E5E5;
+  outline: 2px solid #111111;
   outline-offset: 2px;
   border-radius: 8px;
 }

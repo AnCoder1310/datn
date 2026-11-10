@@ -5,7 +5,7 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(23, 43, 58, 0.45);
+  background: rgba(0, 0, 0, 0.45);
   
 }
 .practice-finish-dialog {
@@ -13,11 +13,11 @@
   width: min(100%, 960px);
   max-height: min(90vh, 760px);
   overflow-y: auto;
-  border: 1px solid #E5EAEE;
+  border: 1px solid #E5E5E5;
   border-radius: 20px;
   background: #fff;
-  box-shadow: 0 20px 48px rgba(23, 43, 58, 0.12);
-  color: #172B3A;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12);
+  color: #111111;
 }
 .practice-finish-close {
   position: absolute;
@@ -29,26 +29,26 @@
   height: 32px;
   border: 0;
   background: transparent;
-  color: #64748B;
+  color: #666666;
 }
 .practice-finish-close svg { width: 28px; height: 28px; }
-.practice-finish-close:hover { color: #172B3A; }
+.practice-finish-close:hover { color: #111111; }
 .practice-finish-main { display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 30px; padding: 55px 54px 28px; }
-.practice-finish-art { display: grid; place-items: center; width: 140px; height: 140px; border-radius: 50%; background: #F5F8FA; border: 1px solid #E5EAEE; }
+.practice-finish-art { display: grid; place-items: center; width: 140px; height: 140px; border-radius: 50%; background: #FFFFFF; border: 1px solid #E5E5E5; }
 .practice-finish-art svg { width: 88px; height: 88px;  }
-.practice-finish-main h2 { font-size: clamp(1.45rem, 3vw, 1.9rem); font-weight: 800; line-height: 1.2; color: #172B3A; }
-.practice-finish-main p { max-width: 520px; margin-top: 18px; font-size: 1.12rem; line-height: 1.5; color: #64748B; }
-.practice-finish-info { display: flex; align-items: flex-start; gap: 20px; margin: 0 54px 28px; padding: 22px 24px; border-radius: 16px; background: #F5F8FA; border: 1px solid #E5EAEE; }
-.practice-finish-info-icon { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 12px; background: #FFFFFF; color: #172B3A; font-size: 1.5rem; font-weight: 800; border: 1px solid #E5EAEE; }
-.practice-finish-info p { color: #64748B; font-size: 1rem; line-height: 1.55; }
-.practice-finish-info strong { color: #172B3A; }
-.practice-finish-actions { display: flex; justify-content: flex-end; gap: 16px; padding: 24px 54px 30px; border-top: 1px solid #E5EAEE; }
+.practice-finish-main h2 { font-size: clamp(1.45rem, 3vw, 1.9rem); font-weight: 800; line-height: 1.2; color: #111111; }
+.practice-finish-main p { max-width: 520px; margin-top: 18px; font-size: 1.12rem; line-height: 1.5; color: #666666; }
+.practice-finish-info { display: flex; align-items: flex-start; gap: 20px; margin: 0 54px 28px; padding: 22px 24px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E5E5E5; }
+.practice-finish-info-icon { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 12px; background: #FFFFFF; color: #111111; font-size: 1.5rem; font-weight: 800; border: 1px solid #E5E5E5; }
+.practice-finish-info p { color: #666666; font-size: 1rem; line-height: 1.55; }
+.practice-finish-info strong { color: #111111; }
+.practice-finish-actions { display: flex; justify-content: flex-end; gap: 16px; padding: 24px 54px 30px; border-top: 1px solid #E5E5E5; }
 .practice-finish-actions button { min-width: 205px; min-height: 52px; padding: 12px 24px; border-radius: 999px; font-size: .98rem; font-weight: 700; }
 .practice-finish-actions button:disabled, .practice-finish-close:disabled { opacity: .62; cursor: wait; }
-.practice-finish-cancel { border: 1px solid #E5EAEE; background: #FFFFFF; color: #172B3A; }
+.practice-finish-cancel { border: 1px solid #E5E5E5; background: #FFFFFF; color: #111111; }
 .practice-finish-cancel:hover:not(:disabled) { background: #FFFFFF; }
-.practice-finish-confirm { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; background: #80E5E5; color: #172B3A; border: 1px solid #80E5E5; font-weight: 700; box-shadow: 0 2px 8px rgba(128, 229, 229, 0.3); }
-.practice-finish-confirm:hover:not(:disabled) { background: #6ad6d6; }
+.practice-finish-confirm { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; background: #111111; color: #FFFFFF; border: 1px solid #111111; font-weight: 700; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
+.practice-finish-confirm:hover:not(:disabled) { background: #262626; }
 .practice-finish-spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.45); border-top-color: #fff; border-radius: 50%; animation: practice-finish-spin .8s linear infinite; }
 @keyframes practice-finish-spin { to { transform: rotate(360deg); } }
 

@@ -9,10 +9,10 @@
   gap: 10px;
   min-height: 40px;
   padding: 4px 10px 4px 4px;
-  border: 1px solid #E5EAEE;
+  border: 1px solid #E5E5E5;
   border-radius: 999px;
   background: #FFFFFF;
-  color: #172B3A;
+  color: #111111;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
@@ -21,12 +21,12 @@
 
 .account-menu-trigger:hover,
 .account-menu-trigger.is-open {
-  background: #F5F8FA;
-  border-color: #80E5E5;
+  background: #FFFFFF;
+  border-color: #111111;
 }
 
 .account-menu-trigger:focus-visible {
-  outline: 2px solid #80E5E5;
+  outline: 2px solid #111111;
   outline-offset: 2px;
 }
 
@@ -38,7 +38,7 @@
 .account-menu-chevron {
   width: 14px;
   height: 14px;
-  color: #64748B;
+  color: #666666;
   transition: transform 0.2s ease;
 }
 
@@ -57,10 +57,10 @@
   flex-direction: column;
   gap: 12px;
   background: #FFFFFF;
-  border: 1px solid #E5EAEE;
+  border: 1px solid #E5E5E5;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(23, 43, 58, 0.08);
-  color: #172B3A;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  color: #111111;
   font-family: inherit;
 }
 
@@ -77,9 +77,9 @@
   border-radius: 10px;
   display: grid;
   place-items: center;
-  background: rgba(128, 229, 229, 0.2);
-  border: 1px solid #80E5E5;
-  color: #172B3A;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #111111;
+  color: #111111;
   font-size: 15px;
   font-weight: 700;
 }
@@ -93,20 +93,20 @@
 .account-menu-names strong {
   font-size: 14px;
   font-weight: 700;
-  color: #172B3A;
+  color: #111111;
   overflow-wrap: anywhere;
 }
 
 .account-menu-names span {
   font-size: 12px;
-  color: #64748B;
+  color: #666666;
   overflow-wrap: anywhere;
 }
 
 .account-menu-facts {
   margin: 0;
   padding-bottom: 12px;
-  border-bottom: 1px solid #E5EAEE;
+  border-bottom: 1px solid #E5E5E5;
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 6px 12px;
@@ -114,21 +114,21 @@
 }
 
 .account-menu-facts dt {
-  color: #64748B;
+  color: #666666;
 }
 
 .account-menu-facts dd {
   margin: 0;
   font-weight: 600;
-  color: #172B3A;
+  color: #111111;
 }
 
 .account-menu-logout {
   min-height: 38px;
-  border: 1px solid #E5EAEE;
+  border: 1px solid #E5E5E5;
   border-radius: 8px;
   background: #FFFFFF;
-  color: #172B3A;
+  color: #111111;
   font-family: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -146,21 +146,21 @@
 }
 
 .account-menu-logout:hover {
-  background: #F5F8FA;
-  border-color: #94A3B8;
+  background: #FFFFFF;
+  border-color: #999999;
 }
 
 .account-menu-logout:focus-visible {
-  outline: 2px solid #80E5E5;
+  outline: 2px solid #111111;
   outline-offset: 2px;
 }
 
 .account-menu-switch {
   min-height: 38px;
-  border: 1px solid #80E5E5;
+  border: 1px solid #111111;
   border-radius: 8px;
-  background: #80E5E5;
-  color: #172B3A;
+  background: #111111;
+  color: #FFFFFF;
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;
@@ -169,17 +169,17 @@
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(128, 229, 229, 0.25);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   transition: all 0.18s ease;
 }
 
 .account-menu-switch:hover {
-  background: #6ad6d6;
-  border-color: #6ad6d6;
+  background: #262626;
+  border-color: #262626;
 }
 
 .account-menu-switch:focus-visible {
-  outline: 2px solid #172B3A;
+  outline: 2px solid #111111;
   outline-offset: 2px;
 }
 
