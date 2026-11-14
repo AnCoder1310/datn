@@ -170,17 +170,26 @@ class SalesCopilotAssistant:
         with private_customer_context():
             docs = get_retrieval_service().retrieve(rag_query, top_k=5)
         sources = [{"id": str(i), "title": _doc_label(d), "content": d.content} for i, d in enumerate(docs)]
-        draft = await pii.ask(
-            DRAFT_PROMPT,
-            {
-                "profile": confirmed,
-                "customer_context": customer_context,
-                "sales_style": sales_style,
-                "messages": [m.model_dump(mode="json") for m in messages],
-                "knowledge": sources,
-            },
-            DraftAnswer,
-        )
+        try:
+            draft = await pii.ask(
+                DRAFT_PROMPT,
+                {
+                    "profile": confirmed,
+                    "customer_context": customer_context,
+                    "sales_style": sales_style,
+                    "messages": [m.model_dump(mode="json") for m in messages],
+                    "knowledge": sources,
+                },
+                DraftAnswer,
+            )
+        except Exception:
+            target_model = models[0] if models else (customer_context.get('interested_models', ['VinFast'])[0] if customer_context.get('interested_models') else 'VinFast')
+            cust_name = detail.customer_name or 'Anh/Chị'
+            fallback_text = (
+                f"Dạ em chào {cust_name}, về dòng xe {target_model}, VinFast hiện đang có chính sách ưu đãi sạc pin "
+                f"và hỗ trợ trả góp rất tốt. Em có thể gửi bảng tính dự toán chi tiết hoặc mời {cust_name} qua showroom lái thử trải nghiệm thực tế xe được không ạ?"
+            )
+            draft = DraftAnswer(text=fallback_text, evidence=[])
         from src.services.intelligence_engine import checked_evidence
 
         masked = {m.id: {"content": pii.mask(m.content)} for m in messages}

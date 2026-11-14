@@ -5,7 +5,7 @@ from src.services import llm as llm_service
 
 
 def test_openrouter_uses_provider_specific_model(monkeypatch):
-    settings = Settings(
+    settings = Settings(_env_file=None, 
         llm_provider="openrouter",
         openrouter_api_key="sk-or-v1-test-only",
         openrouter_model_name="openai/gpt-6-luna",
@@ -20,7 +20,7 @@ def test_openrouter_uses_provider_specific_model(monkeypatch):
 
 
 def test_openrouter_fails_before_network_call_when_key_is_missing(monkeypatch):
-    settings = Settings(llm_provider="openrouter", openrouter_api_key="")
+    settings = Settings(_env_file=None, llm_provider="openrouter", openrouter_api_key="")
     monkeypatch.setattr(llm_service, "get_settings", lambda: settings)
 
     with pytest.raises(ValueError, match="openrouter is not configured"):
@@ -28,7 +28,7 @@ def test_openrouter_fails_before_network_call_when_key_is_missing(monkeypatch):
 
 
 def test_openrouter_accepts_separate_practice_judge_model(monkeypatch):
-    settings = Settings(openrouter_api_key="test-only")
+    settings = Settings(_env_file=None, openrouter_api_key="test-only")
     monkeypatch.setattr(llm_service, "get_settings", lambda: settings)
     model = llm_service.get_llm(
         provider=settings.practice_judge_provider, model=settings.practice_judge_model, temperature=0

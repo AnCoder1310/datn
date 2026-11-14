@@ -91,7 +91,7 @@ def get_llm(
         from src.services.provider_response import CopilotChatOpenAI
 
         api_key = settings.openrouter_api_key
-        target_model = model or settings.model_name
+        target_model = model or settings.openrouter_model_name or settings.model_name
         base_url = settings.openrouter_base_url or "https://openrouter.ai/api/v1"
         is_9router = "9router" in base_url or "127.0.0.1:20128" in base_url
 

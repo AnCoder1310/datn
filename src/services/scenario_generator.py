@@ -320,22 +320,22 @@ class ScenarioGeneratorService:
             vf_key = vf_match.group(1).upper()
             vf_model = f"VF {vf_key}" if vf_key != "WILD" else "VF Wild"
             vf_num = vf_key
-        elif re.search(r"(xe\s*máy\s*điện|xe\s*máy|chạy\s*phố|nhỏ\s*gọn|đô\s*thị|đầu\s*tiên)", clean, re.IGNORECASE):
+        elif re.search(r"(xe\s*máy\s*điện|xe\s*máy|chạy\s*phố|nhỏ\s*gọn|đô\s*thị|đầu\s*tiên)", clean, re.IGNORECASE):
             vf_model = "VF 3"
             vf_num = "3"
-        elif re.search(r"(taxi|dịch\s*vụ|chạy\s*grab|vios|i10|tiết\s*kiệm\s*xăng)", clean, re.IGNORECASE):
+        elif re.search(r"(taxi|dịch\s*vụ|chạy\s*grab|vios|i10|tiết\s*kiệm\s*xăng)", clean, re.IGNORECASE):
             vf_model = "VF 5 Plus"
             vf_num = "5"
-        elif re.search(r"(chung\s*cư|gia\s*đình\s*trẻ|seltos|creta)", clean, re.IGNORECASE):
+        elif re.search(r"(chung\s*cư|gia\s*đình\s*trẻ|seltos|creta)", clean, re.IGNORECASE):
             vf_model = "VF 6"
             vf_num = "6"
-        elif re.search(r"(cx-5|cx5|cr-v|crv|tucson|thể\s*thao|sedan)", clean, re.IGNORECASE):
+        elif re.search(r"(cx-5|cx5|cr-v|crv|tucson|thể\s*thao|sedan)", clean, re.IGNORECASE):
             vf_model = "VF 7"
             vf_num = "7"
-        elif re.search(r"(santa\s*fe|everest|toàn\s*cầu|doanh\s*nhân)", clean, re.IGNORECASE):
+        elif re.search(r"(santa\s*fe|everest|toàn\s*cầu|doanh\s*nhân)", clean, re.IGNORECASE):
             vf_model = "VF 8"
             vf_num = "8"
-        elif re.search(r"(chủ\s*tịch|carnival|sang\s*trọng|full-size)", clean, re.IGNORECASE):
+        elif re.search(r"(chủ\s*tịch|carnival|sang\s*trọng|full-size)", clean, re.IGNORECASE):
             vf_model = "VF 9"
             vf_num = "9"
         else:
@@ -343,17 +343,17 @@ class ScenarioGeneratorService:
             vf_num = "6"
 
         # 2. Extract Gender, Name, Age
-        is_female = bool(re.search(r"(nữ|chị|cô|bà|mẹ)", clean, re.IGNORECASE))
-        is_elderly = bool(re.search(r"(bác|chú|bác\s*tài)", clean, re.IGNORECASE))
+        is_female = bool(re.search(r"(nữ|chị|cô|bà|mẹ)", clean, re.IGNORECASE))
+        is_elderly = bool(re.search(r"(bác|chú|bác\s*tài)", clean, re.IGNORECASE))
 
-        name_match = re.search(r"tên\s+(?:là\s+)?([A-ZÀ-Ỹa-zà-ỹ]+)", clean, re.IGNORECASE)
+        name_match = re.search(r"tên\s+(?:là\s+)?([A-ZÀ-Ỹa-zà-ỹ]+)", clean, re.IGNORECASE)
         extracted_name = None
         if name_match:
             cand = name_match.group(1).capitalize()
             if cand.lower() not in {"nữ", "nam", "trẻ", "già", "khách", "hàng", "muốn", "cần", "lo", "bác"}:
                 extracted_name = cand
         if not extracted_name:
-            kh_match = re.search(r"(?:anh|chị|bác)\s+([A-ZÀ-Ỹa-zà-ỹ]+)", clean, re.IGNORECASE)
+            kh_match = re.search(r"(?:anh|chị|bác)\s+([A-ZÀ-Ỹa-zà-ỹ]+)", clean, re.IGNORECASE)
             if kh_match:
                 cand = kh_match.group(1).capitalize()
                 if cand.lower() not in {"nữ", "nam", "trẻ", "già", "khách", "hàng", "muốn", "cần", "lo", "tài"}:

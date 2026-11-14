@@ -13,7 +13,8 @@ if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-load_dotenv()
+if __name__ == "__main__":
+    load_dotenv()
 
 from src.config import get_settings  # noqa: E402
 from src.integrations.auth_repository import SQLAuthRepository  # noqa: E402

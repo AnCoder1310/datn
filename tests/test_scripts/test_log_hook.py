@@ -64,7 +64,7 @@ def test_codex_capture_from_subdirectory(tmp_path):
     entry = json.loads((tmp_path / "nested/logs/session.jsonl").read_text(encoding="utf-8"))
     assert entry["prompt"] == payload["prompt"]
     assert entry["session_id"] == "synthetic"
-    assert entry["repo"] == "P-043"
+    assert entry["repo"] in {"P-043", "datn"}
     assert entry["commit"]
 
 

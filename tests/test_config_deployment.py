@@ -19,6 +19,7 @@ def test_production_rejects_unsafe_configuration(override: dict[str, str], messa
         "AUTH_COOKIE_SECURE": "true",
         "DATABASE_URL": "postgresql://user:pass@db/app",
         "VECTOR_STORE_TYPE": "pgvector",
+        "EMBEDDING_PROVIDER": "openrouter",
         "OPENROUTER_API_KEY": "test-key",
         **override,
     }

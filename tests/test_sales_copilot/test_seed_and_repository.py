@@ -5,6 +5,9 @@ from src.integrations.sales_copilot_repository import SQLSalesCopilotRepository
 from src.services.sales_conversation_service import SalesConversationService, extract_paragraphs_from_docx
 
 
+import os, pytest
+
+@pytest.mark.skipif(not os.path.exists('data/message_sales.docx'), reason='Fixture data/message_sales.docx not found')
 def test_docx_paragraph_extraction():
     paragraphs = extract_paragraphs_from_docx("data/message_sales.docx")
     assert len(paragraphs) >= 150
@@ -13,6 +16,7 @@ def test_docx_paragraph_extraction():
     assert any("Hội thoại 3" in p for p in paragraphs)
 
 
+@pytest.mark.skipif(not os.path.exists('data/message_sales.docx'), reason='Fixture data/message_sales.docx not found')
 def test_repository_and_seed():
     settings = get_settings()
     repo = SQLSalesCopilotRepository(settings.database_url)

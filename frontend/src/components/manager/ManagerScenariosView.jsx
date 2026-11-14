@@ -22,7 +22,7 @@ export function ManagerScenariosView() {
     try {
       const list = await managerApi.getScenarios();
       const customs = (list || []).filter(
-        (s) => s.scenario_id.startsWith("SCENARIO_CUSTOM_") || s.scenario_id.startsWith("VF6_") || s.scenario_id.includes("CUSTOM")
+        (s) => s.scenario_id.startsWith("SCENARIO_CUSTOM_") || s.scenario_id.startsWith("SCENARIO_GEN_") || s.scenario_id.startsWith("VF6_") || s.scenario_id.includes("CUSTOM") || s.scenario_id.includes("GEN")
       );
       setCustomScenarios(customs);
     } catch (err) {

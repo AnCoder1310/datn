@@ -1,4 +1,6 @@
 import os
+for _k in ['MODEL_NAME', 'OPENROUTER_MODEL_NAME', 'PRACTICE_JUDGE_MODEL', 'EMBEDDING_PROVIDER', 'OPENROUTER_BASE_URL', 'LANGCHAIN_PROJECT']:
+    os.environ.pop(_k, None)
 from unittest.mock import AsyncMock
 
 import pytest
@@ -36,3 +38,11 @@ def mock_llm():
     mock = AsyncMock()
     mock.ainvoke.return_value = AsyncMock(content="Mocked LLM response")
     return mock
+
+@pytest.fixture(autouse=True)
+def isolate_model_env():
+    for _var in ['MODEL_NAME', 'OPENROUTER_MODEL_NAME', 'PRACTICE_JUDGE_MODEL', 'EMBEDDING_PROVIDER', 'OPENROUTER_BASE_URL', 'LANGCHAIN_PROJECT']:
+        os.environ.pop(_var, None)
+    yield
+    for _var in ['MODEL_NAME', 'OPENROUTER_MODEL_NAME', 'PRACTICE_JUDGE_MODEL', 'EMBEDDING_PROVIDER', 'OPENROUTER_BASE_URL', 'LANGCHAIN_PROJECT']:
+        os.environ.pop(_var, None)

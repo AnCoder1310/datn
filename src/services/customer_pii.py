@@ -19,6 +19,8 @@ class PIIUnavailableError(ValueError):
 class CustomerPII:
     def __init__(self, encrypted: str | None = None, *, customer_id: str | None = None):
         key = get_settings().sales_pii_key.get_secret_value()
+        if not key:
+            raise PIIUnavailableError("Cần cấu hình SALES_PII_KEY hợp lệ để xử lý dữ liệu khách.")
         self.customer_id = customer_id
         try:
             self.cipher = Fernet(key.encode())

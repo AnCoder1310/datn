@@ -232,18 +232,27 @@ class RecordedPracticeService:
     async def approve(self, session_id: str, manager_id: str, decision: ManagerReviewDecision) -> ManagerReviewRecord:
         record = await self._records.approve(session_id, manager_id, decision)
         if self._audit:
+            override_reason = decision.change_reason or decision.general_comment or 'Quản lý phê duyệt'
             if decision.score_overrides:
+                overrides_data = [
+                    {
+                        'criterion': crit.value if hasattr(crit, 'value') else str(crit),
+                        'score': val.score if hasattr(val, 'score') else val,
+                        **({'reason': val.reason} if hasattr(val, 'reason') and val.reason else {}),
+                    }
+                    for crit, val in decision.score_overrides.items()
+                ]
                 await self._audit.log_score_override(
                     manager_id=manager_id,
                     session_id=session_id,
-                    reason=decision.change_reason,
-                    score_overrides=[so.model_dump() for so in decision.score_overrides],
+                    reason=override_reason,
+                    score_overrides=overrides_data,
                 )
             else:
                 await self._audit.log_review_approval(
                     manager_id=manager_id,
                     session_id=session_id,
-                    reason=decision.change_reason,
+                    reason=override_reason,
                 )
         return record
 
