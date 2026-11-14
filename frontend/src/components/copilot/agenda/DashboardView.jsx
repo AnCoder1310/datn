@@ -343,10 +343,10 @@ export function DashboardView({
           setSelectedModel(modelKey);
           setSelectedStage(null);
         }}
-        onBookTestDrive={(model) => {
+        onBookTestDrive={() => {
           if (onCreate) onCreate(data?.customers || []);
         }}
-        onQuotePrice={(model) => {
+        onQuotePrice={() => {
           if (onCreate) onCreate(data?.customers || []);
         }}
       />

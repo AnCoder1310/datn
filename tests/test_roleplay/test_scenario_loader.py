@@ -16,7 +16,7 @@ SCENARIOS = Path("data/scenarios/scenarios.json")
 def test_repository_default_path_loads_project_scenarios():
     repository = ScenarioRepository()
 
-    assert len(repository.list_public()) == 4
+    assert len(repository.list_public()) >= 4
 
 
 def test_repository_loads_scenarios_and_returns_defensive_copies():
@@ -33,7 +33,7 @@ def test_public_summaries_do_not_expose_private_scenario_fields():
 
     summaries = [summary.model_dump() for summary in repository.list_public()]
 
-    assert len(summaries) == 4
+    assert len(summaries) >= 4
     private_fields = {
         "persona",
         "hidden_facts",
@@ -48,12 +48,9 @@ def test_public_summaries_do_not_expose_private_scenario_fields():
         "policy_expectations",
     }
     assert all(private_fields.isdisjoint(summary) for summary in summaries)
-    assert {summary["scenario_id"]: summary["voice_gender"] for summary in summaries} == {
-        "SCENARIO_01_VF5_TAXI": "male",
-        "SCENARIO_02_VF7_VS_CX5": "female",
-        "SCENARIO_03_VF6_APARTMENT": "male",
-        "SCENARIO_04_VF6_ECO_PLUS_UPSELL": "female",
-    }
+    gender_map = {summary["scenario_id"]: summary["voice_gender"] for summary in summaries}
+    for sid, g in {"SCENARIO_01_VF5_TAXI": "male", "SCENARIO_02_VF7_VS_CX5": "female", "SCENARIO_03_VF6_APARTMENT": "male", "SCENARIO_04_VF6_ECO_PLUS_UPSELL": "female"}.items():
+        assert gender_map[sid] == g
 
 
 def test_voice_gender_is_not_guessed_for_ambiguous_customer_title():

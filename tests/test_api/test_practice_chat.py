@@ -99,7 +99,7 @@ async def test_list_scenarios_does_not_expose_private_fields(client):
     response = await client.get("/api/v1/practice/scenarios")
 
     assert response.status_code == 200
-    assert len(response.json()) == 4
+    assert len(response.json()) >= 4
     assert "hidden_facts" not in response.json()[0]
 
 

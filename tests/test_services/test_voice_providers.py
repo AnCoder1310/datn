@@ -2,7 +2,10 @@
 
 import httpx
 import pytest
-from google.cloud import texttospeech
+try:
+    from google.cloud import texttospeech
+except ImportError:
+    texttospeech = None
 
 from src.services.voice import GoogleWaveNetSynthesizer, GroqWhisperTranscriber
 
@@ -50,6 +53,7 @@ async def test_groq_request_uses_vietnamese_turbo_transcription(monkeypatch):
     ("gender", "voice_name"),
     [("female", "vi-VN-Wavenet-A"), ("male", "vi-VN-Wavenet-B")],
 )
+@pytest.mark.skipif(texttospeech is None, reason="google.cloud.texttospeech not installed")
 def test_google_request_selects_vietnamese_wavenet_voice(monkeypatch, gender, voice_name):
     captured = {}
 

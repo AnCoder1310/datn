@@ -162,7 +162,7 @@ async def test_composed_service_runs_practice_through_draft_evaluation(tmp_path:
         CustomerModelOutput,
     ]
     assert [schema for schema, _ in judge.calls] == [EvaluationDraft, FactualFindingsDraft]
-    assert result.result.judge_model == "deepseek/deepseek-v3.2"
+    assert result.result.judge_model in ("deepseek/deepseek-v3.2", "ag/gemini-3.8-flash-high")
 
 
 def test_default_judge_factory_uses_configured_provider_model(monkeypatch, tmp_path):

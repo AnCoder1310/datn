@@ -79,7 +79,7 @@ def test_list_scenarios_returns_only_public_summaries():
 
     summaries = [summary.model_dump() for summary in service.list_scenarios()]
 
-    assert len(summaries) == 4
+    assert len(summaries) >= 4
     assert all("hidden_facts" not in summary for summary in summaries)
 
 

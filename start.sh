@@ -11,18 +11,21 @@ echo "  VINFAST AI SALES ENABLEMENT — SYSTEM STARTUP"
 echo "=========================================================="
 
 PYTHON_BIN="python3"
-if [ -f "$DIR/.venv/bin/python" ]; then
-    PYTHON_BIN="$DIR/.venv/bin/python"
-    source "$DIR/.venv/bin/activate"
-elif [ -f ".venv/bin/python" ]; then
-    PYTHON_BIN=".venv/bin/python"
-    source .venv/bin/activate
-elif [ -x "/opt/homebrew/bin/python3.11" ]; then
+if [ -x "/opt/homebrew/bin/python3.11" ]; then
     PYTHON_BIN="/opt/homebrew/bin/python3.11"
-elif [ -f "/Users/truongan/P-043-deployment/.venv/bin/python" ]; then
+elif [ -x "$DIR/.venv/bin/python" ]; then
+    PYTHON_BIN="$DIR/.venv/bin/python"
+elif [ -x "/Users/truongan/P-043-deployment/.venv/bin/python" ]; then
     PYTHON_BIN="/Users/truongan/P-043-deployment/.venv/bin/python"
-    source /Users/truongan/P-043-deployment/.venv/bin/activate
 fi
+
+if [ -f "$DIR/.venv/bin/activate" ]; then
+    source "$DIR/.venv/bin/activate"
+elif [ -f "/Users/truongan/P-043-deployment/.venv/bin/activate" ]; then
+    source "/Users/truongan/P-043-deployment/.venv/bin/activate"
+fi
+
+echo "[i] Sử dụng Python: $($PYTHON_BIN --version 2>&1)"
 
 # 0. Đồng bộ & Nạp sẵn dữ liệu demo (Users, Practice, Dashboard)
 echo "[i] Nạp dữ liệu mẫu (12 khách hàng, 29 công việc, kịch bản, lịch)..."
@@ -50,5 +53,15 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
-echo "[✓] Frontend sẵn sàng tại http://localhost:3000"
+echo "=========================================================="
+echo "  HỆ THỐNG ĐÃ SẴN SÀNG!"
+echo "  🌐 Ứng dụng:  http://localhost:3000"
+echo "  ⚙️  Backend:   http://127.0.0.1:8000"
+echo "  Tài khoản demo:"
+echo "    - Tư vấn viên: advisor.demo / DemoAdvisor123!"
+echo "    - Quản lý:     manager.demo / DemoManager123!"
+echo "=========================================================="
+
+(sleep 2 && which open >/dev/null && open http://localhost:3000 2>/dev/null) &
+
 npm run dev

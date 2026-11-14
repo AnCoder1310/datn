@@ -56,7 +56,11 @@
         "requires_eligibility_check": false
       }
     ],
-    "target_skills": ["need_discovery", "objection_handling", "closing_next_step"],
+    "target_skills": [
+      "need_discovery",
+      "objection_handling",
+      "closing_next_step"
+    ],
     "persona": {
       "name": "Anh Nam",
       "age": 35,
@@ -78,31 +82,57 @@
       {
         "fact_key": "daily_distance",
         "trigger_intent": "ask_daily_travel_distance",
-        "trigger_keywords": ["chạy bao nhiêu km", "quãng đường", "mỗi ngày đi", "đi nhiều không"],
+        "trigger_keywords": [
+          "chạy bao nhiêu km",
+          "quãng đường",
+          "mỗi ngày đi",
+          "đi nhiều không"
+        ],
         "revealed_statement": "Mỗi ngày anh chạy túc tắc cũng tầm 180 đến 200 cây số em ạ, tháng cũng ngót nghét 5.000 cây."
       },
       {
         "fact_key": "budget",
         "trigger_intent": "ask_budget_or_financing",
-        "trigger_keywords": ["tài chính", "ngân sách", "trả trước", "vay vốn", "góp"],
+        "trigger_keywords": [
+          "tài chính",
+          "ngân sách",
+          "trả trước",
+          "vay vốn",
+          "góp"
+        ],
         "revealed_statement": "Anh có khoảng 300 triệu để trả trước. Nếu đổi xe thì phần còn lại chắc vẫn phải vay, nhưng anh muốn xem chi phí chạy hằng tháng có hợp lý không đã."
       },
       {
         "fact_key": "fuel_cost_month",
         "trigger_intent": "ask_actual_fuel_spend",
-        "trigger_keywords": ["tiền xăng", "chi phí xăng", "đổ xăng mỗi tháng", "hóa đơn xăng"],
+        "trigger_keywords": [
+          "tiền xăng",
+          "chi phí xăng",
+          "đổ xăng mỗi tháng",
+          "hóa đơn xăng"
+        ],
         "revealed_statement": "Anh có ghi lại chi tiêu mấy tháng gần đây, trung bình tiền xăng Vios khoảng 8,5 triệu một tháng."
       },
       {
         "fact_key": "registration_location",
         "trigger_intent": "ask_registration_location_and_plate",
-        "trigger_keywords": ["đăng ký xe ở đâu", "tỉnh thành", "biển vàng", "biển số"],
+        "trigger_keywords": [
+          "đăng ký xe ở đâu",
+          "tỉnh thành",
+          "biển vàng",
+          "biển số"
+        ],
         "revealed_statement": "Anh định đăng ký xe ở Hà Nội và chạy biển vàng để chở khách."
       },
       {
         "fact_key": "work_schedule",
         "trigger_intent": "ask_work_and_charging_schedule",
-        "trigger_keywords": ["lịch chạy", "giờ nghỉ", "khung giờ sạc", "chạy ca nào"],
+        "trigger_keywords": [
+          "lịch chạy",
+          "giờ nghỉ",
+          "khung giờ sạc",
+          "chạy ca nào"
+        ],
         "revealed_statement": "Anh chạy từ sáng sớm, nghỉ ngắn tầm 12 rưỡi đến 2 giờ chiều rồi chạy tiếp đến tối; nếu phải chờ trụ lúc có cuốc thì tiếc lắm."
       }
     ],
@@ -266,7 +296,9 @@
     "objections": [
       {
         "objection_id": "OBJ_VF6_PROMO_ELIGIBILITY",
-        "requires_revealed_facts": ["current_vehicle"],
+        "requires_revealed_facts": [
+          "current_vehicle"
+        ],
         "trigger_stage": "presentation",
         "objection_text": "Giá vẫn hơi cao so với dự tính của chị. Ưu đãi đó chị có được áp dụng không em?",
         "resolve_condition": "Sale xác nhận rõ ràng chị đủ điều kiện nhận ưu đãi (kể cả câu trả lời ngắn như “Dạ được ạ” hay “Chị đủ điều kiện” khi đang trả lời đúng câu hỏi về xe máy xăng đứng tên chị). Giá sau ưu đãi và các chính sách khác là điểm cộng cho policy_accuracy, KHÔNG bắt buộc để giải tỏa băn khoăn này.",
@@ -480,7 +512,10 @@
         "requires_eligibility_check": false
       }
     ],
-    "target_skills": ["need_discovery", "objection_handling"],
+    "target_skills": [
+      "need_discovery",
+      "objection_handling"
+    ],
     "persona": {
       "name": "Anh Tuấn",
       "age": 29,
@@ -499,13 +534,23 @@
       {
         "fact_key": "daily_distance",
         "trigger_intent": "ask_weekly_travel_distance",
-        "trigger_keywords": ["mỗi ngày đi", "quãng đường", "bao nhiêu km", "đi lại"],
+        "trigger_keywords": [
+          "mỗi ngày đi",
+          "quãng đường",
+          "bao nhiêu km",
+          "đi lại"
+        ],
         "revealed_statement": "Anh chỉ đi làm từ nhà tới cơ quan quanh quanh trong phố tầm 15 cây cả đi lẫn về thôi em."
       },
       {
         "fact_key": "charging_access",
         "trigger_intent": "ask_living_location",
-        "trigger_keywords": ["ở khu nào", "chung cư nào", "địa chỉ", "quận mấy"],
+        "trigger_keywords": [
+          "ở khu nào",
+          "chung cư nào",
+          "địa chỉ",
+          "quận mấy"
+        ],
         "revealed_statement": "Anh ở chung cư bên mạn Cầu Giấy, gần ngay cái Vincom Trần Duy Hưng ấy."
       }
     ],
@@ -582,7 +627,11 @@
         "requires_eligibility_check": false
       }
     ],
-    "target_skills": ["product_knowledge", "objection_handling", "closing_next_step"],
+    "target_skills": [
+      "product_knowledge",
+      "objection_handling",
+      "closing_next_step"
+    ],
     "persona": {
       "name": "Chị Thanh",
       "age": 32,
@@ -601,13 +650,24 @@
       {
         "fact_key": "family_status",
         "trigger_intent": "ask_family_and_usage",
-        "trigger_keywords": ["gia đình", "mấy người", "chở ai", "mục đích sử dụng", "về quê"],
+        "trigger_keywords": [
+          "gia đình",
+          "mấy người",
+          "chở ai",
+          "mục đích sử dụng",
+          "về quê"
+        ],
         "revealed_statement": "Nhà chị có 2 vợ chồng với 2 nhóc tì, mua xe chủ yếu đi lại hàng ngày với cuối tuần hay chở cả nhà về ngoại tầm 120 cây số."
       },
       {
         "fact_key": "decision_maker",
         "trigger_intent": "ask_decision_maker_opinion",
-        "trigger_keywords": ["anh nhà", "ông xã", "chồng", "ai quyết định"],
+        "trigger_keywords": [
+          "anh nhà",
+          "ông xã",
+          "chồng",
+          "ai quyết định"
+        ],
         "revealed_statement": "Chị thì mê kiểu dáng công nghệ của VF 7 rồi, nhưng ông xã chị cứ cản, bảo mua CX-5 cho lành, sợ xe điện sau này bán mất giá."
       }
     ],
@@ -633,5 +693,417 @@
       "max_turns": 12,
       "drop_out_trigger": "Nếu tư vấn viên chê bai dìm hàng CX-5 thô thiển hoặc không chứng minh được giá trị xe."
     }
+  },
+  {
+    "scenario_id": "SCENARIO_CUSTOM_VF3_URBAN",
+    "title": "Khách hàng trẻ văn phòng cân nhắc chuyển từ xe máy điện sang VF 3",
+    "difficulty": "Medium",
+    "target_skills": [
+      "need_discovery",
+      "objection_handling",
+      "closing_next_step"
+    ],
+    "sales_channel": "Showroom",
+    "training_objective": "Khai thác nhu cầu đi lại đô thị tránh mưa nắng, giải tỏa lo ngại sạc pin chung cư và hẹn lịch lái thử.",
+    "scenario_version": "1.0",
+    "persona": {
+      "name": "Chị Linh",
+      "age": 27,
+      "current_car": "VinFast Klara S",
+      "communication_style": "Nhẹ nhàng, cẩn thận, quan tâm kích thước nhỏ gọn dễ đỗ và chi phí nuôi xe hàng tháng"
+    },
+    "visible_context": "Khách nhắn tin qua Fanpage: 'Em ơi VF 3 đợt này giá lăn bánh thế nào? Chị đang đi xe máy điện muốn đổi lên ô tô che mưa nắng mà sợ khó lái.'",
+    "hidden_facts": {
+      "budget": "Có sẵn khoảng 250 triệu tiết kiệm, có thể vay thêm trả góp nhẹ",
+      "commute": "Hàng ngày đi làm khoảng 15 km trong nội thành",
+      "parking": "Chung cư nơi chị ở có sẵn trụ sạc công cộng nhưng buổi tối sợ đông xe",
+      "real_concern": "Sợ xe ô tô khó xoay trở trong ngõ nhỏ và chi phí sạc pin cao hơn xe máy"
+    },
+    "buyer_intent": "Muốn sở hữu chiếc ô tô đầu tiên nhỏ gọn để đi làm không ngại thời tiết và chở đồ tiện lợi",
+    "customer_goals": "Hiểu rõ chi phí sạc so với xăng, kiểm tra độ linh hoạt trong phố và trải nghiệm lái thử thực tế",
+    "disclosure_rules": [
+      {
+        "fact_key": "budget",
+        "trigger_intent": "ask_budget",
+        "trigger_keywords": [
+          "tài chính",
+          "ngân sách",
+          "trả trước"
+        ],
+        "revealed_statement": "Chị có sẵn tầm 250 triệu, nếu thiếu thì trả góp tháng tầm vài triệu thôi em nhé."
+      },
+      {
+        "fact_key": "parking",
+        "trigger_intent": "ask_parking_charging",
+        "trigger_keywords": [
+          "đỗ xe",
+          "sạc",
+          "chung cư",
+          "ngõ"
+        ],
+        "revealed_statement": "Chị ở chung cư, dưới hầm có trụ sạc nhưng chị lo buổi tối đông xe không sạc được."
+      }
+    ],
+    "objections": [
+      {
+        "objection_id": "OBJ_VF3_CHARGING",
+        "trigger_stage": "objection_handling",
+        "trigger_keywords": [
+          "sạc chung cư",
+          "hết pin",
+          "trụ sạc"
+        ],
+        "objection_text": "Chung cư chị đông dân, lỡ tối không còn chỗ cắm sạc thì hôm sau lấy gì đi em?",
+        "resolve_condition": "Tư vấn viên giải thích quãng đường đi được và mạng lưới trạm sạc gần chung cư",
+        "ideal_sales_response": "Với nhu cầu đi lại hàng ngày thì vài ngày chị mới cần sạc một lần, ngoài ra quanh khu vực có nhiều trạm sạc nhanh tại cây xăng và trung tâm thương mại.",
+        "requires_revealed_facts": []
+      }
+    ],
+    "expected_discovery": "Tư vấn viên hỏi rõ cự ly di chuyển hàng ngày và điều kiện sạc tại chung cư",
+    "success_conditions": "Giải tỏa nỗi sợ khó lái trong phố và chốt được lịch lái thử trải nghiệm trực tiếp",
+    "termination_conditions": {
+      "max_turns": 10,
+      "drop_out_trigger": "Tư vấn viên ép cọc xe khi chưa giải thích rõ phương án sạc pin cho khách"
+    },
+    "acceptable_outcomes": [
+      {
+        "outcome_id": "schedule_test_drive",
+        "label": "Hẹn lịch lái thử VF 3",
+        "product": "VF 3",
+        "requires_resolved_objections": [],
+        "preferred": true
+      }
+    ],
+    "upsell_benefits": [],
+    "upsell_rule": null,
+    "policy_expectations": [
+      {
+        "policy_id": "charging",
+        "level": "expected",
+        "requires_eligibility_check": false,
+        "topic": "Chính sách sạc pin và bảo hành",
+        "lookup": {
+          "query": "Chính sách sạc pin trạm sạc V-GREEN",
+          "document_type": "policy",
+          "policy_type": "charging",
+          "product_model": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_CUSTOM_VF7_CROSSOVER",
+    "title": "Khách hàng gia đình trẻ muốn nâng cấp từ sedan xăng sang VF 7",
+    "difficulty": "Medium",
+    "target_skills": [
+      "need_discovery",
+      "product_knowledge",
+      "objection_handling",
+      "closing_next_step"
+    ],
+    "sales_channel": "Showroom",
+    "training_objective": "Làm nổi bật thiết kế thể thao, hệ thống an toàn hỗ trợ lái và chi phí vận hành ưu việt của VF 7.",
+    "scenario_version": "1.0",
+    "persona": {
+      "name": "Anh Tuấn",
+      "age": 36,
+      "current_car": "Kia Cerato 2019",
+      "communication_style": "Yêu công nghệ, thích cảm giác lái mạnh mẽ, đòi hỏi thông số kỹ thuật chính xác"
+    },
+    "visible_context": "Khách bước vào showroom và ngắm bản VF 7 Plus: 'Anh đang chạy Cerato tính đổi gầm cao, thấy dáng VF 7 đẹp mà chưa rõ bản Plus khác gì bản Base.'",
+    "hidden_facts": {
+      "budget": "Tài chính sẵn sàng trả thẳng hoặc vay ít, ngân sách quanh 900 triệu đến một tỷ",
+      "driving_style": "Thường xuyên đi cao tốc cuối tuần về quê cùng gia đình",
+      "real_concern": "Sợ chi phí thay pin sau vài năm và lăn tăn giữa bản Base với bản Plus hai cầu"
+    },
+    "buyer_intent": "Nâng cấp lên xe SUV gầm cao hiện đại, thể thao, an toàn cho cả nhà đi đường dài",
+    "customer_goals": "So sánh chi tiết khác biệt trang bị giữa hai phiên bản và chính sách bảo hành pin",
+    "disclosure_rules": [
+      {
+        "fact_key": "driving_style",
+        "trigger_intent": "ask_driving_habits",
+        "trigger_keywords": [
+          "thói quen",
+          "về quê",
+          "cao tốc",
+          "chuyến đi"
+        ],
+        "revealed_statement": "Gia đình anh hay đi xa cuối tuần, cần xe đầm chắc và tăng tốc vượt xe an toàn trên cao tốc."
+      }
+    ],
+    "objections": [
+      {
+        "objection_id": "OBJ_BATTERY_DURABILITY",
+        "trigger_stage": "objection_handling",
+        "trigger_keywords": [
+          "chai pin",
+          "hỏng pin",
+          "thay pin"
+        ],
+        "objection_text": "Nghe nói xe điện đi vài năm chai pin thay tốn kém lắm phải không em?",
+        "resolve_condition": "Tư vấn viên dẫn chứng chính sách bảo hành pin dài hạn và tiêu chuẩn đổi mới khi pin suy giảm dung lượng",
+        "ideal_sales_response": "VinFast bảo hành pin dài hạn và cam kết thay thế miễn phí nếu dung lượng pin suy giảm dưới mức tiêu chuẩn.",
+        "requires_revealed_facts": []
+      }
+    ],
+    "expected_discovery": "Tư vấn viên khai thác nhu cầu di chuyển đường dài và sở thích cảm giác lái",
+    "success_conditions": "Làm rõ sự khác biệt giữa hai phiên bản và chốt được buổi trải nghiệm lái thử trên cao tốc",
+    "termination_conditions": {
+      "max_turns": 10,
+      "drop_out_trigger": "Tư vấn viên không nắm vững thông số dẫn động hoặc chính sách bảo hành"
+    },
+    "acceptable_outcomes": [
+      {
+        "outcome_id": "close_plus",
+        "label": "Chốt lái thử VF 7 Plus",
+        "product": "VF 7 Plus",
+        "requires_resolved_objections": [],
+        "preferred": true
+      }
+    ],
+    "upsell_benefits": [],
+    "upsell_rule": null,
+    "policy_expectations": [
+      {
+        "policy_id": "warranty",
+        "level": "expected",
+        "requires_eligibility_check": false,
+        "topic": "Chính sách bảo hành xe và pin VinFast",
+        "lookup": {
+          "query": "VF 7 bảo hành",
+          "document_type": "faq",
+          "policy_type": null,
+          "product_model": "VF 7"
+        }
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_CUSTOM_VF3_362BF8",
+    "title": "Khách hàng Chị Linh cân nhắc lựa chọn giữa VF 3 và xe máy điện",
+    "difficulty": "Medium",
+    "target_skills": [
+      "need_discovery",
+      "product_knowledge",
+      "objection_handling",
+      "closing_next_step"
+    ],
+    "sales_channel": "Showroom",
+    "training_objective": "Khai thác nhu cầu sử dụng thực tế, giải tỏa băn khoăn so sánh với xe máy điện và chốt lịch lái thử VF 3.",
+    "scenario_version": "1.0",
+    "persona": {
+      "name": "Chị Linh",
+      "age": 27,
+      "current_car": "Đang cân nhắc xe máy điện",
+      "communication_style": "Cởi mở, thực tế, quan tâm chi phí vận hành và tiện nghi gia đình"
+    },
+    "visible_context": "Khách bước vào showroom: 'Chào em, anh/chị đang phân vân giữa VF 3 với chiếc xe máy điện. Ngân sách tầm 250 triệu, cần xe phù hợp cho gia đình có con nhỏ và đi đường dài.'",
+    "hidden_facts": {
+      "budget": "Ngân sách dự trù khoảng 250 triệu",
+      "usage": "Gia đình có con nhỏ, thường xuyên đi lại cuối tuần và đường dài",
+      "real_concern": "Lo ngại chi phí pin và trạm sạc đường xa khi so với xe xăng xe máy điện"
+    },
+    "buyer_intent": "Muốn chọn một chiếc SUV điện hiện đại VF 3 nhưng còn e ngại tính tiện lợi so với xe máy điện",
+    "customer_goals": "So sánh rõ ràng chi phí năng lượng và trải nghiệm vận hành thực tế giữa VF 3 và xe máy điện",
+    "disclosure_rules": [
+      {
+        "fact_key": "budget",
+        "trigger_intent": "ask_budget",
+        "trigger_keywords": [
+          "ngân sách",
+          "tài chính",
+          "giá",
+          "khoảng"
+        ],
+        "revealed_statement": "Tài chính anh/chị chuẩn bị tầm 250 triệu, có thể trả thẳng hoặc trả góp hợp lý."
+      },
+      {
+        "fact_key": "usage",
+        "trigger_intent": "ask_usage",
+        "trigger_keywords": [
+          "nhu cầu",
+          "đi lại",
+          "con nhỏ",
+          "đường dài",
+          "về quê"
+        ],
+        "revealed_statement": "Gia đình có con nhỏ, thường xuyên đi lại cuối tuần và đường dài, nên anh/chị rất quan tâm độ an toàn và trạm sạc."
+      }
+    ],
+    "objections": [
+      {
+        "objection_id": "OBJ_COMPARE_3",
+        "trigger_stage": "objection_handling",
+        "trigger_keywords": [
+          "so sánh",
+          "xe máy điện",
+          "xe xăng",
+          "bất tiện"
+        ],
+        "objection_text": "Anh/chị thấy xe máy điện chạy xăng đổ xăng nhanh tiện, sao anh/chị phải chọn xe điện VF 3?",
+        "resolve_condition": "Tư vấn viên làm rõ công nghệ vượt trội, chi phí vận hành tiết kiệm và độ an toàn của xe điện VinFast",
+        "ideal_sales_response": "VF 3 sở hữu sức mạnh động cơ và trang bị an toàn vượt trội trong tầm giá, chi phí năng lượng tiết kiệm hơn một nửa so với xe xăng.",
+        "requires_revealed_facts": []
+      },
+      {
+        "objection_id": "OBJ_CHARGING_3",
+        "trigger_stage": "objection_handling",
+        "trigger_keywords": [
+          "trạm sạc",
+          "hết pin",
+          "đường dài",
+          "chờ sạc"
+        ],
+        "objection_text": "Gia đình đi xa nhỡ hết pin dọc đường hoặc trạm sạc đông phải chờ lâu thì bất tiện lắm em?",
+        "resolve_condition": "Tư vấn viên giới thiệu quy mô trạm sạc V-Green phủ khắp quốc lộ và tốc độ sạc nhanh",
+        "ideal_sales_response": "Mạng lưới trạm sạc V-Green hiện phủ kín quốc lộ và cao tốc toàn quốc, tốc độ sạc nhanh giúp xe nạp lại phần lớn năng lượng chỉ trong thời gian nghỉ giải lao ngắn.",
+        "requires_revealed_facts": []
+      }
+    ],
+    "expected_discovery": "Tư vấn viên hỏi rõ nhu cầu di chuyển của gia đình và ngân sách dự kiến",
+    "success_conditions": "Giải tỏa nỗi lo trạm sạc và thuyết phục khách đăng ký trải nghiệm lái thử VF 3",
+    "termination_conditions": {
+      "max_turns": 10,
+      "drop_out_trigger": "Tư vấn viên không so sánh được ưu thế vận hành hoặc né tránh câu hỏi về trạm sạc"
+    },
+    "acceptable_outcomes": [
+      {
+        "outcome_id": "schedule_test_drive",
+        "label": "Hẹn lịch lái thử VF 3",
+        "product": "VF 3",
+        "requires_resolved_objections": [],
+        "preferred": true
+      }
+    ],
+    "upsell_benefits": [],
+    "upsell_rule": null,
+    "policy_expectations": [
+      {
+        "policy_id": "charging",
+        "level": "expected",
+        "requires_eligibility_check": false,
+        "topic": "Chính sách sạc pin và bảo hành xe điện VinFast",
+        "lookup": {
+          "query": "Chính sách sạc pin trạm sạc V-GREEN",
+          "document_type": "policy",
+          "policy_type": "charging",
+          "product_model": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_CUSTOM_VF3_1AC882",
+    "title": "Khách hàng Anh An cân nhắc lựa chọn giữa VF 3 và Mazda CX-5",
+    "difficulty": "Medium",
+    "target_skills": [
+      "need_discovery",
+      "product_knowledge",
+      "objection_handling",
+      "closing_next_step"
+    ],
+    "sales_channel": "Showroom",
+    "training_objective": "Khai thác nhu cầu sử dụng thực tế, giải tỏa băn khoăn so sánh với Mazda CX-5 và chốt lịch lái thử VF 3.",
+    "scenario_version": "1.0",
+    "persona": {
+      "name": "Anh An",
+      "age": 36,
+      "current_car": "Đang cân nhắc Mazda CX-5",
+      "communication_style": "Cởi mở, thực tế, quan tâm chi phí vận hành và tiện nghi gia đình"
+    },
+    "visible_context": "Khách bước vào showroom: 'Chào em, anh/chị đang phân vân giữa VF 3 với chiếc Mazda CX-5. Ngân sách tầm 250 triệu, cần xe phù hợp cho gia đình có con nhỏ và đi đường dài.'",
+    "hidden_facts": {
+      "budget": "Ngân sách dự trù khoảng 250 triệu",
+      "usage": "Gia đình có con nhỏ, thường xuyên đi lại cuối tuần và đường dài",
+      "real_concern": "Lo ngại chi phí pin và trạm sạc đường xa khi so với xe xăng Mazda CX-5"
+    },
+    "buyer_intent": "Muốn chọn một chiếc SUV điện hiện đại VF 3 nhưng còn e ngại tính tiện lợi so với Mazda CX-5",
+    "customer_goals": "So sánh rõ ràng chi phí năng lượng và trải nghiệm vận hành thực tế giữa VF 3 và Mazda CX-5",
+    "disclosure_rules": [
+      {
+        "fact_key": "budget",
+        "trigger_intent": "ask_budget",
+        "trigger_keywords": [
+          "ngân sách",
+          "tài chính",
+          "giá",
+          "khoảng"
+        ],
+        "revealed_statement": "Tài chính anh/chị chuẩn bị tầm 250 triệu, có thể trả thẳng hoặc trả góp hợp lý."
+      },
+      {
+        "fact_key": "usage",
+        "trigger_intent": "ask_usage",
+        "trigger_keywords": [
+          "nhu cầu",
+          "đi lại",
+          "con nhỏ",
+          "đường dài",
+          "về quê"
+        ],
+        "revealed_statement": "Gia đình có con nhỏ, thường xuyên đi lại cuối tuần và đường dài, nên anh/chị rất quan tâm độ an toàn và trạm sạc."
+      }
+    ],
+    "objections": [
+      {
+        "objection_id": "OBJ_COMPARE_3",
+        "trigger_stage": "objection_handling",
+        "trigger_keywords": [
+          "so sánh",
+          "mazda cx-5",
+          "xe xăng",
+          "bất tiện"
+        ],
+        "objection_text": "Anh/chị thấy Mazda CX-5 chạy xăng đổ xăng nhanh tiện, sao anh/chị phải chọn xe điện VF 3?",
+        "resolve_condition": "Tư vấn viên làm rõ công nghệ vượt trội, chi phí vận hành tiết kiệm và độ an toàn của xe điện VinFast",
+        "ideal_sales_response": "VF 3 sở hữu sức mạnh động cơ và trang bị an toàn vượt trội trong tầm giá, chi phí năng lượng tiết kiệm hơn một nửa so với xe xăng.",
+        "requires_revealed_facts": []
+      },
+      {
+        "objection_id": "OBJ_CHARGING_3",
+        "trigger_stage": "objection_handling",
+        "trigger_keywords": [
+          "trạm sạc",
+          "hết pin",
+          "đường dài",
+          "chờ sạc"
+        ],
+        "objection_text": "Gia đình đi xa nhỡ hết pin dọc đường hoặc trạm sạc đông phải chờ lâu thì bất tiện lắm em?",
+        "resolve_condition": "Tư vấn viên giới thiệu quy mô trạm sạc V-Green phủ khắp quốc lộ và tốc độ sạc nhanh",
+        "ideal_sales_response": "Mạng lưới trạm sạc V-Green hiện phủ kín quốc lộ và cao tốc toàn quốc, tốc độ sạc nhanh giúp xe nạp lại phần lớn năng lượng chỉ trong thời gian nghỉ giải lao ngắn.",
+        "requires_revealed_facts": []
+      }
+    ],
+    "expected_discovery": "Tư vấn viên hỏi rõ nhu cầu di chuyển của gia đình và ngân sách dự kiến",
+    "success_conditions": "Giải tỏa nỗi lo trạm sạc và thuyết phục khách đăng ký trải nghiệm lái thử VF 3",
+    "termination_conditions": {
+      "max_turns": 10,
+      "drop_out_trigger": "Tư vấn viên không so sánh được ưu thế vận hành hoặc né tránh câu hỏi về trạm sạc"
+    },
+    "acceptable_outcomes": [
+      {
+        "outcome_id": "schedule_test_drive",
+        "label": "Hẹn lịch lái thử VF 3",
+        "product": "VF 3",
+        "requires_resolved_objections": [],
+        "preferred": true
+      }
+    ],
+    "upsell_benefits": [],
+    "upsell_rule": null,
+    "policy_expectations": [
+      {
+        "policy_id": "charging",
+        "level": "expected",
+        "requires_eligibility_check": false,
+        "topic": "Chính sách sạc pin và bảo hành xe điện VinFast",
+        "lookup": {
+          "query": "Chính sách sạc pin trạm sạc V-GREEN",
+          "document_type": "policy",
+          "policy_type": "charging",
+          "product_model": "ALL"
+        }
+      }
+    ]
   }
 ]

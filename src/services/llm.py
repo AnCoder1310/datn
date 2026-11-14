@@ -179,7 +179,7 @@ def get_embeddings() -> Embeddings:
         return OpenAIEmbeddings(
             model=model if "/" in model else f"openai/{model}",
             api_key=settings.openrouter_api_key,
-            base_url=settings.openrouter_base_url or "https://openrouter.ai/api/v1",
+            base_url=getattr(settings, "openrouter_base_url", None) or "https://openrouter.ai/api/v1",
             check_embedding_ctx_length=False,
             request_timeout=settings.retrieval_timeout_seconds,
             max_retries=2,
