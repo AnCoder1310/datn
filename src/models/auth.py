@@ -1,7 +1,12 @@
 """Authentication contracts shared by API, service, and persistence layers."""
 
 from datetime import datetime
-from enum import StrEnum
+try:
+    from enum import StrEnum
+except ImportError:
+    from enum import Enum
+    class StrEnum(str, Enum):
+        pass
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 

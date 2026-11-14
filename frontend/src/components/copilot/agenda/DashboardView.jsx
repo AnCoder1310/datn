@@ -39,17 +39,17 @@ const STAGE_LABELS = {
 };
 
 // Modern SaaS Palette for pipeline stages (Soft Cyan & Midnight Navy tones)
-// Premium Monochrome gradient progression for pipeline stages
+// Fresh Aqua Theme for pipeline stages
 const STAGE_COLORS = {
-  won: '#111111',
-  deposit_process: '#2A2A2A',
-  negotiating: '#4A4A4A',
-  considering: '#6E6E6E',
-  qualified: '#8E8E8E',
-  discovery: '#AEAEAE',
-  new: '#D0D0D0',
-  needs_confirmation: '#999999',
-  lost: '#E5E5E5',
+  won: '#263238',
+  deposit_process: '#37474F',
+  negotiating: '#455A64',
+  considering: '#546E7A',
+  qualified: '#65DCCB',
+  discovery: '#8EE5D8',
+  new: '#C2F0E8',
+  needs_confirmation: '#94A3A8',
+  lost: '#E5EAEA',
 };
 
 function getStageLabel(stageId) {
@@ -466,7 +466,7 @@ export function DashboardView({
                 .map((item) => {
                   const pct = Math.max(4, (item.count / Math.max(1, totalCustomers)) * 100);
                   const isSelected = selectedStage === item.stage;
-                  const shade = STAGE_COLORS[item.stage] || '#111111';
+                  const shade = STAGE_COLORS[item.stage] || '#65DCCB';
                   return (
                     <button
                       type="button"

@@ -1,3 +1,4 @@
+import dashboardFallback from '../../../data/dashboardFallback.json';
 import { useEffect, useRef, useState } from 'react';
 import {
   Calendar as CalendarIcon,
@@ -62,7 +63,7 @@ export function CalendarView({
   );
 
   const data = resource.data;
-  const items = data?.items || [];
+  const items = data?.items || (dashboardFallback?.upcoming_events || []);
 
   useEffect(() => {
     if (!active || !scrollRef.current) return;

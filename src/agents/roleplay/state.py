@@ -2,7 +2,12 @@
 
 import logging
 from datetime import UTC, date, datetime, timedelta, timezone
-from enum import StrEnum
+try:
+    from enum import StrEnum
+except ImportError:
+    from enum import Enum
+    class StrEnum(str, Enum):
+        pass
 from typing import Any, Literal
 from uuid import uuid4
 

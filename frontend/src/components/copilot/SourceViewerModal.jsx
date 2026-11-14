@@ -88,7 +88,7 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
           width: '100%',
           maxWidth: 780,
           maxHeight: '88vh',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'var(--color-white)',
           borderRadius: 14,
           boxShadow: '0 20px 50px rgba(0, 0, 0, 0.25)',
           display: 'flex',
@@ -102,12 +102,12 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
         <div
           style={{
             padding: '16px 20px',
-            borderBottom: '1px solid #E5E5E5',
+            borderBottom: '1px solid var(--color-border)',
             display: 'flex',
             alignItems: 'flex-start',
             justifyContent: 'space-between',
             gap: 12,
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--color-white)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
@@ -116,8 +116,8 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
                 width: 34,
                 height: 34,
                 borderRadius: 8,
-                backgroundColor: '#FFFFFF',
-                color: '#111111',
+                backgroundColor: 'var(--color-white)',
+                color: 'var(--color-text-primary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -131,8 +131,8 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 <span
                   style={{
-                    backgroundColor: '#111111',
-                    color: '#FFFFFF',
+                    backgroundColor: 'var(--color-aqua-primary)',
+                    color: 'var(--color-text-primary)',
                     fontSize: '0.72rem',
                     fontWeight: 700,
                     padding: '2px 7px',
@@ -145,8 +145,8 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
                   <span
                     style={{
                       fontSize: '0.72rem',
-                      color: '#666666',
-                      backgroundColor: '#E5E5E5',
+                      color: 'var(--color-text-secondary)',
+                      backgroundColor: 'var(--color-border)',
                       padding: '2px 6px',
                       borderRadius: 4,
                     }}
@@ -158,8 +158,8 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
                   <span
                     style={{
                       fontSize: '0.72rem',
-                      color: '#111111',
-                      backgroundColor: '#111111',
+                      color: 'var(--color-text-primary)',
+                      backgroundColor: 'var(--color-aqua-primary)',
                       padding: '2px 6px',
                       borderRadius: 4,
                     }}
@@ -172,7 +172,7 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
                 style={{
                   fontSize: '1.05rem',
                   fontWeight: 700,
-                  color: '#111111',
+                  color: 'var(--color-text-primary)',
                   marginTop: 4,
                   lineHeight: 1.4,
                 }}
@@ -186,7 +186,7 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
             style={{
               padding: 6,
               borderRadius: 6,
-              color: '#666666',
+              color: 'var(--color-text-secondary)',
               backgroundColor: 'transparent',
               border: 'none',
               cursor: 'pointer',
@@ -206,8 +206,8 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
           <div
             style={{
               borderRadius: 10,
-              backgroundColor: '#111111',
-              border: '1px solid #111111',
+              backgroundColor: 'var(--color-aqua-primary)',
+              border: '1px solid var(--color-aqua-primary)',
               padding: '14px 16px',
             }}
           >
@@ -215,7 +215,7 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
               style={{
                 fontSize: '0.8rem',
                 fontWeight: 700,
-                color: '#666666',
+                color: 'var(--color-text-secondary)',
                 marginBottom: 8,
                 display: 'flex',
                 alignItems: 'center',
@@ -227,7 +227,7 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
             <div
               style={{
                 fontSize: '0.875rem',
-                color: '#111111',
+                color: 'var(--color-text-primary)',
                 lineHeight: 1.6,
                 whiteSpace: 'pre-wrap',
                 fontFamily: 'inherit',
@@ -244,7 +244,7 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
               style={{
                 fontSize: '0.82rem',
                 fontWeight: 600,
-                color: '#111111',
+                color: 'var(--color-text-primary)',
                 backgroundColor: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
@@ -263,19 +263,19 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
                   marginTop: 10,
                   padding: '14px 16px',
                   borderRadius: 8,
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid #E5E5E5',
+                  backgroundColor: 'var(--color-white)',
+                  border: '1px solid var(--color-border)',
                   maxHeight: 280,
                   overflowY: 'auto',
                 }}
               >
-                {loading && <div style={{ fontSize: '0.82rem', color: '#666666' }}>Đang tải văn bản...</div>}
-                {error && <div style={{ fontSize: '0.82rem', color: '#111111' }}>{error}</div>}
+                {loading && <div style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)' }}>Đang tải văn bản...</div>}
+                {error && <div style={{ fontSize: '0.82rem', color: 'var(--color-text-primary)' }}>{error}</div>}
                 {docData?.content && (
                   <pre
                     style={{
                       fontSize: '0.82rem',
-                      color: '#111111',
+                      color: 'var(--color-text-primary)',
                       lineHeight: 1.6,
                       whiteSpace: 'pre-wrap',
                       fontFamily: 'monospace',
@@ -293,14 +293,14 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
         <div
           style={{
             padding: '12px 20px',
-            borderTop: '1px solid #E5E5E5',
-            backgroundColor: '#FFFFFF',
+            borderTop: '1px solid var(--color-border)',
+            backgroundColor: 'var(--color-white)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <span style={{ fontSize: '0.75rem', color: '#666666' }}>
+          <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
             ID: {citation.document_id} {citation.chunk_id ? `• ${citation.chunk_id}` : ''}
           </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -314,11 +314,11 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
                 style={{
                   padding: '6px 12px',
                   borderRadius: 6,
-                  backgroundColor: '#FFFFFF',
-                  color: '#111111',
+                  backgroundColor: 'var(--color-white)',
+                  color: 'var(--color-text-primary)',
                   fontSize: '0.82rem',
                   fontWeight: 500,
-                  border: '1px solid #E5E5E5',
+                  border: '1px solid var(--color-border)',
                   cursor: 'pointer',
                 }}
               >
@@ -330,8 +330,8 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
               style={{
                 padding: '6px 14px',
                 borderRadius: 6,
-                backgroundColor: '#111111',
-                color: '#FFFFFF',
+                backgroundColor: 'var(--color-aqua-primary)',
+                color: 'var(--color-text-primary)',
                 fontSize: '0.82rem',
                 fontWeight: 600,
                 border: 'none',

@@ -1,18 +1,18 @@
 .mode-chooser-backdrop { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px; background: rgba(0, 0, 0,.45); overflow-y: auto; }
-.mode-chooser { box-sizing: border-box; width: min(340px, 100%); padding: 24px 20px 20px; display: flex; flex-direction: column; align-items: center; gap: 18px; background: #fff; color: #111111; border-radius: 20px; box-shadow: 0 24px 60px rgba(11,18,32,.28); font-family: 'Be Vietnam Pro', system-ui, sans-serif; }
+.mode-chooser { box-sizing: border-box; width: min(340px, 100%); padding: 24px 20px 20px; display: flex; flex-direction: column; align-items: center; gap: 18px; background: var(--color-white); color: var(--color-text-primary); border-radius: 20px; box-shadow: 0 24px 60px rgba(11,18,32,.28); font-family: 'Be Vietnam Pro', system-ui, sans-serif; }
 .mode-chooser h2 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -.02em; text-align: center; }
 .mode-chooser-options { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .mode-chooser button { font-family: inherit; cursor: pointer; }
-.mode-chooser-option { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px 10px; border: 1px solid #E5E5E5; border-radius: 16px; background: #fff; color: #111111; transition: border-color .2s, box-shadow .2s, transform .2s; }
+.mode-chooser-option { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px 10px; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-white); color: var(--color-text-primary); transition: border-color .2s, box-shadow .2s, transform .2s; }
 .mode-chooser-option strong { font-size: 17px; }
 .mode-chooser-option-voice { position: relative; }
-.mode-chooser-new { position: absolute; top: -10px; right: -8px; padding: 3px 10px; border-radius: 999px; background: #111111; color: #FFFFFF; font-size: 12px; font-weight: 700; box-shadow: none; animation: new-pulse 1.8s ease-in-out infinite; }
+.mode-chooser-new { position: absolute; top: -10px; right: -8px; padding: 3px 10px; border-radius: 999px; background: var(--color-aqua-primary); color: var(--color-text-primary); font-size: 12px; font-weight: 700; box-shadow: none; animation: new-pulse 1.8s ease-in-out infinite; }
 @keyframes new-pulse{0%,100%{transform:scale(1);box-shadow:0 4px 10px rgba(0, 0, 0,.3),0 0 0 0 rgba(0, 0, 0,.45)}50%{transform:scale(1.08);box-shadow:0 4px 10px rgba(0, 0, 0,.3),0 0 0 8px rgba(0, 0, 0,0)}}
-.mode-chooser-option:hover { border-color: #111111; box-shadow: 0 4px 14px rgba(0, 0, 0,0.06); transform: translateY(-2px); }
-.mode-chooser-icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: #FFFFFF; color: #111111; border: 1px solid #E5E5E5; }
-.mode-chooser-icon.voice { background: #111111; color: #FFFFFF; }
+.mode-chooser-option:hover { border-color: var(--color-aqua-primary); box-shadow: 0 4px 14px rgba(0, 0, 0,0.06); transform: translateY(-2px); }
+.mode-chooser-icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--color-white); color: var(--color-text-primary); border: 1px solid var(--color-border); }
+.mode-chooser-icon.voice { background: var(--color-aqua-primary); color: var(--color-text-primary); }
 .mode-chooser-icon svg { width: 26px; height: 26px; }
-.mode-chooser p { margin: 0; color: #666666; font-size: 13px; text-align: center; }
-.mode-chooser-cancel { width: 100%; min-height: 44px; border: 1px solid #E5E5E5; border-radius: 12px; background: #fff; color: #111111; font-size: 15px; font-weight: 600; }
-.mode-chooser button:focus-visible { outline: 2px solid #111111; outline-offset: 3px; }
+.mode-chooser p { margin: 0; color: var(--color-text-secondary); font-size: 13px; text-align: center; }
+.mode-chooser-cancel { width: 100%; min-height: 44px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-white); color: var(--color-text-primary); font-size: 15px; font-weight: 600; }
+.mode-chooser button:focus-visible { outline: 2px solid var(--color-aqua-primary); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .mode-chooser-option, .mode-chooser-option:hover { transition: none; transform: none; } .mode-chooser-new { animation: none; } }

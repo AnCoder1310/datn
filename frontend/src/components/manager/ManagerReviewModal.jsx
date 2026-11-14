@@ -85,15 +85,15 @@ function DealDiagnosticCard({ sessionId }) {
   }, [sessionId]);
 
   if (status === 'loading') {
-    return <article className="rp-card rp-voice"><p style={{ color: '#666666' }}>Đang tải phân tích chẩn đoán deal...</p></article>;
+    return <article className="rp-card rp-voice"><p style={{ color: 'var(--color-text-secondary)' }}>Đang tải phân tích chẩn đoán deal...</p></article>;
   }
   if (status === 'error' || !diagnostic) return null;
 
   const statusColors = {
-    WON: { color: '#111111', bg: '#FFFFFF', label: 'Deal thành công' },
-    RISK: { color: '#111111', bg: '#E5E5E5', label: 'Deal có rủi ro' },
-    LOST: { color: '#111111', bg: '#E5E5E5', label: 'Rớt deal / Điểm yếu' },
-  }[diagnostic.deal_status] || { color: '#111111', bg: '#FFFFFF', label: diagnostic.deal_status };
+    WON: { color: 'var(--color-text-primary)', bg: 'var(--color-white)', label: 'Deal thành công' },
+    RISK: { color: 'var(--color-text-primary)', bg: 'var(--color-border)', label: 'Deal có rủi ro' },
+    LOST: { color: 'var(--color-text-primary)', bg: 'var(--color-border)', label: 'Rớt deal / Điểm yếu' },
+  }[diagnostic.deal_status] || { color: 'var(--color-text-primary)', bg: 'var(--color-white)', label: diagnostic.deal_status };
 
   return (
     <article className="rp-card rp-voice" style={{ borderLeft: `4px solid ${statusColors.color}`, marginTop: '12px' }}>
@@ -107,17 +107,17 @@ function DealDiagnosticCard({ sessionId }) {
         <strong>Lỗi chính:</strong> {diagnostic.root_cause_title} ({diagnostic.root_cause_category})
       </p>
       {diagnostic.critical_turn && (
-        <p style={{ margin: '4px 0', fontSize: '12px', color: '#666666' }}>
+        <p style={{ margin: '4px 0', fontSize: '12px', color: 'var(--color-text-secondary)' }}>
           <strong>Lượt bước ngoặt:</strong> Lượt {diagnostic.critical_turn}
         </p>
       )}
-      <p style={{ margin: '4px 0', fontSize: '13px', color: '#666666' }}>
+      <p style={{ margin: '4px 0', fontSize: '13px', color: 'var(--color-text-secondary)' }}>
         <strong>Phân tích:</strong> {diagnostic.root_cause_explanation}
       </p>
-      <div style={{ marginTop: '8px', padding: '12px', background: '#FFFFFF', border: '1px solid #E5E5E5', borderRadius: '8px', fontSize: '12px' }}>
-        <strong style={{ color: '#111111' }}>Khuyến nghị cho tư vấn viên:</strong>
-        <p style={{ margin: '4px 0 0 0', color: '#111111' }}>{diagnostic.remediation_advice}</p>
-        <p style={{ margin: '6px 0 0 0', fontStyle: 'italic', color: '#666666' }}>
+      <div style={{ marginTop: '8px', padding: '12px', background: 'var(--color-white)', border: '1px solid var(--color-border)', borderRadius: '8px', fontSize: '12px' }}>
+        <strong style={{ color: 'var(--color-text-primary)' }}>Khuyến nghị cho tư vấn viên:</strong>
+        <p style={{ margin: '4px 0 0 0', color: 'var(--color-text-primary)' }}>{diagnostic.remediation_advice}</p>
+        <p style={{ margin: '6px 0 0 0', fontStyle: 'italic', color: 'var(--color-text-secondary)' }}>
           "{diagnostic.recommended_script}"
         </p>
       </div>

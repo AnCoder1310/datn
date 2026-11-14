@@ -1,6 +1,11 @@
 """Strict contracts for provisional role-play evaluation and manager review."""
 
-from enum import StrEnum
+try:
+    from enum import StrEnum
+except ImportError:
+    from enum import Enum
+    class StrEnum(str, Enum):
+        pass
 
 from pydantic import BaseModel, Field, model_validator
 

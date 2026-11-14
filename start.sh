@@ -14,6 +14,12 @@ PYTHON_BIN="python3"
 if [ -f ".venv/bin/python" ]; then
     PYTHON_BIN=".venv/bin/python"
     source .venv/bin/activate
+elif [ -f "../.venv/bin/python" ]; then
+    PYTHON_BIN="../.venv/bin/python"
+    source ../.venv/bin/activate
+elif [ -f "/Users/truongan/P-043-deployment/.venv/bin/python" ]; then
+    PYTHON_BIN="/Users/truongan/P-043-deployment/.venv/bin/python"
+    source /Users/truongan/P-043-deployment/.venv/bin/activate
 fi
 
 # 0. Đồng bộ & Nạp sẵn dữ liệu demo (Users, Practice, Dashboard)

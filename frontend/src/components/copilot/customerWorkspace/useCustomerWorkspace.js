@@ -1,3 +1,4 @@
+import dashboardFallback from '../../../data/dashboardFallback.json';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { salesCopilotApi } from '../../../api/salesCopilotApi';
 import { mergeMessages, toWorkspaceCustomer } from './workspaceData';
@@ -46,7 +47,26 @@ export function useCustomerWorkspace(currentUser, active = true) {
       setItems(data || []);
       setSelectedId((previous) => previous && data.some((item) => item.conversation_id === previous) ? previous : data[0]?.conversation_id || null);
       setListStatus('ready');
-    }).catch((error) => { setListStatus('error'); setListError(error.message); }).finally(() => requests.current.delete('list'));
+    }).catch((error) => {
+      if (dashboardFallback?.customers?.length) {
+        const fallbackItems = dashboardFallback.customers.map((c) => ({
+          conversation_id: c.conversation_id,
+          customer_name: c.customer_name,
+          customer_id: c.customer_id,
+          interested_models: c.models || [],
+          lead_stage: c.stage || 'discovery',
+          last_message: c.last_message,
+          waiting_since: c.waiting_since,
+          score: c.score,
+        }));
+        setItems(fallbackItems);
+        setSelectedId((previous) => previous && fallbackItems.some((item) => item.conversation_id === previous) ? previous : fallbackItems[0]?.conversation_id || null);
+        setListStatus('ready');
+      } else {
+        setListStatus('error');
+        setListError(error.message);
+      }
+    }).finally(() => requests.current.delete('list'));
     requests.current.set('list', request);
     return request;
   }, []);
@@ -62,7 +82,52 @@ export function useCustomerWorkspace(currentUser, active = true) {
       detailFetchedAt.current[id] = Date.now();
       setDetails((previous) => ({ ...previous, [id]: data }));
       return data;
-    }).catch((error) => { setDetailErrors((previous) => ({ ...previous, [id]: error.message })); }).finally(() => {
+    }).catch((error) => {
+      const found = (dashboardFallback?.customers || []).find((c) => c.conversation_id === id);
+      if (found) {
+        const fallbackDetail = {
+          conversation_id: id,
+          customer_name: found.customer_name,
+          lead_status: { stage: found.stage },
+          profile: {
+            customer_name: found.customer_name,
+            interested_models: found.models,
+            budget_vnd: found.budget_vnd,
+            purchase_timeline: found.purchase_timeline || 'Trong 1–2 tháng tới',
+            payment_method: found.payment_method || 'Trả góp linh hoạt',
+            charging_condition: 'Sạc tại nhà và trạm sạc V-GREEN toàn quốc',
+            demographics: { location: found.location || 'Hà Nội' },
+          },
+          memory: {
+            issues: (found.issues || []).map((i) => ({ text: i, type: 'issue' })),
+            buying_signals: (found.buying_signals || []).map((b) => ({ text: b })),
+            timeline: [],
+          },
+          messages: [
+            {
+              id: id + "-msg-1",
+              seq: 1,
+              sender_role: 'customer',
+              content: found.last_message || 'Xin chào, tôi cần tư vấn về các dòng xe ô tô điện VinFast.',
+              sent_at: found.waiting_since || new Date().toISOString(),
+            },
+            {
+              id: id + "-msg-2",
+              seq: 2,
+              sender_role: 'sales',
+              content: 'Chào Anh/Chị! Em Duy từ VinFast rất sẵn lòng hỗ trợ Anh/Chị trải nghiệm và báo giá lăn bánh tốt nhất hôm nay.',
+              sent_at: new Date().toISOString(),
+            },
+          ],
+          tasks: (dashboardFallback?.work_items?.items || []).filter((w) => w.conversation_id === id),
+        };
+        detailCache.current[id] = fallbackDetail;
+        detailFetchedAt.current[id] = Date.now();
+        setDetails((previous) => ({ ...previous, [id]: fallbackDetail }));
+      } else {
+        setDetailErrors((previous) => ({ ...previous, [id]: error.message }));
+      }
+    }).finally(() => {
       setPending((previous) => ({ ...previous, [id]: false }));
       requests.current.delete(`detail:${id}`);
     });

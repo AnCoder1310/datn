@@ -20,24 +20,24 @@ export function VinFastLogo({ className = 'w-6 h-6', variant = 'chrome', ...prop
     >
       <defs>
         <linearGradient id="vf-chrome-highlight" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FFFFFF" />
-          <stop offset="35%" stopColor="#E5E5E5" />
-          <stop offset="70%" stopColor="#666666" />
-          <stop offset="100%" stopColor="#666666" />
+          <stop offset="0%" stopColor="var(--color-text-primary)" />
+          <stop offset="35%" stopColor="var(--color-border)" />
+          <stop offset="70%" stopColor="var(--color-text-secondary)" />
+          <stop offset="100%" stopColor="var(--color-text-secondary)" />
         </linearGradient>
 
         <linearGradient id="vf-chrome-shadow" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#E5E5E5" />
-          <stop offset="45%" stopColor="#666666" />
-          <stop offset="85%" stopColor="#111111" />
-          <stop offset="100%" stopColor="#111111" />
+          <stop offset="0%" stopColor="var(--color-border)" />
+          <stop offset="45%" stopColor="var(--color-text-secondary)" />
+          <stop offset="85%" stopColor="var(--color-aqua-primary)" />
+          <stop offset="100%" stopColor="var(--color-aqua-primary)" />
         </linearGradient>
 
         <linearGradient id="vf-chrome-inner" x1="50%" y1="0%" x2="50%" y2="100%">
-          <stop offset="0%" stopColor="#FFFFFF" />
-          <stop offset="40%" stopColor="#FFFFFF" />
-          <stop offset="80%" stopColor="#666666" />
-          <stop offset="100%" stopColor="#111111" />
+          <stop offset="0%" stopColor="var(--color-text-primary)" />
+          <stop offset="40%" stopColor="var(--color-text-primary)" />
+          <stop offset="80%" stopColor="var(--color-text-secondary)" />
+          <stop offset="100%" stopColor="var(--color-aqua-primary)" />
         </linearGradient>
       </defs>
 
@@ -78,7 +78,7 @@ export function VinFastLogo({ className = 'w-6 h-6', variant = 'chrome', ...prop
       />
 
       {/* Center Specular Glint */}
-      <circle cx="50" cy="72" r="1.5" fill="#FFFFFF" opacity="0.9" />
+      <circle cx="50" cy="72" r="1.5" fill="var(--color-text-primary)" opacity="0.9" />
     </svg>
   );
 }

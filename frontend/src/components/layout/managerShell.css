@@ -1,7 +1,7 @@
 /* VINFAST AUTOMOTIVE MODERN SAAS — MANAGER SHELL */
 .manager-app-layout {
-  background: #FFFFFF;
-  color: #111111;
+  background: var(--color-white);
+  color: var(--color-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
 }
@@ -14,29 +14,29 @@
   display: inline-grid;
   place-items: center;
   border-radius: 999px;
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
   font-size: 0.7rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 .manager-app-layout .nav-tab-item.active .nav-tab-badge {
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
 }
 
 .manager-app-layout .manager-app-content {
   max-width: 1440px;
   margin: 0 auto;
   padding: 28px 24px 56px;
-  background: #FFFFFF;
+  background: var(--color-white);
 }
 
 .manager-app-layout .card-white,
 .manager-app-layout .manager-queue-card {
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }

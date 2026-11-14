@@ -4,7 +4,12 @@ Customer facts, versioned consultation memory, requested drafts and activities.
 """
 
 from datetime import UTC, datetime
-from enum import StrEnum
+try:
+    from enum import StrEnum
+except ImportError:
+    from enum import Enum
+    class StrEnum(str, Enum):
+        pass
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field

@@ -7,7 +7,7 @@
   gap: 20px;
   min-width: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
-  color: #111111;
+  color: var(--color-text-primary);
   font-variant-numeric: tabular-nums;
   max-width: 1440px;
   margin: 0 auto;
@@ -25,7 +25,7 @@
   justify-content: space-between;
   gap: 12px 24px;
   padding-bottom: 14px;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .ap-title h1 {
@@ -33,12 +33,12 @@
   font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #111111;
+  color: var(--color-text-primary);
 }
 
 .ap-title p {
   margin: 4px 0 0;
-  color: #666666;
+  color: var(--color-text-secondary);
   font-size: 13.5px;
 }
 
@@ -48,9 +48,9 @@
   gap: 7px;
   margin: 0;
   font-size: 13px;
-  color: #666666;
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  color: var(--color-text-secondary);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
   padding: 6px 12px;
   border-radius: 999px;
 }
@@ -59,7 +59,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: #111111;
+  color: var(--color-text-primary);
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
@@ -75,8 +75,8 @@
 
 .ap-card {
   min-width: 0;
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   padding: 20px;
 }
@@ -88,7 +88,7 @@
   align-items: center;
   gap: 12px;
   padding-bottom: 14px;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .ap-card-head h2 {
@@ -96,12 +96,12 @@
   font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #111111;
+  color: var(--color-text-primary);
 }
 
 .ap-hint {
   font-size: 12px;
-  color: #666666;
+  color: var(--color-text-secondary);
   margin: 2px 0 0;
 }
 
@@ -114,10 +114,10 @@
 .ap-filter-pills {
   display: flex;
   gap: 4px;
-  background: #FFFFFF;
+  background: var(--color-white);
   padding: 3px;
   border-radius: 8px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid var(--color-border);
 }
 
 .ap-filter-pill {
@@ -127,18 +127,18 @@
   border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
-  color: #666666;
+  color: var(--color-text-secondary);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .ap-filter-pill:hover {
-  color: #111111;
+  color: var(--color-text-primary);
 }
 
 .ap-filter-pill.is-active {
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
   font-weight: 700;
 }
 
@@ -148,15 +148,15 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 1px solid #E5E5E5;
-  background: #FFFFFF;
-  color: #666666;
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-text-secondary);
   cursor: pointer;
 }
 
 .ap-btn-icon:hover {
-  background: #FFFFFF;
-  color: #111111;
+  background: var(--color-white);
+  color: var(--color-text-primary);
 }
 
 /* SCENARIOS GRID */
@@ -171,8 +171,8 @@
 
 .ap-scenario {
   position: relative;
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   padding: 18px;
   display: flex;
@@ -183,8 +183,8 @@
 }
 
 .ap-scenario:hover {
-  border-color: #111111;
-  background: #FFFFFF;
+  border-color: var(--color-aqua-primary);
+  background: var(--color-white);
 }
 
 .ap-scenario-header {
@@ -206,9 +206,9 @@
   border-radius: 4px;
   font-size: 11px;
   font-weight: 600;
-  color: #111111;
-  background: #E5E5E5;
-  border: 1px solid #E5E5E5;
+  color: var(--color-text-primary);
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
 }
 
 .ap-badge-tag {
@@ -217,16 +217,16 @@
   border-radius: 4px;
   font-size: 11px;
   font-weight: 500;
-  color: #666666;
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  color: var(--color-text-secondary);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
 }
 
 .ap-badge-tag.is-urgent {
-  color: #111111;
+  color: var(--color-text-primary);
   font-weight: 600;
-  background: #E5E5E5;
-  border-color: #999999;
+  background: var(--color-border);
+  border-color: var(--color-text-muted);
 }
 
 .ap-scenario-title {
@@ -234,7 +234,7 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.35;
-  color: #111111;
+  color: var(--color-text-primary);
 }
 
 /* VEHICLE MEDIA */
@@ -264,8 +264,8 @@
 
 /* CUSTOMER QUOTE */
 .ap-scenario-quote {
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 10px 12px;
   display: flex;
@@ -276,7 +276,7 @@
 .ap-scenario-quote small {
   font-size: 10.5px;
   font-weight: 600;
-  color: #666666;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
 }
 
@@ -284,7 +284,7 @@
   margin: 0;
   font-size: 12.5px;
   line-height: 1.5;
-  color: #111111;
+  color: var(--color-text-primary);
   font-style: italic;
 }
 
@@ -294,12 +294,12 @@
   flex-direction: column;
   gap: 10px;
   padding-top: 10px;
-  border-top: 1px solid #E5E5E5;
+  border-top: 1px solid var(--color-border);
 }
 
 .ap-scenario-status {
   font-size: 11.5px;
-  color: #666666;
+  color: var(--color-text-secondary);
 }
 
 .ap-scenario-buttons {
@@ -315,18 +315,18 @@
   gap: 5px;
   padding: 7px 11px;
   border-radius: 6px;
-  border: 1px solid #E5E5E5;
-  background: #FFFFFF;
-  color: #666666;
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-text-secondary);
   font-size: 12.5px;
   font-weight: 500;
   cursor: pointer;
 }
 
 .ap-btn-history:hover {
-  background: #FFFFFF;
-  color: #111111;
-  border-color: #999999;
+  background: var(--color-white);
+  color: var(--color-text-primary);
+  border-color: var(--color-text-muted);
 }
 
 .ap-btn {
@@ -343,15 +343,15 @@
 }
 
 .ap-btn--primary {
-  border: 1px solid #111111;
-  background: #111111;
-  color: #FFFFFF;
+  border: 1px solid var(--color-aqua-primary);
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
   font-weight: 700;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .ap-btn--primary:hover:not(:disabled) {
-  background: #262626;
+  background: var(--color-aqua-hover);
 }
 
 .ap-btn:disabled {
@@ -377,12 +377,12 @@
   font-size: 38px;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: #111111;
+  color: var(--color-text-primary);
 }
 
 .ap-score-value span {
   font-size: 13px;
-  color: #666666;
+  color: var(--color-text-secondary);
   margin-left: 6px;
 }
 
@@ -401,9 +401,9 @@
 }
 
 .ap-radar-area {
-  fill: #111111;
+  fill: var(--color-aqua-primary);
   fill-opacity: 0.15;
-  stroke: #111111;
+  stroke: var(--color-aqua-primary);
   stroke-width: 2;
 }
 
@@ -416,11 +416,11 @@
   margin: 0;
   padding: 24px;
   font-size: 13px;
-  color: #666666;
-  border: 1px dashed #999999;
+  color: var(--color-text-secondary);
+  border: 1px dashed var(--color-text-muted);
   border-radius: 8px;
   text-align: center;
-  background: #FFFFFF;
+  background: var(--color-white);
 }
 
 /* RESPONSIVE */

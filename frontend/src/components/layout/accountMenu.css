@@ -9,10 +9,10 @@
   gap: 10px;
   min-height: 40px;
   padding: 4px 10px 4px 4px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid var(--color-border);
   border-radius: 999px;
-  background: #FFFFFF;
-  color: #111111;
+  background: var(--color-white);
+  color: var(--color-text-primary);
   font-family: inherit;
   text-align: left;
   cursor: pointer;
@@ -21,12 +21,12 @@
 
 .account-menu-trigger:hover,
 .account-menu-trigger.is-open {
-  background: #FFFFFF;
-  border-color: #111111;
+  background: var(--color-white);
+  border-color: var(--color-aqua-primary);
 }
 
 .account-menu-trigger:focus-visible {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-aqua-primary);
   outline-offset: 2px;
 }
 
@@ -38,7 +38,7 @@
 .account-menu-chevron {
   width: 14px;
   height: 14px;
-  color: #666666;
+  color: var(--color-text-secondary);
   transition: transform 0.2s ease;
 }
 
@@ -56,11 +56,11 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  color: #111111;
+  color: var(--color-text-primary);
   font-family: inherit;
 }
 
@@ -78,8 +78,8 @@
   display: grid;
   place-items: center;
   background: rgba(0, 0, 0, 0.2);
-  border: 1px solid #111111;
-  color: #111111;
+  border: 1px solid var(--color-aqua-primary);
+  color: var(--color-text-primary);
   font-size: 15px;
   font-weight: 700;
 }
@@ -93,20 +93,20 @@
 .account-menu-names strong {
   font-size: 14px;
   font-weight: 700;
-  color: #111111;
+  color: var(--color-text-primary);
   overflow-wrap: anywhere;
 }
 
 .account-menu-names span {
   font-size: 12px;
-  color: #666666;
+  color: var(--color-text-secondary);
   overflow-wrap: anywhere;
 }
 
 .account-menu-facts {
   margin: 0;
   padding-bottom: 12px;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid var(--color-border);
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 6px 12px;
@@ -114,21 +114,21 @@
 }
 
 .account-menu-facts dt {
-  color: #666666;
+  color: var(--color-text-secondary);
 }
 
 .account-menu-facts dd {
   margin: 0;
   font-weight: 600;
-  color: #111111;
+  color: var(--color-text-primary);
 }
 
 .account-menu-logout {
   min-height: 38px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #FFFFFF;
-  color: #111111;
+  background: var(--color-white);
+  color: var(--color-text-primary);
   font-family: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -146,21 +146,21 @@
 }
 
 .account-menu-logout:hover {
-  background: #FFFFFF;
-  border-color: #999999;
+  background: var(--color-white);
+  border-color: var(--color-text-muted);
 }
 
 .account-menu-logout:focus-visible {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-aqua-primary);
   outline-offset: 2px;
 }
 
 .account-menu-switch {
   min-height: 38px;
-  border: 1px solid #111111;
+  border: 1px solid var(--color-aqua-primary);
   border-radius: 8px;
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;
@@ -174,12 +174,12 @@
 }
 
 .account-menu-switch:hover {
-  background: #262626;
-  border-color: #262626;
+  background: var(--color-aqua-hover);
+  border-color: var(--color-aqua-primary);
 }
 
 .account-menu-switch:focus-visible {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-aqua-primary);
   outline-offset: 2px;
 }
 

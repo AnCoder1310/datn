@@ -1,23 +1,23 @@
 /* VINFAST AI SALES ENABLEMENT — MODERN SAAS AUTOMOTIVE DASHBOARD */
 /* Color Palette:
-   - Primary: #111111 (Soft Cyan)
-   - Secondary: #111111 (Midnight Navy)
-   - Background: #FAFAFA (Cloud White)
-   - Neutral Cards: #FFFFFF
-   - Border: #E5E5E5
-   - Secondary Text: #666666
-   - Muted Text: #999999
+   - Primary: #65DCCB (Aqua Mint)
+   - Secondary: #263238 (Deep Slate)
+   - Background: var(--color-surface-alt) (Cloud White)
+   - Neutral Cards: var(--color-white)
+   - Border: var(--color-border)
+   - Secondary Text: var(--color-text-secondary)
+   - Muted Text: var(--color-text-muted)
 */
 
 .copilot-shell {
-  --sw-primary: #111111;
-  --sw-secondary: #111111;
-  --sw-bg: #FFFFFF;
-  --sw-card: #FFFFFF;
-  --sw-border: #E5E5E5;
-  --sw-text-primary: #111111;
-  --sw-text-secondary: #666666;
-  --sw-text-muted: #999999;
+  --sw-primary: var(--color-aqua-primary);
+  --sw-secondary: var(--color-text-primary);
+  --sw-bg: var(--color-surface-alt);
+  --sw-card: var(--color-white);
+  --sw-border: var(--color-border);
+  --sw-text-primary: var(--color-text-primary);
+  --sw-text-secondary: var(--color-text-secondary);
+  --sw-text-muted: var(--color-text-muted);
 
   display: flex;
   flex: 1;
@@ -39,7 +39,7 @@
   flex-shrink: 0;
   padding: 18px 12px;
   border-right: 1px solid var(--sw-border);
-  background: #FFFFFF;
+  background: var(--color-white);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -71,15 +71,15 @@
 }
 
 .copilot-sidebar > button:hover {
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   color: var(--sw-secondary);
 }
 
 .copilot-sidebar > button.is-active {
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
   font-weight: 600;
-  border-color: #FFFFFF;
+  border-color: var(--color-border);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
@@ -157,7 +157,7 @@
   padding: 6px 12px;
   border-radius: 8px;
   border: 1px solid var(--sw-border);
-  background: #FFFFFF;
+  background: var(--color-white);
   color: var(--sw-secondary);
   font-size: 13px;
   font-weight: 500;
@@ -167,8 +167,8 @@
 }
 
 .agenda-btn-minimal:hover {
-  background: #FAFAFA;
-  border-color: #999999;
+  background: var(--color-surface-alt);
+  border-color: var(--color-text-muted);
   color: var(--sw-secondary);
 }
 
@@ -180,7 +180,7 @@
 
 .agenda-btn-minimal.is-muted:hover {
   color: var(--sw-secondary);
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
 }
 
 .agenda-btn-solid {
@@ -189,9 +189,9 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: 8px;
-  border: 1px solid #111111;
-  background: #111111;
-  color: #FFFFFF;
+  border: 1px solid var(--color-aqua-primary);
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
@@ -201,8 +201,8 @@
 }
 
 .agenda-btn-solid:hover {
-  background: #262626;
-  border-color: #262626;
+  background: var(--color-aqua-hover);
+  border-color: var(--color-aqua-primary);
 }
 
 .agenda-inline-link {
@@ -219,7 +219,7 @@
 }
 
 .agenda-inline-link:hover {
-  color: #111111;
+  color: var(--color-text-primary);
   text-decoration: underline;
 }
 
@@ -237,7 +237,7 @@
    VINFAST SHOWCASE HERO COMPONENT
    ========================================================================== */
 .vf-showcase-card {
-  background: #FFFFFF;
+  background: var(--color-white);
   border: 1px solid var(--sw-border);
   border-radius: 14px;
   padding: 16px 20px 20px;
@@ -255,7 +255,7 @@
   overflow-x: auto;
   padding-bottom: 12px;
   margin-bottom: 14px;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid var(--color-border);
   scrollbar-width: none;
 }
 
@@ -270,7 +270,7 @@
   padding: 6px 14px;
   border-radius: 9999px;
   border: 1px solid var(--sw-border);
-  background: #FFFFFF;
+  background: var(--color-white);
   color: var(--sw-text-secondary);
   font-size: 13px;
   font-weight: 500;
@@ -280,15 +280,15 @@
 }
 
 .vf-model-tab:hover {
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   color: var(--sw-secondary);
-  border-color: #999999;
+  border-color: var(--color-text-muted);
 }
 
 .vf-model-tab.is-active {
-  background: #111111;
-  color: #FFFFFF;
-  border-color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
 }
@@ -296,16 +296,16 @@
 .vf-model-tab-badge {
   font-size: 10.5px;
   font-weight: 700;
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
   padding: 1px 6px;
   border-radius: 999px;
   line-height: 1.2;
 }
 
 .vf-model-tab.is-active .vf-model-tab-badge {
-  background: #FFFFFF;
-  color: #111111;
+  background: var(--color-white);
+  color: var(--color-text-primary);
 }
 
 /* HERO STAGE (2 COLUMNS: INFO & CAR VISUAL) */
@@ -334,8 +334,8 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: #FFFFFF;
-  background: #111111;
+  color: var(--color-text-primary);
+  background: var(--color-aqua-primary);
   padding: 3px 10px;
   border-radius: 999px;
   margin-bottom: 4px;
@@ -388,15 +388,15 @@
   align-items: center;
   gap: 10px;
   padding: 8px 12px;
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   border: 1px solid var(--sw-border);
   border-radius: 10px;
   transition: all 0.12s ease;
 }
 
 .vf-spec-tile:hover {
-  background: #FFFFFF;
-  border-color: #111111;
+  background: var(--color-white);
+  border-color: var(--color-aqua-primary);
 }
 
 .vf-spec-icon {
@@ -404,7 +404,7 @@
   height: 32px;
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.12);
-  color: #111111;
+  color: var(--color-text-primary);
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -449,9 +449,9 @@
   gap: 7px;
   padding: 8px 16px;
   border-radius: 8px;
-  background: #111111;
-  color: #FFFFFF;
-  border: 1px solid #111111;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-aqua-primary);
   font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
@@ -460,8 +460,8 @@
 }
 
 .vf-btn-primary:hover {
-  background: #262626;
-  border-color: #262626;
+  background: var(--color-aqua-hover);
+  border-color: var(--color-aqua-primary);
   transform: translateY(-1px);
 }
 
@@ -471,7 +471,7 @@
   gap: 7px;
   padding: 8px 14px;
   border-radius: 8px;
-  background: #FFFFFF;
+  background: var(--color-white);
   color: var(--sw-secondary);
   border: 1px solid var(--sw-secondary);
   font-size: 13.5px;
@@ -481,8 +481,8 @@
 }
 
 .vf-btn-secondary:hover {
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
 }
 
 .vf-btn-leads {
@@ -491,7 +491,7 @@
   gap: 6px;
   padding: 7px 12px;
   border-radius: 8px;
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   color: var(--sw-secondary);
   border: 1px solid var(--sw-border);
   font-size: 12.5px;
@@ -501,13 +501,13 @@
 }
 
 .vf-btn-leads:hover {
-  background: #E5E5E5;
+  background: var(--color-border);
 }
 
 .vf-btn-leads.is-filtering {
-  background: #111111;
-  color: #FFFFFF;
-  border-color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
 }
 
 /* VEHICLE VISUAL STAGE */
@@ -571,7 +571,7 @@
 }
 
 .agenda-metric-cell {
-  background: #FFFFFF;
+  background: var(--color-white);
   border: 1px solid var(--sw-border);
   border-radius: 12px;
   padding: 16px 18px;
@@ -594,13 +594,13 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: #111111;
+  background: var(--color-aqua-primary);
   opacity: 0;
   transition: opacity 0.15s ease;
 }
 
 .agenda-metric-cell:hover {
-  border-color: #111111;
+  border-color: var(--color-aqua-primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transform: translateY(-1px);
 }
@@ -652,7 +652,7 @@
    ROW 2: PIPELINE CARD
    ========================================================================== */
 .agenda-pipeline-card {
-  background: #FFFFFF;
+  background: var(--color-white);
   border: 1px solid var(--sw-border);
   border-radius: 12px;
   padding: 14px 18px 16px;
@@ -690,7 +690,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   border: 1px solid var(--sw-border);
   border-radius: 6px;
   padding: 3px 10px;
@@ -702,7 +702,7 @@
 }
 
 .agenda-pill-clear:hover {
-  background: #E5E5E5;
+  background: var(--color-border);
 }
 
 .agenda-pipeline-bar {
@@ -710,7 +710,7 @@
   height: 8px;
   border-radius: 4px;
   overflow: hidden;
-  background: #E5E5E5;
+  background: var(--color-border);
   gap: 2px;
   margin-bottom: 10px;
 }
@@ -728,7 +728,7 @@
 }
 
 .agenda-pipeline-segment.is-active {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-aqua-primary);
   outline-offset: 1px;
 }
 
@@ -745,7 +745,7 @@
   padding: 4px 10px;
   border-radius: 6px;
   border: 1px solid var(--sw-border);
-  background: #FFFFFF;
+  background: var(--color-white);
   color: var(--sw-text-secondary);
   font-size: 12px;
   font-weight: 500;
@@ -754,15 +754,15 @@
 }
 
 .agenda-stage-pill:hover {
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   color: var(--sw-secondary);
-  border-color: #999999;
+  border-color: var(--color-text-muted);
 }
 
 .agenda-stage-pill.is-active {
-  background: #111111;
-  color: #FFFFFF;
-  border-color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
   font-weight: 700;
 }
 
@@ -777,7 +777,7 @@
    PANELS & WORKSPACE GRID (ROW 3)
    ========================================================================== */
 .agenda-panel {
-  background: #FFFFFF;
+  background: var(--color-white);
   border: 1px solid var(--sw-border);
   border-radius: 12px;
   padding: 16px 18px;
@@ -813,7 +813,7 @@
   padding: 4px 10px;
   border-radius: 6px;
   color: var(--sw-secondary);
-  background: #FFFFFF;
+  background: var(--color-white);
   font-size: 13px;
 }
 
@@ -853,7 +853,7 @@
   color: var(--sw-text-muted);
   text-align: center;
   font-size: 13px;
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   border-radius: 8px;
 }
 
@@ -895,14 +895,14 @@
 
 .agenda-queue-tabs button:hover,
 .agenda-filter-tabs button:hover {
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   color: var(--sw-secondary);
 }
 
 .agenda-queue-tabs button.is-active,
 .agenda-filter-tabs button.is-active {
   background: rgba(128, 229, 229, 0.22);
-  color: #111111;
+  color: var(--color-text-primary);
   font-weight: 700;
 }
 
@@ -913,14 +913,14 @@
   font-weight: 700;
   padding: 1px 6px;
   border-radius: 999px;
-  background: #E5E5E5;
+  background: var(--color-border);
   color: var(--sw-secondary);
 }
 
 .agenda-queue-tabs button.is-active em,
 .agenda-filter-tabs button.is-active em {
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
 }
 
 /* CUSTOMER LIST ROWS */
@@ -936,7 +936,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 11px 4px;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .agenda-minimal-row:last-child,
@@ -973,15 +973,15 @@
 }
 
 .agenda-customer-name-btn:hover {
-  color: #111111;
+  color: var(--color-text-primary);
   text-decoration: underline;
 }
 
 .agenda-model-tag {
   font-size: 11.5px;
   font-weight: 700;
-  color: #FFFFFF;
-  background: #111111;
+  color: var(--color-text-primary);
+  background: var(--color-aqua-primary);
   padding: 2px 7px;
   border-radius: 4px;
 }
@@ -989,7 +989,7 @@
 .agenda-stage-tag {
   font-size: 11.5px;
   color: var(--sw-text-secondary);
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   padding: 2px 7px;
   border-radius: 4px;
 }
@@ -1031,9 +1031,9 @@
   gap: 5px;
   padding: 6px 14px;
   border-radius: 6px;
-  background: #111111;
-  color: #FFFFFF;
-  border: 1px solid #111111;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-aqua-primary);
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
@@ -1042,8 +1042,8 @@
 }
 
 .agenda-btn-primary-action:hover {
-  background: #262626;
-  border-color: #262626;
+  background: var(--color-aqua-hover);
+  border-color: var(--color-aqua-primary);
 }
 
 .agenda-btn-subtle {
@@ -1052,7 +1052,7 @@
   gap: 4px;
   padding: 6px 10px;
   border-radius: 6px;
-  background: #FFFFFF;
+  background: var(--color-white);
   color: var(--sw-text-secondary);
   border: 1px solid var(--sw-border);
   font-size: 12px;
@@ -1061,7 +1061,7 @@
 }
 
 .agenda-btn-subtle:hover {
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   color: var(--sw-secondary);
 }
 
@@ -1069,7 +1069,7 @@
   width: 100%;
   padding: 9px;
   margin-top: 8px;
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   border: 1px dashed var(--sw-border);
   border-radius: 8px;
   color: var(--sw-secondary);
@@ -1080,7 +1080,7 @@
 }
 
 .agenda-expand-btn:hover {
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
 }
 
 /* TASK ROWS */
@@ -1095,11 +1095,11 @@
 }
 
 .agenda-task-toggle:hover {
-  color: #111111;
+  color: var(--color-text-primary);
 }
 
 .agenda-task-toggle.is-done {
-  color: #111111;
+  color: var(--color-text-primary);
 }
 
 .agenda-task-header-line {
@@ -1123,13 +1123,13 @@
 }
 
 .agenda-task-pill.is-high {
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
 }
 
 .agenda-task-pill.is-overdue {
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
 }
 
 .agenda-task-details {
@@ -1150,7 +1150,7 @@
   text-align: left;
   cursor: pointer;
   color: var(--sw-secondary);
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid var(--color-border);
   transition: background-color 0.12s ease;
 }
 
@@ -1159,7 +1159,7 @@
 }
 
 .agenda-upcoming:hover {
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
 }
 
 .agenda-upcoming-body {
@@ -1209,7 +1209,7 @@
 }
 
 .agenda-bar-row:hover {
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
 }
 
 .agenda-bar-row.is-selected {
@@ -1238,7 +1238,7 @@
 
 .agenda-bar-track {
   height: 6px;
-  background: #E5E5E5;
+  background: var(--color-border);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -1246,13 +1246,13 @@
 .agenda-bar-track span {
   display: block;
   height: 100%;
-  background: #111111;
+  background: var(--color-aqua-primary);
   border-radius: 3px;
   transition: width 0.3s ease;
 }
 
 .agenda-bar-row.is-selected .agenda-bar-track span {
-  background: #111111;
+  background: var(--color-aqua-primary);
 }
 
 /* MESSAGE ACTIVITY CHART */
@@ -1284,11 +1284,11 @@
 }
 
 .agenda-legend i.customer {
-  background: #111111;
+  background: var(--color-aqua-primary);
 }
 
 .agenda-legend i.sales {
-  background: #111111;
+  background: var(--color-aqua-primary);
 }
 
 .agenda-activity-chart {
@@ -1325,12 +1325,12 @@
 }
 
 .agenda-activity-stack .customer {
-  background: #111111;
+  background: var(--color-aqua-primary);
   width: 100%;
 }
 
 .agenda-activity-stack .sales {
-  background: #111111;
+  background: var(--color-aqua-primary);
   width: 100%;
 }
 
@@ -1352,9 +1352,9 @@
 
 /* ERROR BANNER */
 .sw-error-banner {
-  background: #111111;
-  border: 1px solid #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  border: 1px solid var(--color-aqua-primary);
+  color: var(--color-text-primary);
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 13px;
@@ -1367,7 +1367,7 @@
 .sw-text-button {
   background: none;
   border: 0;
-  color: #111111;
+  color: var(--color-text-primary);
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
@@ -1391,7 +1391,7 @@
   gap: 12px;
   padding: 10px 16px;
   margin-bottom: 12px;
-  background: #FFFFFF;
+  background: var(--color-white);
   border: 1px solid var(--sw-border);
   border-radius: 10px;
   flex-shrink: 0;
@@ -1443,8 +1443,8 @@
 
 .agenda-calendar-nav-buttons .is-current-week {
   background: rgba(0, 0, 0, 0.06);
-  border-color: #111111;
-  color: #111111;
+  border-color: var(--color-aqua-primary);
+  color: var(--color-text-primary);
   font-weight: 600;
 }
 
@@ -1454,7 +1454,7 @@
   gap: 7px;
   padding: 6px 12px;
   border-radius: 8px;
-  background: #FFFFFF;
+  background: var(--color-white);
   border: 1px solid var(--sw-border);
   color: var(--sw-secondary);
 }
@@ -1477,7 +1477,7 @@
 
 .agenda-date-picker-label input {
   border: 1px solid var(--sw-border);
-  background: #FFFFFF;
+  background: var(--color-white);
   border-radius: 6px;
   padding: 5px 9px;
   font-size: 13px;
@@ -1489,7 +1489,7 @@
   min-height: 0;
   width: 100%;
   overflow: auto;
-  background: #FFFFFF;
+  background: var(--color-white);
   border: 1px solid var(--sw-border);
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
@@ -1508,7 +1508,7 @@
   position: sticky;
   top: 0;
   height: 56px;
-  background: #FFFFFF;
+  background: var(--color-white);
   z-index: 10;
   border-bottom: 1px solid var(--sw-border);
   border-right: 1px solid var(--sw-border);
@@ -1530,7 +1530,7 @@
 .agenda-calendar-corner {
   left: 0;
   z-index: 12;
-  background: #FAFAFA;
+  background: var(--color-surface-alt);
   font-size: 10px;
   gap: 2px;
 }
@@ -1573,26 +1573,26 @@
   height: 18px;
   padding: 0 5px;
   border-radius: 4px;
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
   font-size: 10.5px;
   font-weight: 700;
   line-height: 1;
 }
 
 .agenda-calendar-day-heading.is-today {
-  background: #FAFAFA;
-  box-shadow: inset 0 2px 0 #111111;
+  background: var(--color-surface-alt);
+  box-shadow: inset 0 2px 0 var(--color-aqua-primary);
 }
 
 .agenda-calendar-day-heading.is-today .agenda-day-name {
-  color: #111111;
+  color: var(--color-text-primary);
   font-weight: 700;
 }
 
 .agenda-calendar-day-heading.is-today .agenda-day-date {
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
   padding: 2px 8px;
   border-radius: 4px;
   font-weight: 800;
@@ -1604,7 +1604,7 @@
   height: 1440px;
   z-index: 5;
   border-right: 1px solid var(--sw-border);
-  background-color: #FFFFFF;
+  background-color: var(--color-white);
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
@@ -1629,7 +1629,7 @@
   position: relative;
   height: 1440px;
   border-right: 1px solid var(--sw-border);
-  background-color: #FFFFFF;
+  background-color: var(--color-white);
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
@@ -1644,7 +1644,7 @@
 }
 
 .agenda-calendar-day.is-today {
-  background-color: #FAFAFA;
+  background-color: var(--color-surface-alt);
 }
 
 .agenda-calendar-event {
@@ -1655,9 +1655,9 @@
   gap: 2px;
   text-align: left;
   border: 1px solid var(--sw-border);
-  border-left: 3px solid #111111;
+  border-left: 3px solid var(--color-aqua-primary);
   border-radius: 6px;
-  background: #FFFFFF;
+  background: var(--color-white);
   color: var(--sw-secondary);
   overflow: hidden;
   cursor: pointer;
@@ -1667,17 +1667,17 @@
 
 .agenda-calendar-event:hover {
   z-index: 8 !important;
-  background: #FAFAFA;
-  border-color: #111111;
+  background: var(--color-surface-alt);
+  border-color: var(--color-aqua-primary);
 }
 
 .agenda-calendar-event.appointment {
-  border-left-color: #111111;
+  border-left-color: var(--color-aqua-primary);
 }
 
 .agenda-calendar-event.is-completed {
   opacity: 0.6;
-  background: #FFFFFF;
+  background: var(--color-white);
   border-left-color: var(--sw-text-muted);
 }
 
@@ -1723,7 +1723,7 @@
 }
 
 .agenda-calendar-event:focus-visible {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-aqua-primary);
   outline-offset: 1px;
   z-index: 9 !important;
   height: auto !important;
@@ -1734,7 +1734,7 @@
   position: absolute;
   height: 2px;
   width: 100%;
-  background: #111111;
+  background: var(--color-aqua-primary);
   z-index: 4;
   pointer-events: none;
 }
@@ -1747,16 +1747,16 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #111111;
-  border: 1.5px solid #111111;
+  background: var(--color-aqua-primary);
+  border: 1.5px solid var(--color-aqua-primary);
 }
 
 .agenda-now-badge {
   position: absolute;
   right: 4px;
   top: -10px;
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
   font-size: 9.5px;
   font-weight: 700;
   padding: 1px 5px;
@@ -1793,7 +1793,7 @@
   gap: 6px;
   padding: 10px 12px;
   border-radius: 8px;
-  background: #FFFFFF;
+  background: var(--color-white);
   border: 1px solid var(--sw-border);
 }
 
@@ -1812,13 +1812,13 @@
   line-height: 1.6;
   font-size: 12px;
   padding: 10px 12px;
-  background: #FFFFFF;
+  background: var(--color-white);
   border-radius: 8px;
   border: 1px solid var(--sw-border);
 }
 
 .agenda-highlight-task {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-aqua-primary);
   outline-offset: 2px;
   border-radius: 8px;
 }

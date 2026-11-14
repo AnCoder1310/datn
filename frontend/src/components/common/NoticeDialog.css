@@ -11,30 +11,30 @@
 }
 
 .notice-dialog {
-  --notice-tone: #111111;
+  --notice-tone: var(--color-text-primary);
   width: 100%;
   max-width: 420px;
   max-height: calc(100dvh - 40px);
   overflow-y: auto;
   padding: 28px;
   border-radius: 14px;
-  border: 1px solid #E5E5E5;
-  background: #FFFFFF;
-  color: #111111;
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-text-primary);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
   animation: notice-enter 180ms ease-out;
 }
 
 .notice-dialog-error {
-  --notice-tone: #111111;
+  --notice-tone: var(--color-text-primary);
 }
 
 .notice-dialog-warning {
-  --notice-tone: #111111;
+  --notice-tone: var(--color-text-primary);
 }
 
 .notice-dialog-success {
-  --notice-tone: #111111;
+  --notice-tone: var(--color-text-primary);
 }
 
 .notice-dialog-icon {
@@ -43,9 +43,9 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
-  color: #111111;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 16px;
@@ -56,11 +56,11 @@
   line-height: 1.35;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #111111;
+  color: var(--color-text-primary);
 }
 
 .notice-dialog p {
-  color: #666666;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   line-height: 1.55;
 }
@@ -84,29 +84,29 @@
 }
 
 .notice-dialog-action-primary {
-  background: #111111;
-  color: #FFFFFF;
-  border: 1px solid #111111;
+  background: var(--color-aqua-primary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-aqua-primary);
   font-weight: 700;
 }
 
 .notice-dialog-action-primary:hover {
-  background: #262626;
+  background: var(--color-aqua-hover);
 }
 
 .notice-dialog-action-secondary {
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
-  color: #111111;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
 }
 
 .notice-dialog-action-secondary:hover {
-  background: #FFFFFF;
-  border-color: #111111;
+  background: var(--color-white);
+  border-color: var(--color-aqua-primary);
 }
 
 .notice-dialog-action:focus-visible {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-aqua-primary);
   outline-offset: 2px;
 }
 

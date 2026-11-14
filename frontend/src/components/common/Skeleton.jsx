@@ -21,7 +21,7 @@ export function ScenarioCardSkeleton() {
         <Skeleton width="70px" height="22px" borderRadius="999px" />
       </div>
       <Skeleton width="85%" height="24px" />
-      <div style={{ padding: 14, backgroundColor: '#FFFFFF', borderRadius: 10, display: 'flex', gap: 12 }}>
+      <div style={{ padding: 14, backgroundColor: 'var(--color-white)', borderRadius: 10, display: 'flex', gap: 12 }}>
         <Skeleton width="40px" height="40px" borderRadius="50%" />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
           <Skeleton width="60%" height="16px" />

@@ -33,9 +33,9 @@ export function FinishConfirmDialog({ isOpen, onClose, onConfirm, finishing }) {
         <div className="practice-finish-main">
           <div className="practice-finish-art" aria-hidden="true">
             <svg viewBox="0 0 88 88" fill="none">
-              <path d="M24 12h27l15 15v39a6 6 0 0 1-6 6H24a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6Z" stroke="#111111" strokeWidth="3" />
-              <path d="M51 12v15h15M29 38h25M29 47h18M29 56h13" stroke="#111111" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-              <circle cx="62" cy="60" r="15" fill="#111111" />
+              <path d="M24 12h27l15 15v39a6 6 0 0 1-6 6H24a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6Z" stroke="var(--color-aqua-primary)" strokeWidth="3" />
+              <path d="M51 12v15h15M29 38h25M29 47h18M29 56h13" stroke="var(--color-aqua-primary)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="62" cy="60" r="15" fill="var(--color-aqua-primary)" />
               <path d="m55 60 5 5 9-10" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>

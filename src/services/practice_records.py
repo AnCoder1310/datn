@@ -7,7 +7,12 @@ This module deliberately does not accept user IDs from browser request bodies.
 from __future__ import annotations
 
 from datetime import date, datetime
-from enum import StrEnum
+try:
+    from enum import StrEnum
+except ImportError:
+    from enum import Enum
+    class StrEnum(str, Enum):
+        pass
 from typing import Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator

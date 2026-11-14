@@ -52,15 +52,15 @@ export function ChargingView({ onConsultCopilot }) {
       <div className="card-dark" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255, 255, 255, 0.1)', padding: '4px 10px', borderRadius: 9999, marginBottom: 8 }}>
-            <BoltIcon style={{ width: 13, height: 13, color: '#FFFFFF' }} />
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#E5E5E5' }}>
+            <BoltIcon style={{ width: 13, height: 13, color: 'var(--color-text-primary)' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-border)' }}>
               Mạng lưới Trạm sạc V-GREEN Toàn quốc
             </span>
           </div>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFFFFF' }}>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
             Hạ tầng Trạm sạc V-GREEN 2026
           </h1>
-          <p style={{ fontSize: '0.88rem', color: '#999999', marginTop: 4 }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', marginTop: 4 }}>
             Mạng lưới trạm sạc xe điện lớn nhất Việt Nam, phủ sóng 63/63 tỉnh thành và 100% các tuyến cao tốc huyết mạch.
           </p>
         </div>
@@ -68,24 +68,24 @@ export function ChargingView({ onConsultCopilot }) {
         {/* Stats Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 14, paddingTop: 16, borderTop: '1px solid rgba(255, 255, 255, 0.12)' }}>
           <div>
-            <span style={{ fontSize: '0.72rem', color: '#999999', display: 'block' }}>Tổng cổng sạc:</span>
-            <strong style={{ fontSize: '1.4rem', color: '#FFFFFF' }}>{NETWORK_STATS.total_ports}</strong>
+            <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', display: 'block' }}>Tổng cổng sạc:</span>
+            <strong style={{ fontSize: '1.4rem', color: 'var(--color-text-primary)' }}>{NETWORK_STATS.total_ports}</strong>
           </div>
           <div>
-            <span style={{ fontSize: '0.72rem', color: '#999999', display: 'block' }}>Phủ sóng tỉnh thành:</span>
-            <strong style={{ fontSize: '1.4rem', color: '#FFFFFF' }}>{NETWORK_STATS.provinces_covered}</strong>
+            <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', display: 'block' }}>Phủ sóng tỉnh thành:</span>
+            <strong style={{ fontSize: '1.4rem', color: 'var(--color-text-primary)' }}>{NETWORK_STATS.provinces_covered}</strong>
           </div>
           <div>
-            <span style={{ fontSize: '0.72rem', color: '#999999', display: 'block' }}>Tuyến cao tốc:</span>
-            <strong style={{ fontSize: '1.4rem', color: '#FFFFFF' }}>{NETWORK_STATS.highway_coverage}</strong>
+            <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', display: 'block' }}>Tuyến cao tốc:</span>
+            <strong style={{ fontSize: '1.4rem', color: 'var(--color-text-primary)' }}>{NETWORK_STATS.highway_coverage}</strong>
           </div>
           <div>
-            <span style={{ fontSize: '0.72rem', color: '#999999', display: 'block' }}>Trụ Supercharge:</span>
-            <strong style={{ fontSize: '1.4rem', color: '#FFFFFF' }}>{NETWORK_STATS.supercharger_ports}</strong>
+            <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', display: 'block' }}>Trụ Supercharge:</span>
+            <strong style={{ fontSize: '1.4rem', color: 'var(--color-text-primary)' }}>{NETWORK_STATS.supercharger_ports}</strong>
           </div>
           <div>
-            <span style={{ fontSize: '0.72rem', color: '#999999', display: 'block' }}>Tỉ lệ sẵn sàng (Uptime):</span>
-            <strong style={{ fontSize: '1.4rem', color: '#FFFFFF' }}>{NETWORK_STATS.uptime}</strong>
+            <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', display: 'block' }}>Tỉ lệ sẵn sàng (Uptime):</span>
+            <strong style={{ fontSize: '1.4rem', color: 'var(--color-text-primary)' }}>{NETWORK_STATS.uptime}</strong>
           </div>
         </div>
       </div>
@@ -103,7 +103,7 @@ export function ChargingView({ onConsultCopilot }) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#111111' }}>Khu vực:</span>
+          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>Khu vực:</span>
           {provinceOptions.map((opt) => (
             <button
               key={opt.id}
@@ -118,7 +118,7 @@ export function ChargingView({ onConsultCopilot }) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#111111' }}>Công suất:</span>
+            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>Công suất:</span>
             {powerOptions.map((opt) => (
               <button
                 key={opt.id}
@@ -132,7 +132,7 @@ export function ChargingView({ onConsultCopilot }) {
           </div>
 
           <div style={{ position: 'relative', width: 200 }}>
-            <SearchIcon style={{ position: 'absolute', left: 10, top: 9, width: 14, height: 14, color: '#999999' }} />
+            <SearchIcon style={{ position: 'absolute', left: 10, top: 9, width: 14, height: 14, color: 'var(--color-text-muted)' }} />
             <input
               type="text"
               value={searchQuery}
@@ -142,7 +142,7 @@ export function ChargingView({ onConsultCopilot }) {
                 width: '100%',
                 padding: '6px 10px 6px 30px',
                 borderRadius: 9999,
-                border: '1px solid #E5E5E5',
+                border: '1px solid var(--color-border)',
                 fontSize: '0.8rem',
                 outline: 'none',
               }}
@@ -158,40 +158,40 @@ export function ChargingView({ onConsultCopilot }) {
           {CHARGING_STATIONS.length === 0 ? (
             <div className="card-white" style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: '#FFFFFF', color: '#111111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: 'var(--color-white)', color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <AlertCircleIcon style={{ width: 20, height: 20 }} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#111111' }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
                     Dữ liệu trạm sạc thực tế đang để trống
                   </h3>
-                  <p style={{ fontSize: '0.82rem', color: '#666666', marginTop: 2 }}>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', marginTop: 2 }}>
                     Hệ thống không dùng dữ liệu giả lập. Sẵn sàng tiếp nhận tệp dữ liệu PDF biểu phí & chính sách trạm sạc V-GREEN.
                   </p>
                 </div>
               </div>
 
               {REQUIRED_STATION_PDFS.map((pdf) => (
-                <div key={pdf.id} style={{ border: '1px solid #E5E5E5', borderRadius: 8, padding: '16px 20px', backgroundColor: '#FFFFFF' }}>
+                <div key={pdf.id} style={{ border: '1px solid var(--color-border)', borderRadius: 8, padding: '16px 20px', backgroundColor: 'var(--color-white)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <FileTextIcon style={{ width: 14, height: 14, color: '#666666' }} />
-                      <strong style={{ fontSize: '0.9rem', color: '#111111' }}>{pdf.title}</strong>
+                      <FileTextIcon style={{ width: 14, height: 14, color: 'var(--color-text-secondary)' }} />
+                      <strong style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>{pdf.title}</strong>
                     </div>
                     <Badge variant="highlight"><ClockIcon style={{ width: 11, height: 11, display: "inline", verticalAlign: "-1px", marginRight: 3 }} />{pdf.status}</Badge>
                   </div>
 
-                  <div style={{ marginTop: 8, fontSize: '0.8rem', color: '#666666' }}>
+                  <div style={{ marginTop: 8, fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
                     <div>Tên file cần chuẩn bị: <code>{pdf.filename}</code></div>
                     <div>Mã định danh văn bản: <code>{pdf.document_id}</code></div>
                   </div>
 
-                  <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #E5E5E5' }}>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111111' }}>Nội dung cần có:</span>
+                  <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--color-border)' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Nội dung cần có:</span>
                     <ul style={{ listStyle: 'none', paddingLeft: 0, margin: '6px 0 0 0', display: 'flex', flexDirection: 'column', gap: 4 }}>
                       {pdf.required_contents.map((item, idx) => (
-                        <li key={idx} style={{ fontSize: '0.78rem', color: '#666666', display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <span style={{ color: '#666666' }}>•</span>
+                        <li key={idx} style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ color: 'var(--color-text-secondary)' }}>•</span>
                           <span>{item}</span>
                         </li>
                       ))}
@@ -201,7 +201,7 @@ export function ChargingView({ onConsultCopilot }) {
               ))}
             </div>
           ) : filteredStations.length === 0 ? (
-            <div className="card-white" style={{ padding: '32px 24px', textAlign: 'center', color: '#666666' }}>
+            <div className="card-white" style={{ padding: '32px 24px', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
               <p>Không tìm thấy trạm sạc nào phù hợp với bộ lọc hiện tại.</p>
             </div>
           ) : (
@@ -215,33 +215,33 @@ export function ChargingView({ onConsultCopilot }) {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                       <Badge variant="highlight">{st.province}</Badge>
-                      <span style={{ fontSize: '0.75rem', color: '#111111', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--color-text-primary)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                         <CheckCircleIcon style={{ width: 12, height: 12 }} /> {st.status}
                       </span>
-                      <span style={{ fontSize: '0.75rem', color: '#666666' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
                         <ClockIcon style={{ width: 11, height: 11, display: 'inline', marginRight: 3 }} />
                         {st.operating_hours}
                       </span>
                     </div>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#111111' }}>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
                       {st.name}
                     </h3>
                   </div>
 
                   <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: '0.78rem', color: '#666666' }}>Cổng sạc trống:</span>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#111111' }}>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)' }}>Cổng sạc trống:</span>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
                       {st.ports_available} / {st.ports_total}
                     </div>
                   </div>
                 </div>
 
-                <p style={{ fontSize: '0.85rem', color: '#666666' }}>
+                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
                   <LocationIcon style={{ width: 12, height: 12, display: "inline", verticalAlign: "-1px", marginRight: 3 }} />{st.address}
                 </p>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#666666', marginRight: 4 }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginRight: 4 }}>
                     Trụ sạc hỗ trợ:
                   </span>
                   {st.power_types.map((p, idx) => (
@@ -250,8 +250,8 @@ export function ChargingView({ onConsultCopilot }) {
                       style={{
                         padding: '3px 8px',
                         borderRadius: 4,
-                        backgroundColor: '#E5E5E5',
-                        color: '#111111',
+                        backgroundColor: 'var(--color-border)',
+                        color: 'var(--color-text-primary)',
                         fontSize: '0.75rem',
                         fontWeight: 600,
                       }}
@@ -261,10 +261,10 @@ export function ChargingView({ onConsultCopilot }) {
                   ))}
                 </div>
 
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', paddingTop: 10, borderTop: '1px solid #E5E5E5', fontSize: '0.75rem', color: '#666666' }}>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', paddingTop: 10, borderTop: '1px solid var(--color-border)', fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
                   <span style={{ fontWeight: 600 }}>Tiện ích lân cận:</span>
                   {st.amenities.map((a, idx) => (
-                    <span key={idx} style={{ backgroundColor: '#FFFFFF', padding: '2px 6px', borderRadius: 4 }}>
+                    <span key={idx} style={{ backgroundColor: 'var(--color-white)', padding: '2px 6px', borderRadius: 4 }}>
                       {a}
                     </span>
                   ))}
@@ -277,28 +277,28 @@ export function ChargingView({ onConsultCopilot }) {
         {/* RIGHT: ADVISOR CHARGING CHEAT-SHEET */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div className="card-white" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <h3 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#111111', borderBottom: '1px solid #E5E5E5', paddingBottom: 10 }}>
+            <h3 style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--color-text-primary)', borderBottom: '1px solid var(--color-border)', paddingBottom: 10 }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><LightbulbIcon style={{ width: 14, height: 14 }} /> BÍ QUYẾT TƯ VẤN SẠC PIN</span>
             </h3>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div style={{ fontSize: '0.82rem', color: '#111111', lineHeight: 1.45 }}>
-                <strong style={{ color: '#111111' }}>1. Khách ở chung cư không có trụ riêng:</strong>
-                <p style={{ marginTop: 2, color: '#666666' }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--color-text-primary)', lineHeight: 1.45 }}>
+                <strong style={{ color: 'var(--color-text-primary)' }}>1. Khách ở chung cư không có trụ riêng:</strong>
+                <p style={{ marginTop: 2, color: 'var(--color-text-secondary)' }}>
                   Khuyên khách sạc tại trạm sạc nhanh gần cơ quan, siêu thị hoặc trạm V-GREEN 3S. Với quãng đường đi làm 20-30km/ngày, chỉ cần sạc 1 lần/tuần trong ~25 phút.
                 </p>
               </div>
 
-              <div style={{ fontSize: '0.82rem', color: '#111111', lineHeight: 1.45 }}>
-                <strong style={{ color: '#111111' }}>2. Tính năng Cắm là Sạc (Plug & Charge):</strong>
-                <p style={{ marginTop: 2, color: '#666666' }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--color-text-primary)', lineHeight: 1.45 }}>
+                <strong style={{ color: 'var(--color-text-primary)' }}>2. Tính năng Cắm là Sạc (Plug & Charge):</strong>
+                <p style={{ marginTop: 2, color: 'var(--color-text-secondary)' }}>
                   Xe tự động nhận diện tài khoản VinFast, không cần quẹt thẻ hay thao tác phức tạp.
                 </p>
               </div>
 
-              <div style={{ fontSize: '0.82rem', color: '#111111', lineHeight: 1.45 }}>
-                <strong style={{ color: '#111111' }}>3. Khuyến nghị duy trì pin bền:</strong>
-                <p style={{ marginTop: 2, color: '#666666' }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--color-text-primary)', lineHeight: 1.45 }}>
+                <strong style={{ color: 'var(--color-text-primary)' }}>3. Khuyến nghị duy trì pin bền:</strong>
+                <p style={{ marginTop: 2, color: 'var(--color-text-secondary)' }}>
                   Duy trì dung lượng hàng ngày từ 20% - 80%. Chỉ cần sạc 100% trước các chuyến đi xa dài ngày.
                 </p>
               </div>

@@ -39,7 +39,7 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 640 }) {
           width: '100%',
           maxWidth,
           maxHeight: '90vh',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'var(--color-white)',
           borderRadius: 16,
           boxShadow: '0 20px 50px rgba(0, 0, 0, 0.2)',
           display: 'flex',
@@ -52,19 +52,19 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 640 }) {
         <div
           style={{
             padding: '18px 24px',
-            borderBottom: '1px solid #E5E5E5',
+            borderBottom: '1px solid var(--color-border)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#111111' }}>{title}</h2>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>{title}</h2>
           <button
             onClick={onClose}
             style={{
               padding: 6,
               borderRadius: 6,
-              color: '#666666',
+              color: 'var(--color-text-secondary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

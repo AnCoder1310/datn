@@ -1,20 +1,21 @@
 /* VINFAST AI SALES ENABLEMENT — MODERN SAAS DESIGN SYSTEM */
-/* Strict Palette:
-   - Primary: #111111 (Soft Cyan)
-   - Secondary: #111111 (Midnight Navy)
-   - Background: #FFFFFF (Cloud White)
-   - Card: #FFFFFF, Border: #E5E5E5, Text-Sec: #666666, Text-Muted: #999999
+/* Fresh Aqua Palette:
+   - Primary: #65DCCB (Aqua Mint)
+   - Secondary: #263238 (Deep Slate)
+   - Background: #FFFFFF (Pure White)
+   - Accent: #C2F0E8 (Soft Aqua)
+   - Card: #FFFFFF, Border: #E5EAEA, Text-Sec: #64748B, Text-Muted: #94A3A8
 */
 
 :root {
-  --app-primary: #111111;
-  --app-secondary: #111111;
+  --app-primary: #65DCCB;
+  --app-secondary: #263238;
   --app-bg: #FFFFFF;
   --app-card: #FFFFFF;
-  --app-border: #E5E5E5;
-  --app-text-primary: #111111;
-  --app-text-secondary: #666666;
-  --app-text-muted: #999999;
+  --app-border: #E5EAEA;
+  --app-text-primary: #263238;
+  --app-text-secondary: #64748B;
+  --app-text-muted: #94A3A8;
 }
 
 .advisor-app,
@@ -52,8 +53,8 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: #111111;
-  color: #FFFFFF;
+  background: var(--app-primary);
+  color: #263238;
   display: grid;
   place-items: center;
   font-size: 14px;
@@ -101,16 +102,16 @@
 }
 
 .nav-pill:hover {
-  color: #111111;
-  background: #F5F5F5;
+  color: var(--app-secondary);
+  background: #C2F0E8;
 }
 
 .nav-pill.active {
-  background: #111111;
-  color: #FFFFFF;
-  border-color: #111111;
+  background: var(--app-primary);
+  color: #263238;
+  border-color: var(--app-primary);
   font-weight: 700;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 2px 6px rgba(101, 220, 203, 0.35);
 }
 
 .topbar-meta {
@@ -134,7 +135,7 @@
 
 .icon-button:hover {
   background: #FFFFFF;
-  border-color: #111111;
+  border-color: var(--app-primary);
 }
 
 .user-card {
@@ -152,12 +153,12 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid #111111;
+  background: #C2F0E8;
+  border: 1px solid var(--app-primary);
   display: grid;
   place-items: center;
   font-size: 0.75rem;
-  color: #111111;
+  color: #263238;
   font-weight: 700;
 }
 
@@ -214,14 +215,15 @@
 }
 
 .sidebar-item:hover {
-  background: #FFFFFF;
+  background: #C2F0E8;
   color: var(--app-secondary);
 }
 
 .sidebar-item.active {
-  background: #111111;
-  border-color: #FFFFFF;
-  color: #FFFFFF;
+  background: #C2F0E8;
+  border-color: var(--app-primary);
+  border-left: 3px solid var(--app-primary);
+  color: #263238;
   font-weight: 700;
 }
 
@@ -250,12 +252,12 @@
   display: inline-flex;
   padding: 4px 12px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.2);
-  color: #111111;
+  background: #C2F0E8;
+  color: #263238;
   font-size: 0.75rem;
   font-weight: 700;
   margin-bottom: 16px;
-  border: 1px solid #111111;
+  border: 1px solid var(--app-primary);
 }
 
 .hero-panel h1 {
@@ -293,17 +295,24 @@
 }
 
 .primary-button {
-  background: #111111;
-  color: #FFFFFF;
-  border: 1px solid #111111;
+  background: var(--app-primary);
+  color: #263238;
+  border: 1px solid var(--app-primary);
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 3px rgba(101, 220, 203, 0.3);
 }
 
 .primary-button:hover {
-  background: #262626;
-  border-color: #262626;
+  background: #4EC9B7;
+  border-color: #4EC9B7;
+  color: #263238;
   transform: translateY(-1px);
+}
+
+.primary-button:active {
+  background: #3DB9A7;
+  border-color: #3DB9A7;
+  color: #263238;
 }
 
 .secondary-button,
@@ -315,8 +324,9 @@
 
 .secondary-button:hover,
 .chip-button:hover {
-  background: #FFFFFF;
-  border-color: #999999;
+  background: #C2F0E8;
+  border-color: var(--app-primary);
+  color: #263238;
 }
 
 /* SECTION HEADER */
@@ -360,7 +370,7 @@
 }
 
 .feature-card:hover {
-  border-color: #111111;
+  border-color: var(--app-primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   transform: translateY(-1px);
 }
@@ -411,12 +421,12 @@
 }
 
 .scenario-card:hover {
-  border-color: #111111;
+  border-color: var(--app-primary);
   background: #FFFFFF;
 }
 
 .scenario-card.active {
-  border-color: #111111;
+  border-color: var(--app-primary);
   background: rgba(0, 0, 0, 0.12);
 }
 
@@ -524,9 +534,9 @@
 }
 
 .inline-error {
-  background: #111111;
-  border-color: #FFFFFF;
-  color: #FFFFFF;
+  background: #FEE4E2;
+  border-color: #FECDCA;
+  color: #B42318;
   font-weight: 500;
 }
 
