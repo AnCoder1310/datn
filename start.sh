@@ -11,12 +11,14 @@ echo "  VINFAST AI SALES ENABLEMENT — SYSTEM STARTUP"
 echo "=========================================================="
 
 PYTHON_BIN="python3"
-if [ -f ".venv/bin/python" ]; then
+if [ -f "$DIR/.venv/bin/python" ]; then
+    PYTHON_BIN="$DIR/.venv/bin/python"
+    source "$DIR/.venv/bin/activate"
+elif [ -f ".venv/bin/python" ]; then
     PYTHON_BIN=".venv/bin/python"
     source .venv/bin/activate
-elif [ -f "../.venv/bin/python" ]; then
-    PYTHON_BIN="../.venv/bin/python"
-    source ../.venv/bin/activate
+elif [ -x "/opt/homebrew/bin/python3.11" ]; then
+    PYTHON_BIN="/opt/homebrew/bin/python3.11"
 elif [ -f "/Users/truongan/P-043-deployment/.venv/bin/python" ]; then
     PYTHON_BIN="/Users/truongan/P-043-deployment/.venv/bin/python"
     source /Users/truongan/P-043-deployment/.venv/bin/activate

@@ -45,10 +45,10 @@
 .practice-finish-actions { display: flex; justify-content: flex-end; gap: 16px; padding: 24px 54px 30px; border-top: 1px solid var(--color-border); }
 .practice-finish-actions button { min-width: 205px; min-height: 52px; padding: 12px 24px; border-radius: 999px; font-size: .98rem; font-weight: 700; }
 .practice-finish-actions button:disabled, .practice-finish-close:disabled { opacity: .62; cursor: wait; }
-.practice-finish-cancel { border: 1px solid var(--color-border); background: var(--color-white); color: var(--color-text-primary); }
-.practice-finish-cancel:hover:not(:disabled) { background: var(--color-white); }
-.practice-finish-confirm { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; background: var(--color-aqua-primary); color: var(--color-text-primary); border: 1px solid var(--color-aqua-primary); font-weight: 700; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
-.practice-finish-confirm:hover:not(:disabled) { background: var(--color-aqua-hover); }
+.practice-finish-cancel { border: 1.5px solid #65DCCB; background: rgba(101, 220, 203, 0.12); color: #164E48; box-shadow: 0 0 10px rgba(101, 220, 203, 0.18); transition: all 0.18s ease; }
+.practice-finish-cancel:hover:not(:disabled) { background: rgba(101, 220, 203, 0.28); border-color: #35B9A7; color: #0F3B36; box-shadow: 0 0 16px rgba(101, 220, 203, 0.4); transform: translateY(-1px); }
+.practice-finish-confirm { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: rgba(101, 220, 203, 0.18); color: #164E48; border: 1.5px solid #65DCCB; font-weight: 700; box-shadow: 0 0 12px rgba(101, 220, 203, 0.25); }
+.practice-finish-confirm:hover:not(:disabled) { background: rgba(101, 220, 203, 0.35); border-color: #35B9A7; color: #0F3B36; box-shadow: 0 0 18px rgba(101, 220, 203, 0.45); }
 .practice-finish-spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.45); border-top-color: var(--color-border); border-radius: 50%; animation: practice-finish-spin .8s linear infinite; }
 @keyframes practice-finish-spin { to { transform: rotate(360deg); } }
 

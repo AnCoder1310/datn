@@ -9,9 +9,9 @@
   gap: 10px;
   min-height: 40px;
   padding: 4px 10px 4px 4px;
-  border: 1px solid var(--color-border);
+  border: 1.5px solid rgba(101, 220, 203, 0.4);
   border-radius: 999px;
-  background: var(--color-white);
+  background: #FFFFFF;
   color: var(--color-text-primary);
   font-family: inherit;
   text-align: left;
@@ -59,7 +59,7 @@
   background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(101, 220, 203, 0.15);
   color: var(--color-text-primary);
   font-family: inherit;
 }
@@ -77,9 +77,9 @@
   border-radius: 10px;
   display: grid;
   place-items: center;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: rgba(101, 220, 203, 0.18);
+  border: 1.5px solid #65DCCB;
+  color: #164E48;
   font-size: 15px;
   font-weight: 700;
 }
@@ -125,10 +125,10 @@
 
 .account-menu-logout {
   min-height: 38px;
-  border: 1px solid var(--color-border);
+  border: 1.5px solid rgba(101, 220, 203, 0.45);
   border-radius: 8px;
-  background: var(--color-white);
-  color: var(--color-text-primary);
+  background: rgba(101, 220, 203, 0.08);
+  color: #164E48;
   font-family: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -139,15 +139,16 @@
   cursor: pointer;
   transition: all 0.18s ease;
 }
-
 .account-menu-logout svg {
   width: 15px;
   height: 15px;
 }
 
 .account-menu-logout:hover {
-  background: var(--color-white);
-  border-color: var(--color-text-muted);
+  background: rgba(101, 220, 203, 0.28);
+  border-color: #35B9A7;
+  color: #0F3B36;
+  box-shadow: 0 0 12px rgba(101, 220, 203, 0.3);
 }
 
 .account-menu-logout:focus-visible {
@@ -157,10 +158,10 @@
 
 .account-menu-switch {
   min-height: 38px;
-  border: 1px solid var(--color-aqua-primary);
+  border: 1.5px solid #65DCCB;
   border-radius: 8px;
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: rgba(101, 220, 203, 0.18);
+  color: #164E48;
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;
@@ -169,13 +170,14 @@
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 10px rgba(101, 220, 203, 0.25);
   transition: all 0.18s ease;
 }
-
 .account-menu-switch:hover {
-  background: var(--color-aqua-hover);
-  border-color: var(--color-aqua-primary);
+  background: rgba(101, 220, 203, 0.35);
+  border-color: #35B9A7;
+  color: #0F3B36;
+  box-shadow: 0 0 16px rgba(101, 220, 203, 0.4);
 }
 
 .account-menu-switch:focus-visible {

@@ -61,7 +61,7 @@
 
 .sales-workspace :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0 3px rgba(101, 220, 203, 0.3);
 }
 
 .sales-workspace svg {
@@ -187,7 +187,7 @@
 .sw-search:focus-within {
   background: var(--color-white);
   border-color: var(--color-aqua-primary);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 0 0 3px rgba(101, 220, 203, 0.25);
 }
 
 .sw-search input {
@@ -303,12 +303,12 @@
 }
 
 .sw-customer-row:hover {
-  background: var(--color-white);
+  background: rgba(101, 220, 203, 0.08);
 }
 
 .sw-customer-row.is-selected {
-  border-left-color: var(--color-aqua-primary);
-  background: rgba(0, 0, 0, 0.12);
+  border-left-color: #65DCCB;
+  background: rgba(101, 220, 203, 0.16);
 }
 
 .sw-customer-row-content {
@@ -573,25 +573,31 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 6px;
-  border: 1px solid var(--sw-border);
-  background: var(--color-white);
-  color: var(--color-text-primary);
+  border: 1.5px solid rgba(101, 220, 203, 0.4);
+  background: rgba(101, 220, 203, 0.08);
+  color: #164E48;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: all 0.15s ease;
 }
 
 .sw-toolbar-button:hover {
-  background: var(--color-border);
-  border-color: var(--color-text-muted);
+  background: rgba(101, 220, 203, 0.22);
+  border-color: #65DCCB;
+  color: #0F3B36;
+  box-shadow: 0 0 10px rgba(101, 220, 203, 0.25);
 }
 
 .sw-toolbar-button.is-active {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: rgba(101, 220, 203, 0.25);
+  color: #164E48;
   font-weight: 700;
-  border-color: var(--color-border);
+  border: 1.5px solid #65DCCB;
+  box-shadow: 0 0 12px rgba(101, 220, 203, 0.35);
 }
 
 .sw-toolbar-button.is-active svg {
@@ -791,14 +797,15 @@
 }
 
 .sw-chat-message.is-sales .sw-message-bubble {
-  background: var(--color-aqua-primary);
-  border: 1px solid var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: rgba(101, 220, 203, 0.18);
+  border: 1.5px solid #65DCCB;
+  color: #164E48;
   border-top-right-radius: 2px;
+  box-shadow: 0 2px 8px rgba(101, 220, 203, 0.15);
 }
 
 .sw-chat-message.is-sales .sw-message-bubble p {
-  color: var(--color-text-primary);
+  color: #164E48;
 }
 
 .sw-read-status {
@@ -833,7 +840,7 @@
 .sw-composer-box:focus-within {
   background: var(--color-white);
   border-color: var(--color-aqua-primary);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 0 0 3px rgba(101, 220, 203, 0.25);
 }
 
 .sw-composer textarea {
@@ -879,27 +886,34 @@
 }
 
 .sw-draft-trigger.is-active {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: rgba(101, 220, 203, 0.22);
+  color: #164E48;
   font-weight: 700;
-  border-color: var(--color-border);
+  border: 1.5px solid #65DCCB;
+  box-shadow: 0 0 10px rgba(101, 220, 203, 0.25);
 }
 
 .sw-send-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 6px;
-  border: 0;
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  border: 1.5px solid #65DCCB;
+  background: rgba(101, 220, 203, 0.18);
+  color: #164E48;
   font-weight: 700;
+  box-shadow: 0 0 10px rgba(101, 220, 203, 0.2);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .sw-send-button:hover:not(:disabled) {
-  background: var(--color-aqua-hover);
+  background: rgba(101, 220, 203, 0.35);
+  border-color: #35B9A7;
+  color: #0F3B36;
+  box-shadow: 0 0 16px rgba(101, 220, 203, 0.45);
+  transform: translateY(-1px);
 }
 
 .sw-send-button:disabled {
@@ -1211,7 +1225,7 @@
   color: var(--color-text-primary);
   background: var(--color-aqua-primary);
   border: 1px solid var(--color-aqua-primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 8px rgba(101, 220, 203, 0.2);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -1397,4 +1411,57 @@
   font-size: 12.5px;
   color: var(--color-text-primary);
   font-weight: 500;
+}
+
+/* STANDARDIZED TRANSLUCENT FRESH AQUA BUTTONS */
+.sw-primary-button,
+.sw-selection-run-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1.5px solid #65DCCB;
+  background: rgba(101, 220, 203, 0.18);
+  color: #164E48;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(101, 220, 203, 0.22);
+  transition: all 0.15s ease;
+}
+
+.sw-primary-button:hover:not(:disabled),
+.sw-selection-run-btn:hover:not(:disabled) {
+  background: rgba(101, 220, 203, 0.35);
+  border-color: #35B9A7;
+  color: #0F3B36;
+  box-shadow: 0 0 16px rgba(101, 220, 203, 0.45);
+  transform: translateY(-1px);
+}
+
+.sw-secondary-button,
+.sw-select-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1.5px solid #65DCCB;
+  background: rgba(101, 220, 203, 0.12);
+  color: #164E48;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(101, 220, 203, 0.15);
+  transition: all 0.15s ease;
+}
+
+.sw-secondary-button:hover,
+.sw-select-all-btn:hover {
+  background: rgba(101, 220, 203, 0.28);
+  border-color: #35B9A7;
+  color: #0F3B36;
+  box-shadow: 0 0 14px rgba(101, 220, 203, 0.35);
+  transform: translateY(-1px);
 }

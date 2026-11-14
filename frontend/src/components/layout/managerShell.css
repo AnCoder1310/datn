@@ -14,16 +14,18 @@
   display: inline-grid;
   place-items: center;
   border-radius: 999px;
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: rgba(101, 220, 203, 0.2);
+  border: 1px solid #65DCCB;
+  color: #164E48;
   font-size: 0.7rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 .manager-app-layout .nav-tab-item.active .nav-tab-badge {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: rgba(101, 220, 203, 0.2);
+  border: 1px solid #65DCCB;
+  color: #164E48;
 }
 
 .manager-app-layout .manager-app-content {

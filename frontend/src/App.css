@@ -107,11 +107,11 @@
 }
 
 .nav-pill.active {
-  background: var(--app-primary);
-  color: #263238;
-  border-color: var(--app-primary);
+  background: rgba(101, 220, 203, 0.2);
+  color: #164E48;
+  border: 1.5px solid #65DCCB;
   font-weight: 700;
-  box-shadow: 0 2px 6px rgba(101, 220, 203, 0.35);
+  box-shadow: 0 0 12px rgba(101, 220, 203, 0.35);
 }
 
 .topbar-meta {
@@ -295,31 +295,40 @@
 }
 
 .primary-button {
-  background: var(--app-primary);
-  color: #263238;
-  border: 1px solid var(--app-primary);
+  background: rgba(101, 220, 203, 0.18);
+  color: #164E48;
+  border: 1.5px solid #65DCCB;
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(101, 220, 203, 0.3);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 0 12px rgba(101, 220, 203, 0.25), inset 0 0 8px rgba(101, 220, 203, 0.08);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .primary-button:hover {
-  background: #4EC9B7;
-  border-color: #4EC9B7;
-  color: #263238;
+  background: rgba(101, 220, 203, 0.35);
+  border-color: #35B9A7;
+  color: #0F3B36;
+  box-shadow: 0 0 18px rgba(101, 220, 203, 0.45);
   transform: translateY(-1px);
 }
 
 .primary-button:active {
-  background: #3DB9A7;
-  border-color: #3DB9A7;
-  color: #263238;
+  background: rgba(101, 220, 203, 0.48);
+  border-color: #2CA696;
+  transform: translateY(0);
 }
 
 .secondary-button,
 .chip-button {
-  background: #FFFFFF;
-  color: var(--app-secondary);
-  border: 1px solid var(--app-border);
+  background: rgba(101, 220, 203, 0.1);
+  color: #164E48;
+  border: 1.5px solid #65DCCB;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 0 8px rgba(101, 220, 203, 0.15);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .secondary-button:hover,

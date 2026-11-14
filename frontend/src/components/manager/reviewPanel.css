@@ -126,7 +126,7 @@
   background: var(--color-white);
   border: 1px solid var(--color-border);
 }
-.rp-msg--advisor .rp-bubble { background: rgba(0, 0, 0, 0.15); border-color: var(--color-aqua-primary); color: var(--color-text-primary); }
+.rp-msg--advisor .rp-bubble { background: rgba(101, 220, 203, 0.16); border: 1.5px solid #65DCCB; color: #164E48; }
 .rp-empty { margin: 0; padding: 0 24px; font-size: 14px; color: var(--color-text-secondary); }
 
 .rp-scores {
@@ -252,10 +252,10 @@
   font-size: 14px;
   cursor: pointer;
 }
-.rp-btn--outline { border: 1px solid var(--color-border); background: var(--color-white); color: var(--color-text-primary); font-weight: 500; }
-.rp-btn--outline:hover:not(:disabled) { background: var(--color-white); }
-.rp-btn--primary { border: 1px solid var(--color-aqua-primary); background: var(--color-aqua-primary); color: var(--color-text-primary); font-weight: 700; padding: 0 20px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); }
-.rp-btn--primary:hover:not(:disabled) { background: var(--color-aqua-hover); }
+.rp-btn--outline { border: 1.5px solid rgba(101, 220, 203, 0.5); background: rgba(101, 220, 203, 0.1); color: #164E48; font-weight: 600; }
+.rp-btn--outline:hover:not(:disabled) { background: rgba(101, 220, 203, 0.25); border-color: #65DCCB; color: #0F3B36; box-shadow: 0 0 12px rgba(101, 220, 203, 0.3); }
+.rp-btn--primary { border: 1.5px solid #65DCCB; background: rgba(101, 220, 203, 0.18); color: #164E48; font-weight: 700; padding: 0 20px; box-shadow: 0 0 10px rgba(101, 220, 203, 0.25); }
+.rp-btn--primary:hover:not(:disabled) { background: rgba(101, 220, 203, 0.35); border-color: #35B9A7; color: #0F3B36; box-shadow: 0 0 16px rgba(101, 220, 203, 0.45); }
 .rp-btn:disabled { opacity: 0.6; cursor: wait; }
 
 @media (max-width: 1100px) {

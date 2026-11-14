@@ -1,3 +1,4 @@
+import scenariosFallback from './data/scenariosFallback.json';
 import { useState, useEffect } from 'react';
 import { Header } from './components/layout/Header';
 import { NotificationDrawer } from './components/layout/NotificationDrawer';
@@ -81,8 +82,17 @@ export function App() {
         }));
         setScenarioStatus('ready');
       } catch {
-        setScenarios([]);
-        setScenarioStatus('error');
+        // Fallback to built-in scenarios so practice room is always ready
+        setScenarios((scenariosFallback || []).map((scenario) => {
+          const model = scenario.title.match(/VF\s*[3-9]/i)?.[0].replace(/\s+/, ' ') || 'VinFast';
+          return {
+            ...scenario,
+            model,
+            model_badge: model,
+            difficulty: { Easy: 'Cơ bản', Medium: 'Tiêu chuẩn', Hard: 'Nâng cao' }[scenario.difficulty] || scenario.difficulty,
+          };
+        }));
+        setScenarioStatus('ready');
       }
     }
     loadBackendScenarios();

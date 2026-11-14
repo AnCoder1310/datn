@@ -7,8 +7,8 @@
 .pr-room *, .pr-room *::before, .pr-room *::after { box-sizing: border-box; }
 .pr-room h2, .pr-room h3, .pr-room p { margin: 0; }
 .pr-room button, .pr-room textarea { font: inherit; }
-.pr-room button { min-width: 44px; min-height: 44px; cursor: pointer; border: 1px solid var(--pr-border); border-radius: 10px; padding: 0 12px; background: white; color: var(--pr-ink); }
-.pr-room button:hover:not(:disabled) { filter: brightness(.96); }
+.pr-room button { min-width: 44px; min-height: 44px; cursor: pointer; border: 1.5px solid #65DCCB; border-radius: 10px; padding: 0 14px; background: rgba(101, 220, 203, 0.12); color: #164E48; font-weight: 600; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: 0 0 8px rgba(101, 220, 203, 0.15); transition: all 0.18s ease; }
+.pr-room button:hover:not(:disabled) { background: rgba(101, 220, 203, 0.28); border-color: #35B9A7; color: #0F3B36; box-shadow: 0 0 14px rgba(101, 220, 203, 0.35); transform: translateY(-1px); }
 .pr-room button:disabled { opacity: .5; cursor: not-allowed; }
 .pr-room :focus-visible { outline: 2px solid var(--color-aqua-primary); outline-offset: 2px; }
 .pr-room svg { width: 20px; height: 20px; flex: none; }
@@ -28,8 +28,8 @@
 .pr-segment { display: inline-flex; padding: 3px; border-radius: 12px; background: var(--color-border); flex: none; }
 .pr-room .pr-segment button { border: 0; background: transparent; color: var(--pr-muted); white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
 .pr-room .pr-mode button svg { width: 16px; height: 16px; }
-.pr-room .pr-segment button[aria-pressed="true"] { background: var(--color-aqua-primary); color: var(--color-text-primary); font-weight: 600; }
-.pr-room .pr-finish, .pr-room .pr-send { color: var(--color-text-primary); background: var(--color-aqua-primary); border: 1px solid var(--color-aqua-primary); font-weight: 700; }
+.pr-room .pr-segment button[aria-pressed="true"] { background: rgba(101, 220, 203, 0.25); color: #164E48; border: 1.5px solid #65DCCB; font-weight: 700; }
+.pr-room .pr-finish, .pr-room .pr-send { color: #164E48; background: rgba(101, 220, 203, 0.18); border: 1.5px solid #65DCCB; font-weight: 700; box-shadow: 0 0 10px rgba(101, 220, 203, 0.25); }
 .pr-finish { flex: none; }
 .pr-finish-short, .pr-phone-context { display: none; }
 .pr-body { flex: 1; min-height: 0; min-width: 0; display: grid; grid-template-columns: 320px minmax(0, 1fr); }

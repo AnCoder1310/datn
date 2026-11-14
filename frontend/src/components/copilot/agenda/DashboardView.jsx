@@ -41,15 +41,15 @@ const STAGE_LABELS = {
 // Modern SaaS Palette for pipeline stages (Soft Cyan & Midnight Navy tones)
 // Fresh Aqua Theme for pipeline stages
 const STAGE_COLORS = {
-  won: '#263238',
-  deposit_process: '#37474F',
-  negotiating: '#455A64',
-  considering: '#546E7A',
+  won: '#10B981',
+  deposit_process: '#06B6D4',
+  negotiating: '#14B8A6',
+  considering: '#38BDF8',
   qualified: '#65DCCB',
   discovery: '#8EE5D8',
   new: '#C2F0E8',
-  needs_confirmation: '#94A3A8',
-  lost: '#E5EAEA',
+  needs_confirmation: '#A7F3D0',
+  lost: '#E2E8F0',
 };
 
 function getStageLabel(stageId) {

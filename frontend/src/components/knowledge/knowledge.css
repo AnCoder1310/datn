@@ -113,26 +113,28 @@
   gap: 8px;
   min-height: 40px;
   padding: 6px 14px;
-  border: none;
-  border-radius: 6px;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
   background: transparent;
-  color: var(--color-text-secondary);
+  color: #4A6B68;
   font-size: 13.5px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .kb-tab:hover:not([aria-pressed='true']) {
-  color: var(--color-text-primary);
-  background: var(--color-border);
+  color: #164E48;
+  background: rgba(101, 220, 203, 0.12);
+  border-color: rgba(101, 220, 203, 0.4);
 }
 
 .kb-tab[aria-pressed='true'] {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: rgba(101, 220, 203, 0.22);
+  border: 1.5px solid #65DCCB;
+  color: #164E48;
   font-weight: 700;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 12px rgba(101, 220, 203, 0.3);
 }
 
 .kb-tab-count {
@@ -325,31 +327,41 @@
 
 .kb-button {
   min-height: 36px;
-  border: 1px solid var(--color-border);
-  background: var(--color-white);
-  color: var(--color-text-primary);
+  border: 1.5px solid #65DCCB;
+  background: rgba(101, 220, 203, 0.12);
+  color: #164E48;
   border-radius: 6px;
   padding: 6px 14px;
   font-size: 12.5px;
   font-weight: 600;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 0 8px rgba(101, 220, 203, 0.15);
+  transition: all 0.15s ease;
 }
 
 .kb-button:hover {
-  background: var(--color-white);
-  border-color: var(--color-aqua-primary);
+  background: rgba(101, 220, 203, 0.28);
+  border-color: #35B9A7;
+  color: #0F3B36;
+  box-shadow: 0 0 14px rgba(101, 220, 203, 0.35);
+  transform: translateY(-1px);
 }
 
 .kb-button--primary {
-  background: var(--color-aqua-primary);
-  border-color: var(--color-border);
-  color: var(--color-text-primary);
+  background: rgba(101, 220, 203, 0.18);
+  border: 1.5px solid #65DCCB;
+  color: #164E48;
   font-weight: 700;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 12px rgba(101, 220, 203, 0.25);
 }
 
 .kb-button--primary:hover {
-  background: var(--color-aqua-hover);
-  border-color: var(--color-aqua-primary);
+  background: rgba(101, 220, 203, 0.35);
+  border-color: #35B9A7;
+  color: #0F3B36;
+  box-shadow: 0 0 18px rgba(101, 220, 203, 0.45);
+  transform: translateY(-1px);
 }
 
 .kb-text-button {
