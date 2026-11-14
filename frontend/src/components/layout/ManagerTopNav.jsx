@@ -7,6 +7,7 @@ import {
   SparkleIcon,
   ShieldCheckIcon,
 } from "../common/Icons";
+import { BotMessageSquare } from "lucide-react";
 import { AccountMenu } from "./AccountMenu";
 
 export function ManagerTopNav({

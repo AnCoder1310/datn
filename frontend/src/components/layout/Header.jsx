@@ -1,5 +1,5 @@
 import { BellIcon } from '../common/Icons';
-import { BotMessageSquare, GraduationCap, LibraryBig } from 'lucide-react';
+import { BotMessageSquare, GraduationCap, LibraryBig, UsersRound } from 'lucide-react';
 import { AccountMenu } from './AccountMenu';
 
 export function Header({
