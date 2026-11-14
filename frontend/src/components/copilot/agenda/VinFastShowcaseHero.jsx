@@ -168,6 +168,10 @@ export function VinFastShowcaseHero({
         {/* RIGHT COLUMN: VEHICLE IMAGE STAGE */}
         <div className="vf-hero-visual">
           <div className="vf-visual-backdrop" />
+          <div className="vf-visual-badge">
+            <span>⚡ 100% Thuần điện</span>
+            <span>🛡️ An toàn 5★</span>
+          </div>
           <img
             src={currentModel.image}
             alt={currentModel.name}

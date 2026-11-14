@@ -52,6 +52,18 @@ export function Header({
 
         {/* HEADER ACTIONS */}
         <div className="header-actions">
+          {onSwitchRole && (
+            <button
+              type="button"
+              className="quick-switch-role-pill"
+              onClick={() => onSwitchRole('manager')}
+              title="Chuyển nhanh sang cổng Quản lý"
+            >
+              <UsersRound size={13} strokeWidth={2.2} />
+              <span>Chuyển sang Quản lý</span>
+            </button>
+          )}
+
           {hasNotifications && (
             <button
               className="icon-badge-btn"

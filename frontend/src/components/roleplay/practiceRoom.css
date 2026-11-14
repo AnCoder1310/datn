@@ -49,7 +49,8 @@
 .pr-bubble { border-radius: 0 12px 12px 12px; padding: 11px 14px; background: var(--color-white); border: 1px solid var(--color-border); color: var(--color-text-primary); font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
 .pr-bubble p { white-space: pre-wrap; }
 .pr-advisor { flex-direction: row-reverse; }
-.pr-advisor .pr-message-avatar, .pr-advisor .pr-bubble { background: var(--color-aqua-primary); color: var(--color-text-primary); }
+.pr-advisor .pr-message-avatar { background: rgba(101, 220, 203, 0.2); color: #0f766e; border: 1.5px solid #65DCCB; }
+.pr-advisor .pr-bubble { background: rgba(101, 220, 203, 0.14); border: 1.5px solid #65DCCB; color: #0f766e; box-shadow: 0 0 12px rgba(101, 220, 203, 0.2); }
 .pr-advisor .pr-message-main { display: flex; flex-direction: column; align-items: flex-end; }
 .pr-advisor .pr-bubble { border-radius: 12px 0 12px 12px; }
 .pr-room .pr-replay { display: inline-flex; align-items: center; justify-content: center; padding: 0; background: transparent; border: 0; color: var(--color-text-secondary); }

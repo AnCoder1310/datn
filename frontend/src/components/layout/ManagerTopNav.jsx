@@ -68,6 +68,18 @@ export function ManagerTopNav({
         </nav>
 
         <div className="header-actions">
+          {onSwitchRole && (
+            <button
+              type="button"
+              className="quick-switch-role-pill"
+              onClick={() => onSwitchRole('advisor')}
+              title="Chuyển nhanh sang cổng Tư vấn viên"
+            >
+              <BotMessageSquare size={13} strokeWidth={2.2} />
+              <span>Chuyển sang Tư vấn viên</span>
+            </button>
+          )}
+
           <AccountMenu
             name={displayName}
             username={currentUser?.username}

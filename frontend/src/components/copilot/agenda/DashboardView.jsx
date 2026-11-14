@@ -593,17 +593,6 @@ export function DashboardView({
                         ? compactWaiting(customer.waiting_since, now)
                         : null;
 
-                      // Chỉ hiển thị ghi chú nếu là vấn đề thực tế, không lặp văn bản mẫu
-                      const candidateNote = (customer.issues && customer.issues.length > 0)
-                        ? customer.issues[0]
-                        : (customer.last_message && !customer.last_message.includes('Em đã ghi nhận'))
-                          ? customer.last_message
-                          : null;
-                      const cleaned = cleanDemoText(candidateNote);
-                      const shortNote = cleaned && !cleaned.toLowerCase().includes('kịch bản') && cleaned.length > 6
-                        ? cleaned.slice(0, 80)
-                        : null;
-
                       return (
                         <div className="agenda-minimal-row" key={customer.customer_id}>
                           <div className="agenda-minimal-row-main">
@@ -619,11 +608,6 @@ export function DashboardView({
                               <span className="agenda-stage-tag">{stageLabel}</span>
                               {budgetText && <span className="agenda-budget-tag">{budgetText}</span>}
                             </div>
-                            {shortNote && (
-                              <p className="agenda-customer-note">
-                                “{shortNote}”
-                              </p>
-                            )}
                           </div>
 
                           <div className="agenda-minimal-row-right">

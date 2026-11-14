@@ -84,25 +84,37 @@
 }
 
 .notice-dialog-action-primary {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-aqua-primary);
+  background: rgba(101, 220, 203, 0.18);
+  color: #0f766e;
+  border: 1.5px solid #65DCCB;
   font-weight: 700;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 0 10px rgba(101, 220, 203, 0.22);
 }
 
 .notice-dialog-action-primary:hover {
-  background: var(--color-aqua-hover);
+  background: rgba(101, 220, 203, 0.35);
+  border-color: #35B9A7;
+  color: #09524c;
+  box-shadow: 0 0 16px rgba(101, 220, 203, 0.4);
+  transform: translateY(-1px);
 }
 
 .notice-dialog-action-secondary {
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-primary);
+  background: rgba(101, 220, 203, 0.08);
+  border: 1.5px solid rgba(101, 220, 203, 0.4);
+  color: #0f766e;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .notice-dialog-action-secondary:hover {
-  background: var(--color-white);
-  border-color: var(--color-aqua-primary);
+  background: rgba(101, 220, 203, 0.22);
+  border-color: #65DCCB;
+  color: #09524c;
+  box-shadow: 0 0 10px rgba(101, 220, 203, 0.25);
 }
 
 .notice-dialog-action:focus-visible {
