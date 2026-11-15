@@ -323,7 +323,7 @@
 
 .vf-model-tab.is-active .vf-model-tab-badge {
   background: #1D1D1F;
-  color: #1D1D1F;
+  color: #FFFFFF;
 }
 
 /* 2. SHOWROOM STAGE */
@@ -810,10 +810,15 @@
 }
 
 .agenda-stage-pill.is-active {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
+  background: #1D1D1F;
+  color: #FFFFFF !important;
+  border-color: #1D1D1F;
   font-weight: 700;
+}
+
+.agenda-stage-pill.is-active span,
+.agenda-stage-pill.is-active em {
+  color: #FFFFFF !important;
 }
 
 .agenda-stage-pill em {
@@ -973,8 +978,8 @@
 
 .agenda-queue-tabs button.is-active em,
 .agenda-filter-tabs button.is-active em {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #1D1D1F;
+  color: #FFFFFF !important;
 }
 
 /* CUSTOMER LIST ROWS */
@@ -1200,13 +1205,16 @@
 }
 
 .agenda-task-pill.is-high {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #1D1D1F;
+  color: #FFFFFF !important;
+  font-weight: 600;
 }
 
 .agenda-task-pill.is-overdue {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #E8E8ED;
+  color: #1D1D1F !important;
+  border: 1px solid #E8E8ED;
+  font-weight: 600;
 }
 
 .agenda-task-details {
@@ -1429,9 +1437,9 @@
 
 /* ERROR BANNER */
 .sw-error-banner {
-  background: var(--color-aqua-primary);
-  border: 1px solid var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #F5F5F7;
+  border: 1px solid #E8E8ED;
+  color: #1D1D1F !important;
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 13px;
@@ -1650,8 +1658,8 @@
   height: 18px;
   padding: 0 5px;
   border-radius: 4px;
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #1D1D1F;
+  color: #FFFFFF !important;
   font-size: 10.5px;
   font-weight: 700;
   line-height: 1;
@@ -1668,8 +1676,8 @@
 }
 
 .agenda-calendar-day-heading.is-today .agenda-day-date {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #1D1D1F;
+  color: #FFFFFF !important;
   padding: 2px 8px;
   border-radius: 4px;
   font-weight: 800;
@@ -1832,8 +1840,8 @@
   position: absolute;
   right: 4px;
   top: -10px;
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #1D1D1F;
+  color: #FFFFFF !important;
   font-size: 9.5px;
   font-weight: 700;
   padding: 1px 5px;

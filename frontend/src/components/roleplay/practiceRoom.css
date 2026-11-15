@@ -19,7 +19,7 @@
 .pr-identity { flex: 1; min-width: 120px; }
 .pr-identity h2 { font-size: 17px; font-weight: 700; line-height: 1.4; }
 .pr-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--pr-muted); font-size: 12px; margin-top: 4px; }
-.pr-model { background: var(--color-aqua-primary); color: var(--color-text-primary); border-radius: 6px; padding: 1px 8px; font-weight: 600; }
+.pr-model { background: #F5F5F7; color: #1D1D1F; border: 1px solid #E8E8ED; border-radius: 6px; padding: 1px 8px; font-weight: 600; }
 .pr-model:empty { display: none; }
 .pr-meta progress { width: 96px; height: 6px; appearance: none; border: 0; border-radius: 3px; overflow: hidden; background: var(--color-border); }
 .pr-meta progress::-webkit-progress-bar { background: var(--color-border); }
@@ -96,7 +96,7 @@
 .pr-mirror-enable strong { font-size: 14px; font-weight: 600; }
 .pr-mirror-enable small { font-size: 12px; color: var(--pr-muted); }
 .pr-mirror-enable em { font-size: 12.5px; color: var(--pr-blue-deep); font-style: normal; }
-.pr-camera-icon { width: 60px; height: 60px; display: grid; place-items: center; background: var(--color-aqua-primary); color: var(--pr-blue-deep); border: 1px solid var(--color-aqua-primary); border-radius: 50%; flex: none; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12); }
+.pr-camera-icon { width: 60px; height: 60px; display: grid; place-items: center; background: #1D1D1F; color: #FFFFFF !important; border: 1px solid #1D1D1F; border-radius: 50%; flex: none; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12); } .pr-camera-icon svg { color: #FFFFFF !important; }
 .pr-camera-error { max-width: 280px; font-size: 12px; color: var(--pr-muted); margin-top: 8px !important; }
 .pr-mic-wrap { position: relative; display: grid; place-items: center; width: 88px; height: 88px; grid-column: 2; flex: none; }
 /* Over the Mirror video the dots need their own layer, or z-index:-1 puts them behind the video. */

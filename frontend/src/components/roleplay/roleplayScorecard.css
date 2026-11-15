@@ -28,7 +28,7 @@
 .evaluation-summary-card.strengths { background: var(--color-white); border: 1px solid var(--color-border); }
 .evaluation-summary-card.weaknesses { background: var(--color-white); border: 1px solid var(--color-border); }
 .evaluation-summary-card h3 { display: flex; align-items: center; gap: 10px; font-size: .85rem; font-weight: 800; }
-.evaluation-summary-card h3 span { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; color: var(--color-text-primary); background: var(--color-aqua-primary); }
+.evaluation-summary-card h3 span { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; color: #FFFFFF; background: #1D1D1F; }
 .evaluation-summary-card.weaknesses h3 span { background: var(--color-text-secondary); color: var(--color-text-primary); font-size: 1.1rem; }
 .evaluation-summary-card h3 svg { width: 17px; height: 17px; }
 .evaluation-summary-card p, .evaluation-summary-card li { color: var(--color-text-secondary); font-size: .79rem; line-height: 1.48; }
@@ -42,7 +42,7 @@
 .evaluation-criterion { overflow: hidden; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-white); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04); }
 .evaluation-criterion-toggle { display: flex; align-items: center; gap: 18px; width: 100%; padding: 17px 20px; border: 0; background: transparent; color: var(--color-text-primary); text-align: left; }
 .evaluation-criterion-toggle:hover { background: var(--color-white); }
-.evaluation-criterion-number { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border: 3px solid var(--color-border); border-radius: 50%; background: var(--color-aqua-primary); color: var(--color-text-primary); font-size: .85rem; font-weight: 800; box-sizing: content-box; }
+.evaluation-criterion-number { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border: 1px solid #E8E8ED; border-radius: 50%; background: #F5F5F7; color: #1D1D1F; font-size: .85rem; font-weight: 800; box-sizing: content-box; }
 .evaluation-criterion-name { flex: 1; font-size: .94rem; font-weight: 800; }
 .evaluation-criterion-score { padding: 6px 14px; border-radius: 999px; background: rgba(29, 29, 31, 0.08); color: #1D1D1F; border: 1.5px solid #1D1D1F; font-size: .82rem; font-weight: 700; white-space: nowrap; }
 .evaluation-criterion-score.unassessed { background: var(--color-white); color: var(--color-text-secondary); border: 1px solid var(--color-border); }

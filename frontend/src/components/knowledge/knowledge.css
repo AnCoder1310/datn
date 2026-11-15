@@ -147,8 +147,8 @@
 }
 
 .kb-tab[aria-pressed='true'] .kb-tab-count {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #1D1D1F;
+  color: #FFFFFF !important;
 }
 
 /* FRESH UPDATES STRIP */
@@ -194,9 +194,14 @@
   text-align: center;
   padding: 4px;
   border-radius: 6px;
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #1D1D1F;
+  color: #FFFFFF !important;
   line-height: 1.1;
+}
+
+.kb-date-tile strong,
+.kb-date-tile small {
+  color: #FFFFFF !important;
 }
 
 .kb-date-tile strong {
@@ -291,9 +296,9 @@
 }
 
 .kb-pill--new {
-  color: var(--color-text-primary);
-  background: var(--color-aqua-primary);
-  border: 1px solid var(--color-aqua-primary);
+  color: #FFFFFF !important;
+  background: #1D1D1F;
+  border: 1px solid #1D1D1F;
   font-weight: 700;
 }
 

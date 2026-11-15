@@ -1195,8 +1195,8 @@ a {
   justify-content: space-between;
   align-items: flex-start;
   padding: 20px 24px;
-  background: var(--color-aqua-primary); color: #1D1D1F;
-  color: #ffffff;
+  background: #1D1D1F;
+  color: #FFFFFF !important;
 }
 
 .review-modal-header span {
@@ -2482,7 +2482,8 @@ a {
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: var(--color-aqua-primary); color: #1D1D1F;
+  background: #1D1D1F;
+  color: #FFFFFF !important;
   border: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
@@ -3553,8 +3554,7 @@ a {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  color: #fff;
-  background: var(--color-aqua-primary); color: #1D1D1F;
+  background: #1D1D1F;
   color: #FFFFFF;
   font-weight: 700;
 }
@@ -3670,7 +3670,7 @@ a {
 .practice-scenario-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .practice-scenario-badges { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
 .practice-scenario-badges span { white-space: nowrap; }
-.practice-model-badge { padding: 4px 14px; border-radius: 999px; background: var(--color-aqua-primary); color: #1D1D1F; font-weight: 700; font-size: .72rem; font-weight: 700; }
+.practice-model-badge { padding: 4px 14px; border-radius: 999px; background: #F5F5F7; color: #1D1D1F; border: 1px solid #E8E8ED; font-weight: 600; font-size: .72rem; }
 .practice-difficulty-badge { padding: 4px 10px; border-radius: 999px; background: #FFFFFF; color: var(--color-text-primary); font-size: .7rem; font-weight: 700; }
 .practice-scenario-badges small { margin-left: 4px; color: var(--color-text-secondary); font-size: .68rem; }
 .practice-vehicle-image { width: 88px; height: 49px; object-fit: cover; border-radius: 8px; }
@@ -3725,7 +3725,7 @@ a {
 .copilot-chat-title { color: var(--color-text-primary); font-size: 1.1rem; font-weight: 800; letter-spacing: -.02em; }
 .copilot-chat-subtitle { margin-top: 3px; color: var(--color-text-secondary); font-size: .78rem; }
 .copilot-grounded-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border: 1px solid rgba(29, 29, 31, 0.08); border-radius: 999px; background: #FFFFFF; color: var(--color-text-primary); font-size: .68rem; white-space: nowrap; }
-.copilot-grounded-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-aqua-primary); color: #1D1D1F; }
+.copilot-grounded-dot { width: 6px; height: 6px; border-radius: 50%; background: #1D1D1F; }
 .copilot-reset-button { display: inline-flex; align-items: center; gap: 7px; flex: none; padding: 8px 15px; border: 1.5px solid rgba(29, 29, 31, 0.08); border-radius: 999px; background: rgba(29, 29, 31, 0.08); color: #1D1D1F; font-size: .77rem; font-weight: 700; transition: all 0.15s ease; }
 .copilot-reset-button:hover { background: rgba(29, 29, 31, 0.08); border-color: #1D1D1F; color: #1D1D1F; box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08); }
 
@@ -3733,7 +3733,7 @@ a {
 .copilot-reset-button svg { width: 15px; height: 15px; }
 .copilot-messages { flex: 1; display: flex; flex-direction: column; gap: 18px; min-height: 0; overflow-y: auto; padding: 24px; background: linear-gradient(#fff, #FFFFFF); }
 .copilot-assistant-message { border: 1px solid rgba(29, 29, 31, 0.08); border-radius: 14px; background: #FFFFFF; box-shadow: 0 5px 16px rgba(11, 18, 32, .04); }
-.copilot-message-mark { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 7px; background: var(--color-aqua-primary); color: #1D1D1F; }
+.copilot-message-mark { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 7px; background: #1D1D1F; color: #FFFFFF; }
 .copilot-grid-layout .chat-bubble-user { border-radius: 14px 14px 4px 14px; background: rgba(29, 29, 31, 0.08); border: 1.5px solid #1D1D1F; color: #1D1D1F; box-shadow: 0 0 12px rgba(29, 29, 31, 0.08); }
 .copilot-composer { padding: 16px 24px; border-top: 1px solid rgba(29, 29, 31, 0.08); background: #fff; }
 .copilot-composer-form { display: flex; align-items: center; gap: 10px; padding: 6px 7px 6px 18px; border: 1px solid rgba(29, 29, 31, 0.08); border-radius: 999px; background: #FFFFFF; box-shadow: 0 2px 8px rgba(11, 18, 32, .04); }
@@ -3894,10 +3894,10 @@ a {
 @keyframes practice-voice-float { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-3px) scale(1.025); } }
 @keyframes practice-voice-shape { from { transform: rotate(0deg) scale(1); } to { transform: rotate(110deg) scale(1.18); } }
 @media (prefers-reduced-motion: reduce) { .practice-room-voice-bubble, .practice-room-voice-glow { animation: none; } }
-.practice-room-send { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--color-aqua-primary); color: #1D1D1F; border: none; }
+.practice-room-send { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; background: #1D1D1F; color: #FFFFFF; border: none; cursor: pointer; }
 .practice-room-send:hover:not(:disabled) { background: #6E6E73; }
 .practice-room-send:disabled { background: rgba(29, 29, 31, 0.08); color: var(--color-text-muted); cursor: not-allowed; }
-@media (max-width: 768px) { .practice-room-container { height: calc(100vh - 110px); min-height: 520px; } .practice-room-header { padding: 14px; } .practice-room-context { grid-template-columns: 1fr; padding: 10px 14px; } .practice-room-messages, .practice-room-composer { padding: 14px; } .practice-room-bubble { max-width: 92%; } .practice-room-voice-stage { padding: 11px 12px; } .practice-room-voice-bubble { width: 88px; height: 88px; } .practice-room-control, .practice-room-send { width: 36px; height: 36px; } .practice-room-composer-form { gap: 3px; padding-left: 12px; } }
+@media (max-width: 768px) { .practice-room-container { height: calc(100vh - 110px); min-height: 520px; } .practice-room-header { padding: 14px; } .practice-room-context { grid-template-columns: 1fr; padding: 10px 14px; } .practice-room-messages, .practice-room-composer { padding: 14px; } .practice-room-bubble { max-width: 92%; } .practice-room-voice-stage { padding: 11px 12px; } .practice-room-voice-bubble { width: 88px; height: 88px; } .practice-room-control, .practice-room-send { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; background: #1D1D1F; color: #FFFFFF; border: none; cursor: pointer; } .practice-room-composer-form { gap: 3px; padding-left: 12px; } }
 @media (max-width: 768px) {
   .practice-room-header { display: block; }
   .practice-room-header-main { width: 100%; }

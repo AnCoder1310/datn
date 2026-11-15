@@ -152,14 +152,14 @@
 }
 
 .sw-batch-trigger.has-pending {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #1D1D1F;
+  color: #FFFFFF !important;
   font-weight: 700;
-  border-color: var(--color-border);
+  border-color: #1D1D1F;
 }
 
 .sw-batch-trigger.has-pending svg {
-  color: var(--color-text-primary);
+  color: #FFFFFF !important;
 }
 
 .sw-list-search-row {
@@ -618,8 +618,8 @@
 }
 
 .sw-toolbar-button.is-active .sw-tool-count {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #1D1D1F;
+  color: #FFFFFF !important;
 }
 
 .sw-conversation-channel {
@@ -1213,8 +1213,8 @@
 }
 
 .sw-priority-high, .sw-priority-urgent {
-  background: var(--color-aqua-primary);
-  color: var(--color-text-primary);
+  background: #1D1D1F;
+  color: #FFFFFF !important;
   font-weight: 700;
 }
 
