@@ -398,50 +398,360 @@
 
 /* PROGRESS METRICS */
 .ap-progress {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+  gap: 36px;
+  align-items: start;
 }
 
 .ap-score {
-  flex: 1 1 240px;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+}
+
+.ap-score h2,
+.ap-skills h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #1D1D1F;
+}
+
+.ap-score-value {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 4px;
 }
 
 .ap-score-value strong {
-  font-size: 38px;
+  font-size: 40px;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: var(--color-text-primary);
+  color: #1D1D1F;
+  line-height: 1;
 }
 
 .ap-score-value span {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  margin-left: 6px;
+  font-size: 13.5px;
+  color: #6E6E73;
 }
 
+.ap-change {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1D1D1F;
+}
+
+/* SPARKLINE TREND CHART */
+.ap-spark {
+  width: 100%;
+  max-width: 300px;
+  height: 80px;
+  margin: 12px 0 6px;
+  overflow: visible;
+  display: block;
+}
+
+.ap-spark polyline {
+  stroke: #1D1D1F;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ap-spark circle {
+  fill: #1D1D1F;
+  stroke: #FFFFFF;
+  stroke-width: 2;
+}
+
+.ap-spark-ref {
+  stroke: #E8E8ED;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.ap-caption {
+  font-size: 12px;
+  color: #6E6E73;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+/* SKILLS RADAR CHART */
 .ap-skills {
-  flex: 1 1 280px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ap-skills-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ap-skills-heading h2 {
+  margin: 0;
+}
+
+.ap-skills-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid #E8E8ED;
+  background: #FFFFFF;
+  color: #6E6E73;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.ap-skills-info:hover {
+  background: #F5F5F7;
+  color: #1D1D1F;
+  border-color: #1D1D1F;
 }
 
 .ap-radar-frame {
-  max-width: 280px;
+  width: 100%;
+  max-width: 360px;
   margin: 0 auto;
 }
 
 .ap-radar {
+  display: block;
   width: 100%;
   height: auto;
+  overflow: visible;
+}
+
+.ap-radar-grid {
+  fill: none;
+  stroke: #E8E8ED;
+  stroke-width: 1.2;
+}
+
+.ap-radar-axis {
+  stroke: #E8E8ED;
+  stroke-width: 1.2;
+}
+
+.ap-radar-tick {
+  font-size: 10px;
+  fill: #6E6E73;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.ap-radar-previous {
+  fill: none;
+  stroke: #6E6E73;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  stroke-linejoin: round;
+}
+
+.ap-radar-previous-dot {
+  fill: #6E6E73;
+}
+
+.ap-radar-current {
+  transform-box: view-box;
+  transform-origin: 180px 145px;
 }
 
 .ap-radar-area {
-  fill: var(--color-aqua-primary);
-  fill-opacity: 0.15;
-  stroke: var(--color-aqua-primary);
+  fill: rgba(29, 29, 31, 0.08);
+  stroke: #1D1D1F;
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+}
+
+.ap-radar-partial {
+  fill: none;
+  stroke: #1D1D1F;
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+}
+
+.ap-radar-current circle {
+  fill: #1D1D1F;
+  stroke: #FFFFFF;
   stroke-width: 2;
+}
+
+.ap-radar-label {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  fill: #1D1D1F;
+}
+
+.ap-radar-score {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #1D1D1F;
+}
+
+.ap-radar-delta {
+  fill: #6E6E73;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.ap-radar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 20px;
+  font-size: 12px;
+  color: #6E6E73;
+  margin-top: 10px;
+}
+
+.ap-radar-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ap-legend-current {
+  display: inline-block;
+  width: 16px;
+  height: 0;
+  border-top: 2.5px solid #1D1D1F;
+}
+
+.ap-legend-previous {
+  display: inline-block;
+  width: 16px;
+  height: 0;
+  border-top: 2px dashed #6E6E73;
+}
+
+.ap-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* SKILL HELP DIALOG */
+.ap-skill-help {
+  box-sizing: border-box;
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 24px;
+  border: 1px solid #E8E8ED;
+  border-radius: 16px;
+  background: #FFFFFF;
+  color: #1D1D1F;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+
+.ap-skill-help::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.ap-skill-help header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.ap-skill-help h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1D1D1F;
+}
+
+.ap-skill-help header button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #E8E8ED;
+  border-radius: 8px;
+  background: #FFFFFF;
+  color: #6E6E73;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ap-skill-help header button:hover {
+  background: #F5F5F7;
+  color: #1D1D1F;
+}
+
+.ap-skill-help p {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #6E6E73;
+  margin: 0 0 16px;
+}
+
+.ap-skill-help dl {
+  display: grid;
+  gap: 14px;
+  margin: 0 0 20px;
+}
+
+.ap-skill-help dt {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1D1D1F;
+}
+
+.ap-skill-help dd {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6E6E73;
+}
+
+.ap-skill-help-done {
+  width: 100%;
+  min-height: 42px;
+  border: none;
+  border-radius: 10px;
+  background: #1D1D1F;
+  color: #FFFFFF;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.ap-skill-help-done:hover {
+  background: #6E6E73;
+}
+
+@media (max-width: 768px) {
+  .ap-progress {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
 
 /* PRACTICE HISTORY TABLE */

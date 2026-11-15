@@ -29,7 +29,7 @@
 .evaluation-summary-card.weaknesses { background: var(--color-white); border: 1px solid var(--color-border); }
 .evaluation-summary-card h3 { display: flex; align-items: center; gap: 10px; font-size: .85rem; font-weight: 800; }
 .evaluation-summary-card h3 span { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; color: #FFFFFF; background: #1D1D1F; }
-.evaluation-summary-card.weaknesses h3 span { background: var(--color-text-secondary); color: var(--color-text-primary); font-size: 1.1rem; }
+.evaluation-summary-card.weaknesses h3 span { background: var(--color-text-secondary); color: #FFFFFF; font-size: 1.1rem; }
 .evaluation-summary-card h3 svg { width: 17px; height: 17px; }
 .evaluation-summary-card p, .evaluation-summary-card li { color: var(--color-text-secondary); font-size: .79rem; line-height: 1.48; }
 .evaluation-summary-card p, .evaluation-summary-card ul { margin: 8px 0 0 40px; }
