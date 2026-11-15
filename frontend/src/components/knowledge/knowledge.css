@@ -116,7 +116,7 @@
   border: 1.5px solid transparent;
   border-radius: 8px;
   background: transparent;
-  color: #4A6B68;
+  color: #6E6E73;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
@@ -124,17 +124,17 @@
 }
 
 .kb-tab:hover:not([aria-pressed='true']) {
-  color: #164E48;
-  background: rgba(101, 220, 203, 0.12);
-  border-color: rgba(101, 220, 203, 0.4);
+  color: #0071E3;
+  background: rgba(0, 113, 227, 0.08);
+  border-color: rgba(0, 113, 227, 0.3);
 }
 
 .kb-tab[aria-pressed='true'] {
-  background: rgba(101, 220, 203, 0.22);
-  border: 1.5px solid #65DCCB;
-  color: #164E48;
+  background: rgba(0, 113, 227, 0.14);
+  border: 1.5px solid #0071E3;
+  color: #0071E3;
   font-weight: 700;
-  box-shadow: 0 0 12px rgba(101, 220, 203, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
 }
 
 .kb-tab-count {
@@ -327,40 +327,40 @@
 
 .kb-button {
   min-height: 36px;
-  border: 1.5px solid #65DCCB;
-  background: rgba(101, 220, 203, 0.12);
-  color: #164E48;
-  border-radius: 6px;
+  border: 1.5px solid #0071E3;
+  background: rgba(0, 113, 227, 0.08);
+  color: #0071E3;
+  border-radius: 9999px;
   padding: 6px 14px;
   font-size: 12.5px;
   font-weight: 600;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 0 8px rgba(101, 220, 203, 0.15);
+  box-shadow: 0 0 8px rgba(0, 113, 227, 0.08);
   transition: all 0.15s ease;
 }
 
 .kb-button:hover {
-  background: rgba(101, 220, 203, 0.28);
-  border-color: #35B9A7;
-  color: #0F3B36;
-  box-shadow: 0 0 14px rgba(101, 220, 203, 0.35);
+  background: rgba(0, 113, 227, 0.14);
+  border-color: #0077ED;
+  color: #006EDB;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
   transform: translateY(-1px);
 }
 
 .kb-button--primary {
-  background: rgba(101, 220, 203, 0.18);
-  border: 1.5px solid #65DCCB;
-  color: #164E48;
+  background: rgba(0, 113, 227, 0.08);
+  border: 1.5px solid #0071E3;
+  color: #0071E3;
   font-weight: 700;
-  box-shadow: 0 0 12px rgba(101, 220, 203, 0.25);
+  box-shadow: 0 0 12px rgba(0, 113, 227, 0.14);
 }
 
 .kb-button--primary:hover {
-  background: rgba(101, 220, 203, 0.35);
-  border-color: #35B9A7;
-  color: #0F3B36;
-  box-shadow: 0 0 18px rgba(101, 220, 203, 0.45);
+  background: rgba(0, 113, 227, 0.22);
+  border-color: #0077ED;
+  color: #006EDB;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
   transform: translateY(-1px);
 }
 

@@ -26,9 +26,9 @@ class ErrorBoundary extends Component {
           display: 'grid',
           placeItems: 'center',
           padding: 24,
-          backgroundColor: '#F5F8FA',
+          backgroundColor: '#F5F5F7',
           fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", sans-serif',
-          color: '#172B3A',
+          color: '#1D1D1F',
         }}>
           <div style={{
             maxWidth: 520,
@@ -36,14 +36,14 @@ class ErrorBoundary extends Component {
             padding: 28,
             borderRadius: 16,
             background: '#FFFFFF',
-            border: '1.5px solid rgba(101, 220, 203, 0.4)',
-            boxShadow: '0 8px 30px rgba(101, 220, 203, 0.15)',
+            border: '1.5px solid rgba(0, 113, 227, 0.2)',
+            boxShadow: '0 8px 30px rgba(0, 113, 227, 0.2)',
             textAlign: 'center',
           }}>
-            <h2 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 10px', color: '#0f766e' }}>
+            <h2 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 10px', color: '#0071E3' }}>
               VinFast AI Sales Enablement
             </h2>
-            <p style={{ fontSize: 13.5, color: '#64748B', lineHeight: 1.5, margin: '0 0 16px' }}>
+            <p style={{ fontSize: 13.5, color: '#6E6E73', lineHeight: 1.5, margin: '0 0 16px' }}>
               Giao diện gặp sự cố tạm thời. Vui lòng bấm nút bên dưới để tải lại trang.
             </p>
             {this.state.error?.message && (
@@ -75,9 +75,9 @@ class ErrorBoundary extends Component {
                 gap: 8,
                 padding: '9px 24px',
                 borderRadius: 999,
-                background: 'rgba(101, 220, 203, 0.18)',
-                border: '1.5px solid #65DCCB',
-                color: '#0f766e',
+                background: 'rgba(0, 113, 227, 0.2)',
+                border: '1.5px solid #0071E3',
+                color: '#0071E3',
                 fontWeight: 700,
                 fontSize: 14,
                 cursor: 'pointer',

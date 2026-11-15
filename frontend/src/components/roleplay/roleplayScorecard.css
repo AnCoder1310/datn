@@ -1,12 +1,12 @@
 .evaluation-page { font-family: 'Be Vietnam Pro', system-ui, sans-serif; width: 100%; max-width: 1160px; margin: 0 auto; padding: 22px 28px 48px; color: var(--color-text-primary); }
 .evaluation-header { position: relative; margin: -22px -28px 28px; padding: 22px 28px 30px; background: var(--color-white); border-bottom: 1px solid var(--color-border); }
 .evaluation-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
-.evaluation-toolbar button, .evaluation-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 0; cursor: pointer; font-weight: 700; }
+.evaluation-toolbar button, .evaluation-actions button { padding: 10px 20px; border-radius: 10px; background: #FFFFFF; color: #1D1D1F; border: 1px solid #D2D2D7; font-size: .84rem; font-weight: 500; transition: all 0.15s ease; }
 .evaluation-toolbar svg, .evaluation-actions svg { width: 17px; height: 17px; }
 .evaluation-back { padding: 9px 2px; background: transparent; color: var(--color-text-primary); font-size: .83rem; }
 .evaluation-back:hover { color: var(--color-text-primary); }
-.evaluation-download { padding: 10px 18px; border-radius: 999px; background: rgba(101, 220, 203, 0.14); color: #164E48; border: 1.5px solid #65DCCB; font-size: .82rem; font-weight: 700; box-shadow: 0 0 10px rgba(101, 220, 203, 0.2); backdrop-filter: blur(6px); transition: all 0.18s ease; }
-.evaluation-download:hover { background: rgba(101, 220, 203, 0.3); border-color: #35B9A7; color: #0F3B36; box-shadow: 0 0 16px rgba(101, 220, 203, 0.45); transform: translateY(-1px); }
+.evaluation-download { padding: 9px 18px; border-radius: 10px; background: #FFFFFF; color: #1D1D1F; border: 1px solid #D2D2D7; font-size: .84rem; font-weight: 500; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); transition: all 0.15s ease; }
+.evaluation-download:hover { background: #F5F5F7; border-color: #C7C7CC; transform: translateY(-1px); }
 .evaluation-eyebrow { display: inline-block; padding: 6px 12px; border-radius: 999px; background: var(--color-white); color: var(--color-text-primary); border: 1px solid var(--color-border); font-size: .72rem; font-weight: 750; }
 .evaluation-header h1 { margin-top: 13px; font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1.22; font-weight: 800; }
 .evaluation-header p { margin-top: 10px; color: var(--color-text-secondary); font-size: .87rem; line-height: 1.5; }
@@ -44,7 +44,7 @@
 .evaluation-criterion-toggle:hover { background: var(--color-white); }
 .evaluation-criterion-number { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border: 3px solid var(--color-border); border-radius: 50%; background: var(--color-aqua-primary); color: var(--color-text-primary); font-size: .85rem; font-weight: 800; box-sizing: content-box; }
 .evaluation-criterion-name { flex: 1; font-size: .94rem; font-weight: 800; }
-.evaluation-criterion-score { padding: 6px 14px; border-radius: 999px; background: rgba(101, 220, 203, 0.16); color: #164E48; border: 1.5px solid #65DCCB; font-size: .82rem; font-weight: 700; white-space: nowrap; }
+.evaluation-criterion-score { padding: 6px 14px; border-radius: 999px; background: rgba(0, 113, 227, 0.08); color: #0071E3; border: 1.5px solid #0071E3; font-size: .82rem; font-weight: 700; white-space: nowrap; }
 .evaluation-criterion-score.unassessed { background: var(--color-white); color: var(--color-text-secondary); border: 1px solid var(--color-border); }
 .evaluation-criterion-score strong { font-size: 1rem; }
 .evaluation-chevron { font-size: 1.6rem; line-height: .7; transform: rotate(0); transition: transform .2s; }
@@ -69,14 +69,15 @@
 .evaluation-finding { display: flex; justify-content: space-between; gap: 15px; padding: 12px 0; border-top: 1px solid var(--color-border); font-size: .85rem; }
 .evaluation-finding span { flex: none; font-weight: 700; color: var(--color-text-primary); }
 .evaluation-actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 24px; }
-.evaluation-actions button { padding: 10px 18px; border-radius: 999px; background: rgba(101, 220, 203, 0.14); color: #164E48; border: 1.5px solid #65DCCB; font-size: .84rem; font-weight: 700; box-shadow: 0 0 10px rgba(101, 220, 203, 0.2); backdrop-filter: blur(6px); transition: all 0.18s ease; }
-.evaluation-actions button:last-child { background: rgba(101, 220, 203, 0.22); border-color: #65DCCB; }
-.evaluation-actions button:hover { background: rgba(101, 220, 203, 0.3); border-color: #35B9A7; color: #0F3B36; box-shadow: 0 0 16px rgba(101, 220, 203, 0.45); transform: translateY(-1px); }
+.evaluation-actions button { padding: 10px 20px; border-radius: 10px; background: #FFFFFF; color: #1D1D1F; border: 1px solid #D2D2D7; font-size: .84rem; font-weight: 500; transition: all 0.15s ease; }
+.evaluation-actions button:last-child { background: #0071E3; color: #FFFFFF; border: none; font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
+.evaluation-actions button:hover { background: #F5F5F7; border-color: #C7C7CC; }
+.evaluation-actions button:last-child:hover { background: #0077ED; box-shadow: 0 4px 12px rgba(0, 113, 227, 0.28); }
 .evaluation-pending { max-width: 700px; margin: 50px auto; padding: 45px; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-white); text-align: center; }
 .evaluation-pending > svg { width: 42px; height: 42px; color: var(--color-text-primary); }
 .evaluation-pending h2 { margin-top: 14px; font-size: 1.2rem; }
 .evaluation-pending p { margin: 10px 0 20px; color: var(--color-text-secondary); }
-.evaluation-pending button { padding: 10px 22px; border: 1.5px solid #65DCCB; border-radius: 999px; background: rgba(101, 220, 203, 0.18); color: #164E48; font-weight: 700; box-shadow: 0 0 12px rgba(101, 220, 203, 0.25); transition: all 0.18s ease; }
+.evaluation-pending button { padding: 10px 22px; border: 1.5px solid #0071E3; border-radius: 999px; background: rgba(0, 113, 227, 0.08); color: #0071E3; font-weight: 700; box-shadow: 0 0 12px rgba(0, 113, 227, 0.14); transition: all 0.18s ease; }
 
 @media (max-width: 760px) {
   .evaluation-page { padding: 16px 14px 30px; }

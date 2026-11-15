@@ -1,21 +1,21 @@
 /* VINFAST AI SALES ENABLEMENT — MODERN SAAS DESIGN SYSTEM */
 /* Fresh Aqua Palette:
-   - Primary: #65DCCB (Aqua Mint)
-   - Secondary: #263238 (Deep Slate)
+   - Primary: #0071E3 (Aqua Mint)
+   - Secondary: #1D1D1F (Deep Slate)
    - Background: #FFFFFF (Pure White)
-   - Accent: #C2F0E8 (Soft Aqua)
-   - Card: #FFFFFF, Border: #E5EAEA, Text-Sec: #64748B, Text-Muted: #94A3A8
+   - Accent: #EAF3FF (Soft Aqua)
+   - Card: #FFFFFF, Border: #E8E8ED, Text-Sec: #6E6E73, Text-Muted: #86868B
 */
 
 :root {
-  --app-primary: #65DCCB;
-  --app-secondary: #263238;
+  --app-primary: #0071E3;
+  --app-secondary: #1D1D1F;
   --app-bg: #FFFFFF;
   --app-card: #FFFFFF;
-  --app-border: #E5EAEA;
-  --app-text-primary: #263238;
-  --app-text-secondary: #64748B;
-  --app-text-muted: #94A3A8;
+  --app-border: #E8E8ED;
+  --app-text-primary: #1D1D1F;
+  --app-text-secondary: #6E6E73;
+  --app-text-muted: #86868B;
 }
 
 .advisor-app,
@@ -54,7 +54,7 @@
   height: 32px;
   border-radius: 8px;
   background: var(--app-primary);
-  color: #263238;
+  color: #1D1D1F;
   display: grid;
   place-items: center;
   font-size: 14px;
@@ -103,15 +103,15 @@
 
 .nav-pill:hover {
   color: var(--app-secondary);
-  background: #C2F0E8;
+  background: #EAF3FF;
 }
 
 .nav-pill.active {
-  background: rgba(101, 220, 203, 0.2);
-  color: #164E48;
-  border: 1.5px solid #65DCCB;
+  background: rgba(0, 113, 227, 0.14);
+  color: #0071E3;
+  border: 1.5px solid #0071E3;
   font-weight: 700;
-  box-shadow: 0 0 12px rgba(101, 220, 203, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
 }
 
 .topbar-meta {
@@ -153,12 +153,12 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #C2F0E8;
+  background: #EAF3FF;
   border: 1px solid var(--app-primary);
   display: grid;
   place-items: center;
   font-size: 0.75rem;
-  color: #263238;
+  color: #1D1D1F;
   font-weight: 700;
 }
 
@@ -215,15 +215,15 @@
 }
 
 .sidebar-item:hover {
-  background: #C2F0E8;
+  background: #EAF3FF;
   color: var(--app-secondary);
 }
 
 .sidebar-item.active {
-  background: #C2F0E8;
+  background: #EAF3FF;
   border-color: var(--app-primary);
   border-left: 3px solid var(--app-primary);
-  color: #263238;
+  color: #1D1D1F;
   font-weight: 700;
 }
 
@@ -252,8 +252,8 @@
   display: inline-flex;
   padding: 4px 12px;
   border-radius: 999px;
-  background: #C2F0E8;
-  color: #263238;
+  background: #EAF3FF;
+  color: #1D1D1F;
   font-size: 0.75rem;
   font-weight: 700;
   margin-bottom: 16px;
@@ -286,56 +286,59 @@
 .primary-button,
 .secondary-button,
 .chip-button {
-  border-radius: 8px;
-  padding: 9px 16px;
-  font-size: 0.88rem;
-  font-weight: 600;
+  background: #FFFFFF;
+  color: #1D1D1F;
+  border: 1px solid #D2D2D7;
+  border-radius: 10px;
+  font-weight: 500;
+  padding: 10px 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: all 0.15s ease-in-out;
   cursor: pointer;
-  transition: all 0.18s ease;
 }
 
 .primary-button {
-  background: rgba(101, 220, 203, 0.18);
-  color: #164E48;
-  border: 1.5px solid #65DCCB;
-  font-weight: 700;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 0 12px rgba(101, 220, 203, 0.25), inset 0 0 8px rgba(101, 220, 203, 0.08);
-  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #0071E3;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 10px 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
 }
 
 .primary-button:hover {
-  background: rgba(101, 220, 203, 0.35);
-  border-color: #35B9A7;
-  color: #0F3B36;
-  box-shadow: 0 0 18px rgba(101, 220, 203, 0.45);
+  background: #0077ED;
+  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.28);
   transform: translateY(-1px);
 }
 
 .primary-button:active {
-  background: rgba(101, 220, 203, 0.48);
-  border-color: #2CA696;
+  background: rgba(0, 113, 227, 0.3);
+  border-color: #006EDB;
   transform: translateY(0);
 }
 
 .secondary-button,
 .chip-button {
-  background: rgba(101, 220, 203, 0.1);
-  color: #164E48;
-  border: 1.5px solid #65DCCB;
-  font-weight: 600;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 0 8px rgba(101, 220, 203, 0.15);
-  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #FFFFFF;
+  color: #1D1D1F;
+  border: 1px solid #D2D2D7;
+  border-radius: 10px;
+  font-weight: 500;
+  padding: 10px 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
 }
 
 .secondary-button:hover,
 .chip-button:hover {
-  background: #C2F0E8;
-  border-color: var(--app-primary);
-  color: #263238;
+  background: #F5F5F7;
+  border-color: #C7C7CC;
+  color: #1D1D1F;
 }
 
 /* SECTION HEADER */

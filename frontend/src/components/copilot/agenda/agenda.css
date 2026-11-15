@@ -1,7 +1,7 @@
 /* VINFAST AI SALES ENABLEMENT — MODERN SAAS AUTOMOTIVE DASHBOARD */
 /* Color Palette:
-   - Primary: #65DCCB (Aqua Mint)
-   - Secondary: #263238 (Deep Slate)
+   - Primary: #0071E3 (Aqua Mint)
+   - Secondary: #1D1D1F (Deep Slate)
    - Background: var(--color-surface-alt) (Cloud White)
    - Neutral Cards: var(--color-white)
    - Border: var(--color-border)
@@ -11,13 +11,13 @@
 
 .copilot-shell {
   --sw-primary: var(--color-aqua-primary);
-  --sw-secondary: var(--color-text-primary);
-  --sw-bg: var(--color-surface-alt);
+  --sw-secondary: #1D1D1F;
+  --sw-bg: #F5F5F7;
   --sw-card: var(--color-white);
   --sw-border: var(--color-border);
-  --sw-text-primary: var(--color-text-primary);
-  --sw-text-secondary: var(--color-text-secondary);
-  --sw-text-muted: var(--color-text-muted);
+  --sw-text-primary: #1D1D1F;
+  --sw-text-secondary: #6E6E73;
+  --sw-text-muted: #86868B;
 
   display: flex;
   flex: 1;
@@ -35,22 +35,22 @@
 
 /* SIDEBAR NAVIGATION */
 .copilot-sidebar {
-  width: 190px;
+  width: 195px;
   flex-shrink: 0;
   padding: 18px 12px;
   border-right: 1px solid var(--sw-border);
-  background: var(--color-white);
+  background: #FFFFFF;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .copilot-sidebar-title {
   font-size: 11px;
   font-weight: 700;
-  color: var(--sw-text-muted);
+  color: #6E6E73;
   letter-spacing: 0.8px;
-  padding: 0 10px 10px;
+  padding: 0 10px 8px;
   text-transform: uppercase;
 }
 
@@ -58,35 +58,32 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
+  padding: 9px 14px;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 8px;
-  color: var(--sw-text-secondary);
+  border-radius: 10px;
+  color: #6E6E73;
   font-size: 13.5px;
   font-weight: 500;
   text-align: left;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.15s ease-in-out;
 }
 
 .copilot-sidebar > button:hover {
-  background: var(--color-surface-alt);
-  color: var(--sw-secondary);
-}
-
-.copilot-sidebar > button:hover {
-  background: rgba(101, 220, 203, 0.1);
-  border-color: rgba(101, 220, 203, 0.4);
-  color: #164E48;
+  background: #F5F5F7;
+  color: #1D1D1F;
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
 }
 
 .copilot-sidebar > button.is-active {
-  background: rgba(101, 220, 203, 0.18);
-  color: #164E48;
-  font-weight: 700;
-  border-color: #65DCCB;
-  box-shadow: 0 0 12px rgba(101, 220, 203, 0.28);
+  background: #EAF3FF;
+  color: #0071E3;
+  font-weight: 600;
+  border: 1px solid rgba(0, 113, 227, 0.15);
+  box-shadow: none;
 }
 
 .copilot-pages,
@@ -161,25 +158,25 @@
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  border-radius: 8px;
-  border: 1.5px solid rgba(101, 220, 203, 0.5);
-  background: rgba(101, 220, 203, 0.1);
-  color: #164E48;
+  border-radius: 9999px;
+  border: 1.5px solid #0071E3;
+  background: rgba(0, 113, 227, 0.08);
+  color: #0071E3;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 0 8px rgba(101, 220, 203, 0.15);
+  box-shadow: 0 0 8px rgba(0, 113, 227, 0.08);
   transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .agenda-btn-minimal:hover {
-  background: rgba(101, 220, 203, 0.26);
-  border-color: #35B9A7;
-  color: #0F3B36;
-  box-shadow: 0 0 14px rgba(101, 220, 203, 0.35);
+  background: rgba(0, 113, 227, 0.14);
+  border-color: #0077ED;
+  color: #006EDB;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
   transform: translateY(-1px);
 }
 
@@ -199,25 +196,25 @@
   align-items: center;
   gap: 6px;
   padding: 6px 16px;
-  border-radius: 8px;
-  border: 1.5px solid #65DCCB;
-  background: rgba(101, 220, 203, 0.18);
-  color: #164E48;
+  border-radius: 9999px;
+  border: 1.5px solid #0071E3;
+  background: rgba(0, 113, 227, 0.08);
+  color: #0071E3;
   font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 0 12px rgba(101, 220, 203, 0.25), inset 0 0 8px rgba(101, 220, 203, 0.08);
+  box-shadow: 0 0 12px rgba(0, 113, 227, 0.14), inset 0 0 8px rgba(0, 113, 227, 0.06);
   transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .agenda-btn-solid:hover {
-  background: rgba(101, 220, 203, 0.35);
-  border-color: #35B9A7;
-  color: #0F3B36;
-  box-shadow: 0 0 18px rgba(101, 220, 203, 0.45);
+  background: rgba(0, 113, 227, 0.22);
+  border-color: #0077ED;
+  color: #006EDB;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
   transform: translateY(-1px);
 }
 
@@ -254,7 +251,7 @@
    ========================================================================== */
 .vf-showcase-card {
   background: #FFFFFF;
-  border: 1px solid #E5EAEA;
+  border: 1px solid #E8E8ED;
   border-radius: 20px;
   padding: 24px 28px 24px;
   margin-bottom: 20px;
@@ -272,14 +269,13 @@
 .vf-model-tabs {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   padding: 4px;
   border-radius: 9999px;
-  background: #F8FAFC;
-  border: 1px solid #E5EAEA;
+  background: #F5F5F7;
+  border: 1px solid #E8E8ED;
   overflow-x: auto;
   max-width: 100%;
-  scrollbar-width: none;
 }
 
 .vf-model-tabs::-webkit-scrollbar {
@@ -292,42 +288,41 @@
   gap: 6px;
   padding: 6px 16px;
   border-radius: 9999px;
-  border: 1.5px solid transparent;
+  border: none;
   background: transparent;
-  color: #64748B;
+  color: #6E6E73;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.15s ease;
 }
 
 .vf-model-tab:hover {
-  color: #172B3A;
-  background: rgba(101, 220, 203, 0.08);
+  color: #1D1D1F;
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .vf-model-tab.is-active {
   background: #FFFFFF;
-  border-color: #65DCCB;
-  color: #0f766e;
-  font-weight: 700;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  color: #1D1D1F;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .vf-model-tab-badge {
   font-size: 11px;
   font-weight: 700;
-  background: rgba(101, 220, 203, 0.2);
-  color: #0f766e;
+  background: rgba(0, 113, 227, 0.14);
+  color: #0071E3;
   padding: 1px 6px;
   border-radius: 999px;
   line-height: 1.2;
 }
 
 .vf-model-tab.is-active .vf-model-tab-badge {
-  background: #65DCCB;
-  color: #0c4a45;
+  background: #0071E3;
+  color: #006EDB;
 }
 
 /* 2. SHOWROOM STAGE */
@@ -364,9 +359,9 @@
   gap: 6px;
   padding: 3px 10px;
   border-radius: 999px;
-  background: rgba(101, 220, 203, 0.12);
-  border: 1px solid rgba(101, 220, 203, 0.4);
-  color: #0f766e;
+  background: rgba(0, 113, 227, 0.08);
+  border: 1px solid rgba(0, 113, 227, 0.3);
+  color: #0071E3;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.3px;
@@ -375,24 +370,24 @@
 .vf-sub-pill {
   font-size: 11px;
   font-weight: 600;
-  color: #64748B;
+  color: #6E6E73;
   padding: 3px 8px;
   border-radius: 999px;
-  background: #F1F5F9;
+  background: #F5F5F7;
 }
 
 .vf-showroom-name {
   font-size: 30px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  color: #172B3A;
+  color: #1D1D1F;
   margin: 2px 0 0;
   line-height: 1.2;
 }
 
 .vf-showroom-tagline {
   font-size: 13.5px;
-  color: #64748B;
+  color: #6E6E73;
   margin: 0;
   font-weight: 500;
 }
@@ -401,16 +396,16 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: 12px;
-  background: #F8FAFC;
-  border: 1px solid #E5EAEA;
+  background: #F5F5F7;
+  border: 1px solid #E8E8ED;
 }
 
 .vf-price-label {
   font-size: 11px;
   font-weight: 600;
-  color: #64748B;
+  color: #6E6E73;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -418,7 +413,7 @@
 .vf-price-value {
   font-size: 24px;
   font-weight: 850;
-  color: #0f766e;
+  color: #0071E3;
   letter-spacing: -0.4px;
   line-height: 1.2;
 }
@@ -426,7 +421,7 @@
 .vf-price-sub {
   font-size: 11px;
   font-weight: 500;
-  color: #059669;
+  color: #248A3D;
 }
 
 /* VEHICLE STAGE (CLEAN WHITE STAGE, NO AMBIENT GLOW / NO SMUDGES) */
@@ -454,8 +449,8 @@
   padding: 4px 10px;
   border-radius: 999px;
   background: #FFFFFF;
-  border: 1px solid #E5EAEA;
-  color: #475569;
+  border: 1px solid #E8E8ED;
+  color: #6E6E73;
   font-size: 11.5px;
   font-weight: 600;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
@@ -497,7 +492,7 @@
   padding: 9px 24px;
   border-radius: 9999px;
   background: #FFFFFF;
-  border: 1px solid #E5EAEA;
+  border: 1px solid #E8E8ED;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   width: fit-content;
   margin: 0 auto;
@@ -513,10 +508,10 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(101, 220, 203, 0.16);
+  background: rgba(0, 113, 227, 0.08);
   display: grid;
   place-items: center;
-  color: #0f766e;
+  color: #0071E3;
   flex-shrink: 0;
 }
 
@@ -527,21 +522,21 @@
 
 .vf-hud-label {
   font-size: 11px;
-  color: #64748B;
+  color: #6E6E73;
   font-weight: 500;
 }
 
 .vf-hud-val {
   font-size: 13.5px;
   font-weight: 800;
-  color: #172B3A;
+  color: #1D1D1F;
   letter-spacing: -0.2px;
 }
 
 .vf-hud-divider {
   width: 1px;
   height: 22px;
-  background: #E5EAEA;
+  background: #E8E8ED;
 }
 
 /* 4. SHOWROOM ACTIONS (TRANSLUCENT LIGHT CYAN + BRIGHT CYAN BORDER) */
@@ -560,47 +555,49 @@
   gap: 8px;
   padding: 9px 22px;
   border-radius: 9999px;
-  background: rgba(101, 220, 203, 0.14);
-  color: #0f766e;
-  border: 1.5px solid #65DCCB;
-  font-size: 13px;
-  font-weight: 700;
+  background: #0071E3;
+  color: #FFFFFF;
+  border: none;
+  font-size: 13.5px;
+  font-weight: 600;
   cursor: pointer;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 0 12px rgba(101, 220, 203, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 113, 227, 0.25);
   transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .vf-btn-action:hover {
-  background: rgba(101, 220, 203, 0.28);
-  border-color: #35B9A7;
-  color: #09524c;
-  box-shadow: 0 0 18px rgba(101, 220, 203, 0.38);
+  background: #0077ED;
+  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.35);
   transform: translateY(-1px);
 }
 
 .vf-btn-action.is-secondary {
-  background: rgba(101, 220, 203, 0.08);
-  border-color: rgba(101, 220, 203, 0.5);
+  background: #FFFFFF;
+  color: #1D1D1F;
+  border: 1px solid #D2D2D7;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .vf-btn-action.is-secondary:hover {
-  background: rgba(101, 220, 203, 0.22);
-  border-color: #65DCCB;
+  background: #F5F5F7;
+  border-color: #C7C7CC;
+  color: #1D1D1F;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .vf-btn-action.is-leads {
-  background: rgba(101, 220, 203, 0.08);
-  border-color: rgba(101, 220, 203, 0.45);
+  background: #EAF3FF;
+  color: #0071E3;
+  border: 1px solid rgba(0, 113, 227, 0.2);
+  box-shadow: none;
 }
 
 .vf-btn-action.is-leads:hover,
 .vf-btn-action.is-leads.is-active {
-  background: rgba(101, 220, 203, 0.22);
-  border-color: #65DCCB;
-  color: #09524c;
-  box-shadow: 0 0 14px rgba(101, 220, 203, 0.3);
+  background: #D9EBFF;
+  border-color: #0071E3;
+  color: #0071E3;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.15);
 }
 
 /* ==========================================================================
@@ -621,7 +618,7 @@
 
 .agenda-metric-cell {
   background: #FFFFFF;
-  border: 1.5px solid rgba(101, 220, 203, 0.25);
+  border: 1.5px solid rgba(0, 113, 227, 0.14);
   border-radius: 12px;
   padding: 16px 18px;
   text-align: left;
@@ -630,7 +627,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  box-shadow: 0 1px 4px rgba(101, 220, 203, 0.08);
+  box-shadow: 0 1px 4px rgba(0, 113, 227, 0.06);
   transition: all 0.18s ease;
   position: relative;
   overflow: hidden;
@@ -643,15 +640,15 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: #65DCCB;
-  box-shadow: 0 0 8px rgba(101, 220, 203, 0.6);
+  background: #0071E3;
+  box-shadow: 0 0 8px rgba(0, 113, 227, 0.15);
   opacity: 0;
   transition: opacity 0.18s ease;
 }
 
 .agenda-metric-cell:hover {
-  border-color: #65DCCB;
-  box-shadow: 0 4px 16px rgba(101, 220, 203, 0.18);
+  border-color: #0071E3;
+  box-shadow: 0 4px 16px rgba(0, 113, 227, 0.08);
   transform: translateY(-1px);
 }
 
@@ -933,11 +930,11 @@
   align-items: center;
   gap: 6px;
   padding: 6px 11px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  background: rgba(101, 220, 203, 0.08);
-  border: 1.5px solid rgba(101, 220, 203, 0.4);
-  color: #164E48;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(0, 113, 227, 0.22);
+  background: rgba(0, 113, 227, 0.06);
+  border: 1.5px solid rgba(0, 113, 227, 0.3);
+  color: #0071E3;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -946,18 +943,18 @@
 
 .agenda-queue-tabs button:hover,
 .agenda-filter-tabs button:hover {
-  background: rgba(101, 220, 203, 0.2);
-  border-color: #65DCCB;
-  color: #0F3B36;
+  background: rgba(0, 113, 227, 0.14);
+  border-color: #0071E3;
+  color: #006EDB;
 }
 
 .agenda-queue-tabs button.is-active,
 .agenda-filter-tabs button.is-active {
-  background: rgba(101, 220, 203, 0.25);
-  border-color: #65DCCB;
-  color: #164E48;
+  background: rgba(0, 113, 227, 0.14);
+  border-color: #0071E3;
+  color: #0071E3;
   font-weight: 700;
-  box-shadow: 0 0 10px rgba(101, 220, 203, 0.28);
+  box-shadow: 0 0 10px rgba(0, 113, 227, 0.14);
 }
 
 .agenda-queue-tabs button em,
@@ -994,16 +991,16 @@
   padding: 10px 14px;
   border-radius: 12px;
   background: #FFFFFF;
-  border: 1px solid rgba(101, 220, 203, 0.22);
+  border: 1px solid rgba(0, 113, 227, 0.14);
   transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 1px 4px rgba(101, 220, 203, 0.04);
+  box-shadow: 0 1px 4px rgba(0, 113, 227, 0.15);
 }
 
 .agenda-minimal-row:hover,
 .agenda-task-row:hover {
   background: #F8FCFA;
-  border-color: #65DCCB;
-  box-shadow: 0 3px 12px rgba(101, 220, 203, 0.14);
+  border-color: #0071E3;
+  box-shadow: 0 3px 12px rgba(0, 113, 227, 0.08);
   transform: translateY(-1px);
 }
 
@@ -1043,9 +1040,9 @@
 .agenda-model-tag {
   font-size: 11px;
   font-weight: 700;
-  color: #0f766e;
-  background: rgba(101, 220, 203, 0.16);
-  border: 1px solid #65DCCB;
+  color: #0071E3;
+  background: rgba(0, 113, 227, 0.08);
+  border: 1px solid #0071E3;
   padding: 2px 8px;
   border-radius: 999px;
 }
@@ -1053,7 +1050,7 @@
 .agenda-stage-tag {
   font-size: 11px;
   font-weight: 600;
-  color: #475569;
+  color: #6E6E73;
   background: rgba(241, 245, 249, 0.9);
   border: 1px solid #e2e8f0;
   padding: 2px 8px;
@@ -1063,8 +1060,8 @@
 .agenda-budget-tag {
   font-size: 11px;
   font-weight: 700;
-  color: #0f766e;
-  background: rgba(101, 220, 203, 0.08);
+  color: #0071E3;
+  background: rgba(0, 113, 227, 0.06);
   padding: 2px 8px;
   border-radius: 999px;
 }
@@ -1099,22 +1096,22 @@
   align-items: center;
   gap: 5px;
   padding: 6px 14px;
-  border-radius: 6px;
-  background: rgba(101, 220, 203, 0.16);
-  border: 1.5px solid #65DCCB;
-  color: #164E48;
+  border-radius: 9999px;
+  background: rgba(0, 113, 227, 0.08);
+  border: 1.5px solid #0071E3;
+  color: #0071E3;
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(101, 220, 203, 0.2);
+  box-shadow: 0 0 10px rgba(0, 113, 227, 0.14);
   transition: all 0.15s ease;
 }
 
 .agenda-btn-primary-action:hover {
-  background: rgba(101, 220, 203, 0.32);
-  border-color: #35B9A7;
-  color: #0F3B36;
-  box-shadow: 0 0 16px rgba(101, 220, 203, 0.4);
+  background: rgba(0, 113, 227, 0.22);
+  border-color: #0077ED;
+  color: #006EDB;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
   transform: translateY(-1px);
 }
 
@@ -1124,9 +1121,9 @@
   gap: 4px;
   padding: 6px 12px;
   border-radius: 6px;
-  background: rgba(101, 220, 203, 0.08);
-  color: #164E48;
-  border: 1.5px solid rgba(101, 220, 203, 0.4);
+  background: rgba(0, 113, 227, 0.06);
+  color: #0071E3;
+  border: 1.5px solid rgba(0, 113, 227, 0.3);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -1134,19 +1131,19 @@
 }
 
 .agenda-btn-subtle:hover {
-  background: rgba(101, 220, 203, 0.2);
-  border-color: #65DCCB;
-  color: #0F3B36;
+  background: rgba(0, 113, 227, 0.14);
+  border-color: #0071E3;
+  color: #006EDB;
 }
 
 .agenda-expand-btn {
   width: 100%;
   padding: 9px;
   margin-top: 8px;
-  background: rgba(101, 220, 203, 0.12);
-  border: 1.5px solid #65DCCB;
+  background: rgba(0, 113, 227, 0.08);
+  border: 1.5px solid #0071E3;
   border-radius: 8px;
-  color: #164E48;
+  color: #0071E3;
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
@@ -1154,10 +1151,10 @@
 }
 
 .agenda-expand-btn:hover {
-  background: rgba(101, 220, 203, 0.28);
-  border-color: #35B9A7;
-  color: #0F3B36;
-  box-shadow: 0 0 14px rgba(101, 220, 203, 0.35);
+  background: rgba(0, 113, 227, 0.14);
+  border-color: #0077ED;
+  color: #006EDB;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
 }
 
 /* TASK ROWS */
@@ -1290,7 +1287,7 @@
 }
 
 .agenda-bar-row.is-selected {
-  background: rgba(101, 220, 203, 0.16); border: 1.5px solid #65DCCB;
+  background: rgba(0, 113, 227, 0.08); border: 1.5px solid #0071E3;
   border-radius: 6px;
 }
 
@@ -1519,7 +1516,7 @@
 }
 
 .agenda-calendar-nav-buttons .is-current-week {
-  background: rgba(101, 220, 203, 0.12);
+  background: rgba(0, 113, 227, 0.08);
   border-color: var(--color-aqua-primary);
   color: var(--color-text-primary);
   font-weight: 600;
@@ -1915,32 +1912,32 @@
   padding: 6px 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(101, 220, 203, 0.35);
-  color: #172B3A;
+  border: 1px solid rgba(0, 113, 227, 0.22);
+  color: #1D1D1F;
   font-size: 12px;
   backdrop-filter: blur(6px);
-  box-shadow: 0 1px 4px rgba(101, 220, 203, 0.08);
+  box-shadow: 0 1px 4px rgba(0, 113, 227, 0.06);
   transition: all 0.18s ease;
 }
 
 .vf-spec-capsule:hover {
   background: #FFFFFF;
-  border-color: #65DCCB;
-  box-shadow: 0 0 12px rgba(101, 220, 203, 0.22);
+  border-color: #0071E3;
+  box-shadow: 0 0 12px rgba(0, 113, 227, 0.14);
   transform: translateY(-1px);
 }
 
 .vf-spec-icon-inline {
-  color: #0f766e;
+  color: #0071E3;
   flex-shrink: 0;
 }
 
 .vf-spec-text {
-  color: #475569;
+  color: #6E6E73;
 }
 
 .vf-spec-text strong {
-  color: #0f766e;
+  color: #0071E3;
   font-weight: 700;
 }
 
@@ -1950,20 +1947,20 @@
   gap: 8px;
   padding: 4px 14px;
   border-radius: 8px;
-  background: rgba(101, 220, 203, 0.12);
-  border: 1px solid rgba(101, 220, 203, 0.4);
+  background: rgba(0, 113, 227, 0.08);
+  border: 1px solid rgba(0, 113, 227, 0.3);
 }
 
 .vf-hero-price-label {
   font-size: 12px;
   font-weight: 500;
-  color: #475569;
+  color: #6E6E73;
 }
 
 .vf-hero-price-value {
   font-size: 20px;
   font-weight: 800;
-  color: #0f766e;
+  color: #0071E3;
   letter-spacing: -0.3px;
 }
 
@@ -1972,7 +1969,7 @@
    ========================================================================== */
 .agenda-command-hub {
   background: #FFFFFF;
-  border: 1px solid #E5EAEA;
+  border: 1px solid #E8E8ED;
   border-radius: 18px;
   padding: 18px 22px;
   margin-bottom: 20px;
@@ -1996,29 +1993,30 @@
 }
 
 .agenda-kpi-block {
-  background: #F8FAFC;
-  border: 1px solid #E5EAEA;
-  border-radius: 12px;
-  padding: 13px 15px;
+  background: #FFFFFF;
+  border: 1px solid #E8E8ED;
+  border-radius: 14px;
+  padding: 16px 20px;
   text-align: left;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  transition: all 0.15s ease;
+  gap: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .agenda-kpi-block:hover {
-  border-color: #65DCCB;
+  border-color: #D2D2D7;
   background: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   transform: translateY(-1px);
 }
 
 .agenda-kpi-label {
   font-size: 12px;
   font-weight: 600;
-  color: #526E7F;
+  color: #6E6E73;
 }
 
 .agenda-kpi-val {
@@ -2031,31 +2029,31 @@
 .agenda-kpi-val strong {
   font-size: 24px;
   font-weight: 800;
-  color: #172B3A;
+  color: #1D1D1F;
   line-height: 1.1;
   letter-spacing: -0.3px;
 }
 
 .agenda-kpi-val strong.is-money {
   font-size: 19px;
-  color: #0f766e;
+  color: #0071E3;
 }
 
 .agenda-kpi-sub {
   font-size: 14px;
   font-weight: 500;
-  color: #94A3B8;
+  color: #86868B;
 }
 
 .agenda-kpi-val small {
   font-size: 11.5px;
-  color: #64748B;
+  color: #6E6E73;
   white-space: nowrap;
 }
 
 .agenda-command-bottom {
   padding-top: 14px;
-  border-top: 1px solid rgba(101, 220, 203, 0.2);
+  border-top: 1px solid rgba(0, 113, 227, 0.14);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -2071,14 +2069,14 @@
 .agenda-pipeline-strip-title {
   font-size: 13px;
   font-weight: 700;
-  color: #172B3A;
+  color: #1D1D1F;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .agenda-pipeline-strip-meta {
   font-size: 12px;
-  color: #64748B;
+  color: #6E6E73;
   margin-right: auto;
 }
 
@@ -2087,20 +2085,20 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: rgba(101, 220, 203, 0.2);
-  color: #0f766e;
+  background: rgba(0, 113, 227, 0.14);
+  color: #0071E3;
   font-weight: 700;
   font-size: 11.5px;
   display: inline-grid;
   place-items: center;
   flex-shrink: 0;
-  border: 1px solid #65DCCB;
+  border: 1px solid #0071E3;
 }
 
 .agenda-upcoming-section {
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid rgba(101, 220, 203, 0.22);
+  border-top: 1px solid rgba(0, 113, 227, 0.14);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -2112,15 +2110,15 @@
   justify-content: space-between;
   font-size: 12.5px;
   font-weight: 700;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .agenda-analytics-accordion {
   margin-top: 20px;
-  border: 1.5px solid rgba(101, 220, 203, 0.3);
+  border: 1.5px solid rgba(0, 113, 227, 0.22);
   border-radius: 14px;
   background: #FFFFFF;
-  box-shadow: 0 2px 10px rgba(101, 220, 203, 0.08);
+  box-shadow: 0 2px 10px rgba(0, 113, 227, 0.06);
   overflow: hidden;
   transition: all 0.2s ease;
 }
@@ -2134,12 +2132,12 @@
   background: linear-gradient(135deg, #FFFFFF 0%, #F8FCFA 100%);
   font-size: 13.5px;
   font-weight: 700;
-  color: #0f766e;
+  color: #0071E3;
   user-select: none;
 }
 
 .agenda-analytics-summary:hover {
-  background: rgba(101, 220, 203, 0.08);
+  background: rgba(0, 113, 227, 0.06);
 }
 
 .agenda-analytics-title {
@@ -2150,7 +2148,7 @@
 
 .agenda-analytics-chevron {
   transition: transform 0.2s ease;
-  color: #0f766e;
+  color: #0071E3;
 }
 
 .agenda-analytics-accordion[open] .agenda-analytics-chevron {
@@ -2159,6 +2157,6 @@
 
 .agenda-analytics-body {
   padding: 18px 20px 20px;
-  border-top: 1px solid rgba(101, 220, 203, 0.2);
+  border-top: 1px solid rgba(0, 113, 227, 0.14);
   animation: fadeIn 0.2s ease;
 }
