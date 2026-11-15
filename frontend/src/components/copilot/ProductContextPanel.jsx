@@ -561,7 +561,7 @@ export function ProductContextPanel({
                       style={{
                         padding: '10px 8px',
                         borderRadius: 8,
-                        border: isSelected ? '2px solid var(--color-aqua-primary)' : '1px solid #E5E5E5',
+                        border: isSelected ? '2px solid var(--color-aqua-primary)' : '1px solid #E8E8ED',
                         backgroundColor: isSelected ? 'var(--color-white)' : '#FFFFFF',
                         display: 'flex',
                         flexDirection: 'column',

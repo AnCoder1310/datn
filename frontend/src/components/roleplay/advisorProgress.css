@@ -133,16 +133,16 @@
 }
 
 .ap-filter-pill:hover {
-  background: rgba(0, 113, 227, 0.08);
-  color: #0071E3;
+  background: rgba(29, 29, 31, 0.08);
+  color: #1D1D1F;
 }
 
 .ap-filter-pill.is-active {
-  background: rgba(0, 113, 227, 0.14);
-  border-color: #0071E3;
-  color: #0071E3;
+  background: rgba(29, 29, 31, 0.08);
+  border-color: #1D1D1F;
+  color: #1D1D1F;
   font-weight: 700;
-  box-shadow: 0 0 10px rgba(0, 113, 227, 0.14);
+  box-shadow: 0 0 10px rgba(29, 29, 31, 0.08);
 }
 
 .ap-btn-icon {
@@ -174,22 +174,22 @@
 
 .ap-scenario {
   position: relative;
-  background: linear-gradient(135deg, #FFFFFF 0%, #F6FBF9 100%);
-  border: 1.5px solid rgba(0, 113, 227, 0.22);
+  background: linear-gradient(135deg, #FFFFFF 0%, #F5F5F7 100%);
+  border: 1.5px solid rgba(29, 29, 31, 0.08);
   border-radius: 16px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 14px;
-  box-shadow: 0 4px 18px -2px rgba(0, 113, 227, 0.08), 0 1px 3px rgba(23, 43, 58, 0.03);
+  box-shadow: 0 4px 18px -2px rgba(29, 29, 31, 0.08), 0 1px 3px rgba(23, 43, 58, 0.03);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
 
 .ap-scenario:hover {
-  border-color: #0071E3;
-  box-shadow: 0 8px 30px -4px rgba(0, 113, 227, 0.14);
+  border-color: #1D1D1F;
+  box-shadow: 0 8px 30px -4px rgba(29, 29, 31, 0.08);
   transform: translateY(-2px);
 }
 
@@ -257,7 +257,7 @@
   content: '';
   position: absolute;
   inset: 5% 15%;
-  background: radial-gradient(ellipse at center, rgba(0, 113, 227, 0.22) 0%, rgba(194, 240, 232, 0.12) 50%, transparent 75%);
+  background: radial-gradient(ellipse at center, rgba(29, 29, 31, 0.08) 0%, rgba(194, 240, 232, 0.12) 50%, transparent 75%);
   border-radius: 50%;
   pointer-events: none;
   filter: blur(8px);
@@ -335,21 +335,21 @@
   gap: 5px;
   padding: 7px 12px;
   border-radius: 6px;
-  border: 1.5px solid #0071E3;
-  background: rgba(0, 113, 227, 0.08);
-  color: #0071E3;
+  border: 1.5px solid #1D1D1F;
+  background: rgba(29, 29, 31, 0.08);
+  color: #1D1D1F;
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 0 8px rgba(0, 113, 227, 0.08);
+  box-shadow: 0 0 8px rgba(29, 29, 31, 0.08);
   transition: all 0.15s ease;
 }
 
 .ap-btn-history:hover {
-  background: rgba(0, 113, 227, 0.14);
-  border-color: #0077ED;
-  color: #006EDB;
-  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
+  background: rgba(29, 29, 31, 0.08);
+  border-color: #6E6E73;
+  color: #1D1D1F;
+  box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08);
 }
 
 .ap-btn {
@@ -359,36 +359,36 @@
   gap: 6px;
   padding: 7px 16px;
   border-radius: 6px;
-  border: 1.5px solid #0071E3;
-  background: rgba(0, 113, 227, 0.08);
-  color: #0071E3;
+  border: 1.5px solid #1D1D1F;
+  background: rgba(29, 29, 31, 0.08);
+  color: #1D1D1F;
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 0 8px rgba(0, 113, 227, 0.08);
+  box-shadow: 0 0 8px rgba(29, 29, 31, 0.08);
   transition: all 0.15s ease;
 }
 
 .ap-btn:hover:not(:disabled) {
-  background: rgba(0, 113, 227, 0.14);
-  border-color: #0077ED;
-  color: #006EDB;
-  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
+  background: rgba(29, 29, 31, 0.08);
+  border-color: #6E6E73;
+  color: #1D1D1F;
+  box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08);
 }
 
 .ap-btn--primary {
-  border: 1.5px solid #0071E3;
-  background: rgba(0, 113, 227, 0.08);
-  color: #0071E3;
+  border: 1.5px solid #1D1D1F;
+  background: rgba(29, 29, 31, 0.08);
+  color: #1D1D1F;
   font-weight: 700;
-  box-shadow: 0 0 10px rgba(0, 113, 227, 0.14);
+  box-shadow: 0 0 10px rgba(29, 29, 31, 0.08);
 }
 
 .ap-btn--primary:hover:not(:disabled) {
-  background: rgba(0, 113, 227, 0.22);
-  border-color: #0077ED;
-  color: #006EDB;
-  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
+  background: rgba(29, 29, 31, 0.08);
+  border-color: #6E6E73;
+  color: #1D1D1F;
+  box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08);
 }
 
 .ap-btn:disabled {

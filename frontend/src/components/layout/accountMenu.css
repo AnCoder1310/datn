@@ -9,7 +9,7 @@
   gap: 10px;
   min-height: 40px;
   padding: 4px 10px 4px 4px;
-  border: 1.5px solid rgba(0, 113, 227, 0.3);
+  border: 1.5px solid rgba(29, 29, 31, 0.08);
   border-radius: 999px;
   background: #FFFFFF;
   color: var(--color-text-primary);
@@ -59,7 +59,7 @@
   background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 113, 227, 0.08);
+  box-shadow: 0 10px 30px rgba(29, 29, 31, 0.08);
   color: var(--color-text-primary);
   font-family: inherit;
 }
@@ -77,9 +77,9 @@
   border-radius: 10px;
   display: grid;
   place-items: center;
-  background: rgba(0, 113, 227, 0.08);
-  border: 1.5px solid #0071E3;
-  color: #0071E3;
+  background: rgba(29, 29, 31, 0.08);
+  border: 1.5px solid #1D1D1F;
+  color: #1D1D1F;
   font-size: 15px;
   font-weight: 700;
 }
@@ -125,10 +125,10 @@
 
 .account-menu-logout {
   min-height: 38px;
-  border: 1.5px solid rgba(0, 113, 227, 0.3);
+  border: 1.5px solid rgba(29, 29, 31, 0.08);
   border-radius: 8px;
-  background: rgba(0, 113, 227, 0.06);
-  color: #0071E3;
+  background: rgba(29, 29, 31, 0.08);
+  color: #1D1D1F;
   font-family: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -145,10 +145,10 @@
 }
 
 .account-menu-logout:hover {
-  background: rgba(0, 113, 227, 0.14);
-  border-color: #0077ED;
-  color: #006EDB;
-  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
+  background: rgba(29, 29, 31, 0.08);
+  border-color: #6E6E73;
+  color: #1D1D1F;
+  box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08);
 }
 
 .account-menu-logout:focus-visible {
@@ -158,10 +158,10 @@
 
 .account-menu-switch {
   min-height: 38px;
-  border: 1.5px solid #0071E3;
+  border: 1.5px solid #1D1D1F;
   border-radius: 8px;
-  background: rgba(0, 113, 227, 0.08);
-  color: #0071E3;
+  background: rgba(29, 29, 31, 0.08);
+  color: #1D1D1F;
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;
@@ -170,14 +170,14 @@
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(0, 113, 227, 0.14);
+  box-shadow: 0 0 10px rgba(29, 29, 31, 0.08);
   transition: all 0.18s ease;
 }
 .account-menu-switch:hover {
-  background: rgba(0, 113, 227, 0.22);
-  border-color: #0077ED;
-  color: #006EDB;
-  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
+  background: rgba(29, 29, 31, 0.08);
+  border-color: #6E6E73;
+  color: #1D1D1F;
+  box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08);
 }
 
 .account-menu-switch:focus-visible {

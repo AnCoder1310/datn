@@ -69,8 +69,8 @@ export function NotificationDrawer({ isOpen, onClose, notifications, onMarkAllRe
               style={{
                 padding: '14px 16px',
                 borderRadius: 10,
-                backgroundColor: item.read ? '#FFFFFF' : '#EAF3FF',
-                border: item.read ? '1px solid #E8E8ED' : '1px solid rgba(0, 113, 227, 0.25)',
+                backgroundColor: item.read ? '#FFFFFF' : '#F5F5F7',
+                border: item.read ? '1px solid #E8E8ED' : '1px solid rgba(29, 29, 31, 0.08)',
                 marginBottom: 10,
                 cursor: 'pointer',
                 transition: 'all 0.2s',

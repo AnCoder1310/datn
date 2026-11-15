@@ -1,21 +1,21 @@
 /* VINFAST AI SALES ENABLEMENT — MODERN SAAS DESIGN SYSTEM */
 /* Fresh Aqua Palette:
-   - Primary: #0071E3 (Aqua Mint)
+   - Primary: #1D1D1F (Aqua Mint)
    - Secondary: #1D1D1F (Deep Slate)
    - Background: #FFFFFF (Pure White)
-   - Accent: #EAF3FF (Soft Aqua)
-   - Card: #FFFFFF, Border: #E8E8ED, Text-Sec: #6E6E73, Text-Muted: #86868B
+   - Accent: #F5F5F7 (Soft Aqua)
+   - Card: #FFFFFF, Border: #E8E8ED, Text-Sec: #6E6E73, Text-Muted: #6E6E73
 */
 
 :root {
-  --app-primary: #0071E3;
+  --app-primary: #1D1D1F;
   --app-secondary: #1D1D1F;
   --app-bg: #FFFFFF;
   --app-card: #FFFFFF;
   --app-border: #E8E8ED;
   --app-text-primary: #1D1D1F;
   --app-text-secondary: #6E6E73;
-  --app-text-muted: #86868B;
+  --app-text-muted: #6E6E73;
 }
 
 .advisor-app,
@@ -103,15 +103,15 @@
 
 .nav-pill:hover {
   color: var(--app-secondary);
-  background: #EAF3FF;
+  background: #F5F5F7;
 }
 
 .nav-pill.active {
-  background: rgba(0, 113, 227, 0.14);
-  color: #0071E3;
-  border: 1.5px solid #0071E3;
+  background: rgba(29, 29, 31, 0.08);
+  color: #1D1D1F;
+  border: 1.5px solid #1D1D1F;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
+  box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08);
 }
 
 .topbar-meta {
@@ -153,7 +153,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #EAF3FF;
+  background: #F5F5F7;
   border: 1px solid var(--app-primary);
   display: grid;
   place-items: center;
@@ -215,12 +215,12 @@
 }
 
 .sidebar-item:hover {
-  background: #EAF3FF;
+  background: #F5F5F7;
   color: var(--app-secondary);
 }
 
 .sidebar-item.active {
-  background: #EAF3FF;
+  background: #F5F5F7;
   border-color: var(--app-primary);
   border-left: 3px solid var(--app-primary);
   color: #1D1D1F;
@@ -252,7 +252,7 @@
   display: inline-flex;
   padding: 4px 12px;
   border-radius: 999px;
-  background: #EAF3FF;
+  background: #F5F5F7;
   color: #1D1D1F;
   font-size: 0.75rem;
   font-weight: 700;
@@ -288,36 +288,39 @@
 .chip-button {
   background: #FFFFFF;
   color: #1D1D1F;
-  border: 1px solid #D2D2D7;
+  border: 1px solid #E8E8ED;
   border-radius: 10px;
+  font-size: 14px;
   font-weight: 500;
-  padding: 10px 20px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  height: 40px;
+  padding: 0 16px;
+  box-shadow: none;
   transition: all 0.15s ease-in-out;
   cursor: pointer;
 }
 
 .primary-button {
-  background: #0071E3;
+  background: #1D1D1F;
   color: #FFFFFF;
   border: none;
   border-radius: 10px;
+  font-size: 14px;
   font-weight: 600;
-  padding: 10px 20px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  height: 40px;
+  padding: 0 16px;
+  box-shadow: none;
   transition: all 0.15s ease-in-out;
   cursor: pointer;
 }
 
 .primary-button:hover {
-  background: #0077ED;
-  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.28);
-  transform: translateY(-1px);
+  background: #6E6E73;
+  color: #FFFFFF;
 }
 
 .primary-button:active {
-  background: rgba(0, 113, 227, 0.3);
-  border-color: #006EDB;
+  background: rgba(29, 29, 31, 0.08);
+  border-color: #1D1D1F;
   transform: translateY(0);
 }
 
@@ -325,11 +328,13 @@
 .chip-button {
   background: #FFFFFF;
   color: #1D1D1F;
-  border: 1px solid #D2D2D7;
+  border: 1px solid #E8E8ED;
   border-radius: 10px;
+  font-size: 14px;
   font-weight: 500;
-  padding: 10px 20px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  height: 40px;
+  padding: 0 16px;
+  box-shadow: none;
   transition: all 0.15s ease-in-out;
   cursor: pointer;
 }
@@ -337,7 +342,6 @@
 .secondary-button:hover,
 .chip-button:hover {
   background: #F5F5F7;
-  border-color: #C7C7CC;
   color: #1D1D1F;
 }
 
@@ -546,9 +550,9 @@
 }
 
 .inline-error {
-  background: #FEE4E2;
-  border-color: #FECDCA;
-  color: #B42318;
+  background: #F5F5F7;
+  border-color: #E8E8ED;
+  color: #1D1D1F;
   font-weight: 500;
 }
 

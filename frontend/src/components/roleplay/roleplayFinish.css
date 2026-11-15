@@ -45,10 +45,10 @@
 .practice-finish-actions { display: flex; justify-content: flex-end; gap: 16px; padding: 24px 54px 30px; border-top: 1px solid var(--color-border); }
 .practice-finish-actions button { min-width: 205px; min-height: 52px; padding: 12px 24px; border-radius: 999px; font-size: .98rem; font-weight: 700; }
 .practice-finish-actions button:disabled, .practice-finish-close:disabled { opacity: .62; cursor: wait; }
-.practice-finish-cancel { border: 1px solid #D2D2D7; background: #FFFFFF; color: #1D1D1F; border-radius: 10px; font-weight: 500; transition: all 0.15s ease; }
-.practice-finish-cancel:hover:not(:disabled) { background: #F5F5F7; border-color: #C7C7CC; }
-.practice-finish-confirm { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #0071E3; color: #FFFFFF; border: none; border-radius: 10px; font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
-.practice-finish-confirm:hover:not(:disabled) { background: #0077ED; box-shadow: 0 4px 12px rgba(0, 113, 227, 0.28); }
+.practice-finish-cancel { border: 1px solid #E8E8ED; background: #FFFFFF; color: #1D1D1F; border-radius: 10px; font-weight: 500; transition: all 0.15s ease; }
+.practice-finish-cancel:hover:not(:disabled) { background: #F5F5F7; border-color: #E8E8ED; }
+.practice-finish-confirm { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #1D1D1F; color: #FFFFFF; border: none; border-radius: 10px; font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
+.practice-finish-confirm:hover:not(:disabled) { background: #6E6E73; box-shadow: 0 4px 12px rgba(29, 29, 31, 0.08); }
 .practice-finish-spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.45); border-top-color: var(--color-border); border-radius: 50%; animation: practice-finish-spin .8s linear infinite; }
 @keyframes practice-finish-spin { to { transform: rotate(360deg); } }
 

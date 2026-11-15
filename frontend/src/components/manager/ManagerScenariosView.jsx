@@ -239,7 +239,7 @@ export function ManagerScenariosView() {
                   fontSize: "13px",
                   padding: "8px 14px",
                   background: isEditing ? "var(--color-white)" : "#FFFFFF",
-                  borderColor: isEditing ? "var(--color-aqua-primary)" : "#E5E5E5",
+                  borderColor: isEditing ? "var(--color-aqua-primary)" : "#E8E8ED",
                   color: isEditing ? "var(--color-text-primary)" : "inherit"
                 }}
               >
@@ -268,7 +268,7 @@ export function ManagerScenariosView() {
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px", fontSize: "13px" }}>
-            <div style={{ padding: "14px", background: "var(--color-surface-alt)", borderRadius: "6px", border: isEditing ? "1px dashed var(--color-aqua-primary)" : "1px solid #E5E5E5" }}>
+            <div style={{ padding: "14px", background: "var(--color-surface-alt)", borderRadius: "6px", border: isEditing ? "1px dashed var(--color-aqua-primary)" : "1px solid #E8E8ED" }}>
               <h4 style={{ margin: "0 0 10px 0", color: "var(--color-text-primary)", display: "flex", alignItems: "center", gap: "6px" }}>
                 <CarIcon style={{ width: 16, height: 16 }} /> Thông tin khách hàng (Persona)
               </h4>
@@ -322,7 +322,7 @@ export function ManagerScenariosView() {
               )}
             </div>
 
-            <div style={{ padding: "14px", background: "var(--color-surface-alt)", borderRadius: "6px", border: isEditing ? "1px dashed var(--color-aqua-primary)" : "1px solid #E5E5E5" }}>
+            <div style={{ padding: "14px", background: "var(--color-surface-alt)", borderRadius: "6px", border: isEditing ? "1px dashed var(--color-aqua-primary)" : "1px solid #E8E8ED" }}>
               <h4 style={{ margin: "0 0 10px 0", color: "var(--color-text-primary)" }}>Bối cảnh & Lời mở đầu</h4>
               {isEditing ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>

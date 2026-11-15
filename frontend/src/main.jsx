@@ -36,11 +36,11 @@ class ErrorBoundary extends Component {
             padding: 28,
             borderRadius: 16,
             background: '#FFFFFF',
-            border: '1.5px solid rgba(0, 113, 227, 0.2)',
-            boxShadow: '0 8px 30px rgba(0, 113, 227, 0.2)',
+            border: '1.5px solid rgba(29, 29, 31, 0.08)',
+            boxShadow: '0 8px 30px rgba(29, 29, 31, 0.08)',
             textAlign: 'center',
           }}>
-            <h2 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 10px', color: '#0071E3' }}>
+            <h2 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 10px', color: '#1D1D1F' }}>
               VinFast AI Sales Enablement
             </h2>
             <p style={{ fontSize: 13.5, color: '#6E6E73', lineHeight: 1.5, margin: '0 0 16px' }}>
@@ -49,14 +49,14 @@ class ErrorBoundary extends Component {
             {this.state.error?.message && (
               <pre style={{
                 textAlign: 'left',
-                background: '#F8FAFC',
+                background: '#F5F5F7',
                 padding: '10px 14px',
                 borderRadius: 8,
                 fontSize: 12,
-                color: '#E11D48',
+                color: '#1D1D1F',
                 overflowX: 'auto',
                 margin: '0 0 18px',
-                border: '1px solid #E2E8F0',
+                border: '1px solid #E8E8ED',
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
               }}>
@@ -75,9 +75,9 @@ class ErrorBoundary extends Component {
                 gap: 8,
                 padding: '9px 24px',
                 borderRadius: 999,
-                background: 'rgba(0, 113, 227, 0.2)',
-                border: '1.5px solid #0071E3',
-                color: '#0071E3',
+                background: 'rgba(29, 29, 31, 0.08)',
+                border: '1.5px solid #1D1D1F',
+                color: '#1D1D1F',
                 fontWeight: 700,
                 fontSize: 14,
                 cursor: 'pointer',
