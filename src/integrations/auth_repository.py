@@ -150,6 +150,16 @@ class SQLAuthRepository:
             connection.execute(delete(self._sessions).where(self._sessions.c.user_id == user_id))
 
     @_offload_sql
+    def update_display_name(self, user_id: str, display_name: str) -> None:
+        self._ensure_schema()
+        with self._engine.begin() as connection:
+            connection.execute(
+                update(self._users)
+                .where(self._users.c.user_id == user_id)
+                .values(display_name=display_name)
+            )
+
+    @_offload_sql
     def active_advisors(self) -> list[AuthenticatedUser]:
         """Return public identities only; never expose password fields."""
         self._ensure_schema()

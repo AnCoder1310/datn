@@ -1,6 +1,7 @@
 """Cookie authentication endpoints and reusable current-user dependency."""
 
 from datetime import timedelta
+from pydantic import BaseModel, Field
 
 from fastapi import APIRouter, HTTPException, Request, Response, status
 
@@ -77,6 +78,21 @@ def create_auth_router(service: AuthService, settings: Settings) -> APIRouter:
     @router.get("/me", response_model=AuthenticatedUser)
     async def me(request: Request) -> AuthenticatedUser:
         return await current_user.authenticate(request, allow_password_change=True)
+
+    class UpdateProfileRequest(BaseModel):
+        display_name: str = Field(min_length=1, max_length=200)
+
+    @router.patch("/profile", response_model=AuthenticatedUser)
+    async def update_profile(payload: UpdateProfileRequest, request: Request) -> AuthenticatedUser:
+        user = await current_user(request)
+        await service.update_display_name(user.user_id, payload.display_name.strip())
+        return AuthenticatedUser(
+            user_id=user.user_id,
+            username=user.username,
+            display_name=payload.display_name.strip(),
+            role=user.role,
+            must_change_password=user.must_change_password,
+        )
 
     @router.post("/change-password", status_code=status.HTTP_204_NO_CONTENT)
     async def change_password(payload: ChangePasswordRequest, request: Request, response: Response) -> None:

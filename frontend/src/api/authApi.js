@@ -12,6 +12,13 @@ export const authApi = {
     return request('/auth/me');
   },
 
+  updateProfile(displayName) {
+    return request('/auth/profile', {
+      method: 'PATCH',
+      body: JSON.stringify({ display_name: displayName }),
+    });
+  },
+
   changePassword(currentPassword, newPassword) {
     return request('/auth/change-password', {
       method: 'POST',

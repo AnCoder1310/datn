@@ -135,6 +135,7 @@ const VEHICLE_SPECIALTIES = [
 
 export function ProfileView({
   currentUser,
+  onUpdateProfile,
   onOpenRoleplay,
   onOpenCopilot,
   onLogout,
@@ -181,6 +182,9 @@ export function ProfileView({
     try {
       localStorage.setItem('vinfast_profile_custom', JSON.stringify(editForm));
     } catch { /* ignore */ }
+    if (onUpdateProfile) {
+      onUpdateProfile(editForm);
+    }
     setIsEditing(false);
     setSaveSuccessToast('Đã lưu cập nhật hồ sơ thành công!');
     setTimeout(() => setSaveSuccessToast(''), 3500);

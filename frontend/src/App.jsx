@@ -37,17 +37,28 @@ function formatScenarios(list) {
 export function App() {
   // Khởi tạo ngay lập tức với tài khoản Demo Advisor để giao diện & dữ liệu hiển thị tức thì 0ms
   const [currentUser, setCurrentUser] = useState(() => {
+    let base = DEMO_FALLBACK_USER;
     try {
       const cached = localStorage.getItem('p043_user');
       if (cached) {
         const u = JSON.parse(cached);
         if (u && (u.role === 'advisor' || u.role === 'manager')) {
-          return u;
+          base = u;
+        } else {
+          localStorage.removeItem('p043_user');
         }
-        localStorage.removeItem('p043_user');
       }
     } catch (e) { /* ignore */ void e; }
-    return DEMO_FALLBACK_USER;
+    try {
+      const custom = localStorage.getItem('vinfast_profile_custom');
+      if (custom) {
+        const p = JSON.parse(custom);
+        if (p?.name?.trim()) {
+          base = { ...base, display_name: p.name.trim() };
+        }
+      }
+    } catch (e) { /* ignore */ void e; }
+    return base;
   });
   const [authStatus, setAuthStatus] = useState('authenticated');
   const [currentTab, setCurrentTab] = useState('copilot');
@@ -70,8 +81,21 @@ export function App() {
         const user = await authApi.me();
         if (!active) return;
         if (user && (user.role === 'advisor' || user.role === 'manager')) {
-          setCurrentUser(user);
-          try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
+          let effectiveUser = user;
+          try {
+            const savedProfile = localStorage.getItem('vinfast_profile_custom');
+            if (savedProfile) {
+              const p = JSON.parse(savedProfile);
+              if (p?.name?.trim()) {
+                effectiveUser = { ...user, display_name: p.name.trim() };
+                if (p.name.trim() !== user.display_name) {
+                  void authApi.updateProfile(p.name.trim()).catch(() => {});
+                }
+              }
+            }
+          } catch { /* ignore */ }
+          setCurrentUser(effectiveUser);
+          try { localStorage.setItem('p043_user', JSON.stringify(effectiveUser)); } catch (e) { /* ignore */ void e; }
           if (user.role === 'advisor') {
             setCurrentTab((prev) => (prev === 'manager' ? 'copilot' : prev));
           } else if (user.role === 'manager') {
@@ -164,6 +188,23 @@ export function App() {
       setScenarioStatus('loading');
       setCopilotOpened(false);
       setCopilotQuery('');
+    }
+  };
+
+  const handleUpdateProfile = async (updated) => {
+    if (!updated) return;
+    const newName = (updated.name || updated.display_name)?.trim();
+    if (newName) {
+      setCurrentUser((prev) => {
+        const next = { ...prev, display_name: newName };
+        try { localStorage.setItem('p043_user', JSON.stringify(next)); } catch { /* ignore */ }
+        return next;
+      });
+      try {
+        await authApi.updateProfile(newName);
+      } catch (err) {
+        console.warn('Backend profile update deferred:', err);
+      }
     }
   };
 
@@ -281,6 +322,7 @@ export function App() {
         {currentTab === 'profile' && (
           <ProfileView
             currentUser={currentUser}
+            onUpdateProfile={handleUpdateProfile}
             onOpenRoleplay={() => setCurrentTab('roleplay')}
             onOpenCopilot={() => setCurrentTab('copilot')}
             onLogout={handleLogout}

@@ -176,6 +176,9 @@ class AuthService:
             PBKDF2_ITERATIONS,
         )
 
+    async def update_display_name(self, user_id: str, display_name: str) -> None:
+        await self._repository.update_display_name(user_id, display_name)
+
     async def logout(self, token: str | None) -> None:
         if token:
             await self._repository.delete_session(self.hash_token(token))
