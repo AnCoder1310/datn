@@ -27,13 +27,14 @@ export function VinFastShowcaseHero({
 
   // Count leads interested in each model from CRM data
   const interestMap = {};
-  modelInterest.forEach((item) => {
-    interestMap[item.model] = item.count;
+  (modelInterest || []).forEach((item) => {
+    if (item?.model) interestMap[item.model] = item.count || 0;
   });
 
   // Interested customers matching current model
-  const matchingCustomers = customers.filter((c) =>
-    c.models?.some((m) => m.toLowerCase().includes(currentModel.key.toLowerCase()))
+  const matchingCustomers = (customers || []).filter((c) =>
+    Array.isArray(c?.models) &&
+    c.models.some((m) => m && currentModel?.key && m.toLowerCase().includes(currentModel.key.toLowerCase()))
   );
 
   const handleModelChange = (model) => {
@@ -43,142 +44,151 @@ export function VinFastShowcaseHero({
     }
   };
 
+  // Compact specs formatted cleanly without wordy clutter
+  const rangeVal = currentModel.range;
+  const chargingVal = currentModel.charging.includes('/')
+    ? currentModel.charging.split('/')[1].trim()
+    : currentModel.charging;
+  const batteryVal = currentModel.battery.split(' ')[0] + ' kWh';
+  const powerVal = currentModel.power.split('·')[0].trim();
+
   return (
-    <section className="vf-showcase-card" aria-label="Khu vực giới thiệu xe VinFast">
-      {/* MODEL SELECTOR TAB BAR */}
-      <div className="vf-model-tabs" role="tablist" aria-label="Chọn dòng xe VinFast">
-        {VINFAST_SHOWCASE_MODELS.map((model) => {
-          const isSelected = currentModel.id === model.id;
-          const leadCount = interestMap[model.key] || 0;
-          return (
-            <button
-              key={model.id}
-              type="button"
-              role="tab"
-              aria-selected={isSelected}
-              className={`vf-model-tab ${isSelected ? 'is-active' : ''}`}
-              onClick={() => handleModelChange(model)}
-            >
-              <span className="vf-model-tab-label">{model.key}</span>
-              {leadCount > 0 && (
-                <span className="vf-model-tab-badge" title={`${leadCount} khách đang quan tâm`}>
-                  {leadCount}
-                </span>
-              )}
-            </button>
-          );
-        })}
+    <section className="vf-showcase-card" aria-label="Showroom VinFast">
+      {/* 1. MODEL SELECTOR TABS */}
+      <div className="vf-model-tabs-wrap">
+        <div className="vf-model-tabs" role="tablist" aria-label="Chọn dòng xe VinFast">
+          {VINFAST_SHOWCASE_MODELS.map((model) => {
+            const isSelected = currentModel.id === model.id;
+            const leadCount = interestMap[model.key] || 0;
+            return (
+              <button
+                key={model.id}
+                type="button"
+                role="tab"
+                aria-selected={isSelected}
+                className={`vf-model-tab ${isSelected ? 'is-active' : ''}`}
+                onClick={() => handleModelChange(model)}
+              >
+                <span className="vf-model-tab-label">{model.key}</span>
+                {leadCount > 0 && (
+                  <span className="vf-model-tab-badge">
+                    {leadCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* SHOWCASE HERO STAGE */}
-      <div className="vf-hero-stage">
-        {/* LEFT COLUMN: VEHICLE DETAILS & SPEC CHIPS */}
-        <div className="vf-hero-info">
-          <div className="vf-hero-header">
-            <span className="vf-hero-segment">{currentModel.segment}</span>
-            <h2 className="vf-hero-title">{currentModel.name}</h2>
-            <div className="vf-hero-price-row">
-              <span className="vf-hero-price-label">Giá niêm yết:</span>
-              <span className="vf-hero-price-value">{currentModel.price}</span>
-            </div>
-            <p className="vf-hero-tagline">{currentModel.tagline}</p>
+      {/* 2. MINIMALIST SHOWROOM STAGE */}
+      <div className="vf-showroom-stage">
+        {/* HEADER: NAME, SEGMENT & PRICE */}
+        <div className="vf-showroom-header">
+          <div className="vf-showroom-titles">
+            <span className="vf-showroom-badge">{currentModel.segment}</span>
+            <h2 className="vf-showroom-name">{currentModel.name}</h2>
           </div>
 
-          {/* SPECIFICATION MINI TILES */}
-          <div className="vf-spec-grid">
-            <div className="vf-spec-tile">
-              <div className="vf-spec-icon">
-                <BatteryCharging size={16} strokeWidth={2.2} />
-              </div>
-              <div className="vf-spec-copy">
-                <span className="vf-spec-label">Quãng đường (WLTP)</span>
-                <strong className="vf-spec-value">{currentModel.range}</strong>
-              </div>
-            </div>
-
-            <div className="vf-spec-tile">
-              <div className="vf-spec-icon">
-                <Zap size={16} strokeWidth={2.2} />
-              </div>
-              <div className="vf-spec-copy">
-                <span className="vf-spec-label">Sạc nhanh DC</span>
-                <strong className="vf-spec-value">{currentModel.charging}</strong>
-              </div>
-            </div>
-
-            <div className="vf-spec-tile">
-              <div className="vf-spec-icon">
-                <Gauge size={16} strokeWidth={2.2} />
-              </div>
-              <div className="vf-spec-copy">
-                <span className="vf-spec-label">Động cơ / Pin</span>
-                <strong className="vf-spec-value">{currentModel.battery}</strong>
-              </div>
-            </div>
-
-            <div className="vf-spec-tile">
-              <div className="vf-spec-icon">
-                <Sparkles size={16} strokeWidth={2.2} />
-              </div>
-              <div className="vf-spec-copy">
-                <span className="vf-spec-label">Hiệu năng</span>
-                <strong className="vf-spec-value">{currentModel.power}</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* DIRECT ACTION BUTTONS */}
-          <div className="vf-hero-actions">
-            <button
-              type="button"
-              className="vf-btn-primary"
-              onClick={() => onBookTestDrive && onBookTestDrive(currentModel)}
-            >
-              <CalendarCheck size={16} strokeWidth={2.2} />
-              <span>Đăng ký lái thử</span>
-            </button>
-
-            <button
-              type="button"
-              className="vf-btn-secondary"
-              onClick={() => onQuotePrice && onQuotePrice(currentModel)}
-            >
-              <FileSpreadsheet size={16} strokeWidth={2} />
-              <span>Báo giá lăn bánh</span>
-            </button>
-
-            {matchingCustomers.length > 0 && (
-              <button
-                type="button"
-                className={`vf-btn-leads ${selectedModelKey === currentModel.key ? 'is-filtering' : ''}`}
-                onClick={() => onSelectModel && onSelectModel(selectedModelKey === currentModel.key ? null : currentModel.key)}
-                title="Lọc danh sách khách hàng đang quan tâm dòng xe này"
-              >
-                <Users size={14} strokeWidth={2} />
-                <span>
-                  {selectedModelKey === currentModel.key
-                    ? `Đang lọc: ${matchingCustomers.length} khách`
-                    : `${matchingCustomers.length} khách quan tâm`}
-                </span>
-              </button>
-            )}
+          <div className="vf-showroom-price-card">
+            <span className="vf-price-label">Niêm yết</span>
+            <strong className="vf-price-value">{currentModel.price}</strong>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: VEHICLE IMAGE STAGE */}
-        <div className="vf-hero-visual">
-          <div className="vf-visual-backdrop" />
-          <div className="vf-visual-badge">
-            <span>⚡ 100% Thuần điện</span>
-            <span>🛡️ An toàn 5★</span>
-          </div>
+        {/* CENTER VEHICLE IMAGE WITH NATURAL CONTACT SHADOW (NO SMEARS / NO CLUTTER) */}
+        <div className="vf-vehicle-stage">
           <img
             src={currentModel.image}
             alt={currentModel.name}
-            className="vf-vehicle-image"
+            className="vf-hero-image"
             loading="eager"
+            onError={(e) => {
+              if (e.currentTarget.src.endsWith('.webp')) {
+                e.currentTarget.src = currentModel.image.replace('/official/', '/').replace('.webp', '.jpg');
+              } else if (e.currentTarget.src.endsWith('.jpg')) {
+                e.currentTarget.src = currentModel.image.replace('/official/', '/').replace('.webp', '.svg');
+              }
+            }}
           />
-          <div className="vf-vehicle-shadow" />
+          <div className="vf-hero-ground-shadow" />
+        </div>
+
+        {/* BOTTOM HUD: 4 ESSENTIAL SPECS */}
+        <div className="vf-specs-hud" aria-label="Thông số kỹ thuật">
+          <div className="vf-hud-item">
+            <BatteryCharging size={15} className="vf-hud-icon" />
+            <div className="vf-hud-copy">
+              <span className="vf-hud-label">Quãng đường</span>
+              <strong className="vf-hud-val">{rangeVal}</strong>
+            </div>
+          </div>
+
+          <div className="vf-hud-divider" />
+
+          <div className="vf-hud-item">
+            <Zap size={15} className="vf-hud-icon" />
+            <div className="vf-hud-copy">
+              <span className="vf-hud-label">Sạc nhanh</span>
+              <strong className="vf-hud-val">{chargingVal}</strong>
+            </div>
+          </div>
+
+          <div className="vf-hud-divider" />
+
+          <div className="vf-hud-item">
+            <Gauge size={15} className="vf-hud-icon" />
+            <div className="vf-hud-copy">
+              <span className="vf-hud-label">Dung lượng pin</span>
+              <strong className="vf-hud-val">{batteryVal}</strong>
+            </div>
+          </div>
+
+          <div className="vf-hud-divider" />
+
+          <div className="vf-hud-item">
+            <Sparkles size={15} className="vf-hud-icon" />
+            <div className="vf-hud-copy">
+              <span className="vf-hud-label">Công suất</span>
+              <strong className="vf-hud-val">{powerVal}</strong>
+            </div>
+          </div>
+        </div>
+
+        {/* CALL TO ACTION BUTTONS (TRANSLUCENT CYAN + BRIGHT CYAN BORDER) */}
+        <div className="vf-showroom-actions">
+          <button
+            type="button"
+            className="vf-btn-action is-primary"
+            onClick={() => onBookTestDrive && onBookTestDrive(currentModel)}
+          >
+            <CalendarCheck size={15} strokeWidth={2.2} />
+            <span>Lái thử</span>
+          </button>
+
+          <button
+            type="button"
+            className="vf-btn-action is-secondary"
+            onClick={() => onQuotePrice && onQuotePrice(currentModel)}
+          >
+            <FileSpreadsheet size={15} strokeWidth={2} />
+            <span>Báo giá</span>
+          </button>
+
+          {matchingCustomers.length > 0 && (
+            <button
+              type="button"
+              className={`vf-btn-action is-leads ${selectedModelKey === currentModel.key ? 'is-active' : ''}`}
+              onClick={() => onSelectModel && onSelectModel(selectedModelKey === currentModel.key ? null : currentModel.key)}
+            >
+              <Users size={14} strokeWidth={2} />
+              <span>
+                {selectedModelKey === currentModel.key
+                  ? `Đang lọc (${matchingCustomers.length})`
+                  : `${matchingCustomers.length} khách quan tâm`}
+              </span>
+            </button>
+          )}
         </div>
       </div>
     </section>

@@ -11,88 +11,94 @@ import { ManagerReviewView } from './components/manager/ManagerReviewView';
 
 import { authApi } from './api/authApi';
 import { practiceApi } from './api/practiceApi';
+import { notifyAgendaChange } from './components/copilot/agenda/agendaResource';
+
+const DEMO_FALLBACK_USER = {
+  user_id: 'advisor-demo',
+  username: 'advisor.demo',
+  display_name: 'Phạm Đình Duy',
+  role: 'advisor',
+  must_change_password: false,
+};
+
+function formatScenarios(list) {
+  return (list || []).map((scenario) => {
+    const model = scenario.title.match(/VF\s*[3-9]/i)?.[0].replace(/\s+/, ' ') || 'VinFast';
+    return {
+      ...scenario,
+      model,
+      model_badge: model,
+      difficulty: { Easy: 'Cơ bản', Medium: 'Tiêu chuẩn', Hard: 'Nâng cao' }[scenario.difficulty] || scenario.difficulty,
+    };
+  });
+}
 
 export function App() {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [authStatus, setAuthStatus] = useState('loading');
+  // Khởi tạo ngay lập tức với tài khoản Demo Advisor để giao diện & dữ liệu hiển thị tức thì 0ms
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const cached = localStorage.getItem('p043_user');
+      if (cached) return JSON.parse(cached);
+    } catch (e) { /* ignore */ void e; }
+    return DEMO_FALLBACK_USER;
+  });
+  const [authStatus, setAuthStatus] = useState('authenticated');
   const [currentTab, setCurrentTab] = useState('copilot');
-  const [scenarios, setScenarios] = useState([]);
-  const [scenarioStatus, setScenarioStatus] = useState('loading');
+  const [scenarios, setScenarios] = useState(() => formatScenarios(scenariosFallback));
+  const [scenarioStatus, setScenarioStatus] = useState('ready');
   const [scenarioReloadToken, setScenarioReloadToken] = useState(0);
   const [sourceDocumentId, setSourceDocumentId] = useState(null);
   const [sourceReference, setSourceReference] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [copilotQuery, setCopilotQuery] = useState('');
-  const [copilotOpened, setCopilotOpened] = useState(false);
+  const [copilotOpened, setCopilotOpened] = useState(true);
 
+  // Đồng bộ phiên thực tế với backend trong nền
   useEffect(() => {
+    let active = true;
     async function restoreSession() {
       try {
         const user = await authApi.me();
+        if (!active) return;
         setCurrentUser(user);
+        try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
         if (user.role === 'advisor') {
           setCurrentTab('copilot');
-          setCopilotOpened(true);
         }
         setAuthStatus('authenticated');
+        notifyAgendaChange();
+        setScenarioReloadToken((v) => v + 1);
       } catch {
-        // Tự động kích hoạt tài khoản Demo Advisor khi truy cập lần đầu
-        // để toàn bộ dữ liệu (12 khách hàng, 29 công việc, kịch bản) hiển thị ngay lập tức
+        // Tự động kích hoạt tài khoản Demo Advisor trên backend để phiên làm việc luôn hợp lệ
         try {
           const user = await authApi.login('advisor.demo', 'DemoAdvisor123!');
+          if (!active) return;
           setCurrentUser(user);
-          setCurrentTab('copilot');
-          setCopilotOpened(true);
+          try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
           setAuthStatus('authenticated');
+          notifyAgendaChange();
+          setScenarioReloadToken((v) => v + 1);
         } catch {
-          // Tự động kích hoạt phiên Demo Advisor để dữ liệu luôn hiển thị tức thì
-          const demoFallbackUser = {
-            user_id: 'advisor-demo',
-            username: 'advisor.demo',
-            display_name: 'Phạm Đình Duy',
-            role: 'advisor',
-            must_change_password: false,
-          };
-          setCurrentUser(demoFallbackUser);
-          setCurrentTab('copilot');
-          setCopilotOpened(true);
-          setAuthStatus('authenticated');
+          // Tiếp tục sử dụng DEMO_FALLBACK_USER, không chặn giao diện
         }
       }
     }
     restoreSession();
+    return () => { active = false; };
   }, []);
 
-  // Fetch real scenarios only after an advisor is authenticated.
+  // Tải danh sách kịch bản thực tế từ backend khi advisor đã sẵn sàng
   useEffect(() => {
     if (authStatus !== 'authenticated' || currentUser?.role !== 'advisor') return;
     async function loadBackendScenarios() {
       try {
         const backendList = await practiceApi.getScenarios();
-        if (!Array.isArray(backendList)) throw new Error('Danh sách tình huống không hợp lệ.');
-        setScenarios(backendList.map((scenario) => {
-          const model = scenario.title.match(/VF\s*[3-9]/i)?.[0].replace(/\s+/, ' ') || 'VinFast';
-          return {
-            ...scenario,
-            model,
-            model_badge: model,
-            difficulty: { Easy: 'Cơ bản', Medium: 'Tiêu chuẩn', Hard: 'Nâng cao' }[scenario.difficulty] || scenario.difficulty,
-          };
-        }));
-        setScenarioStatus('ready');
+        if (Array.isArray(backendList) && backendList.length > 0) {
+          setScenarios(formatScenarios(backendList));
+        }
       } catch {
-        // Fallback to built-in scenarios so practice room is always ready
-        setScenarios((scenariosFallback || []).map((scenario) => {
-          const model = scenario.title.match(/VF\s*[3-9]/i)?.[0].replace(/\s+/, ' ') || 'VinFast';
-          return {
-            ...scenario,
-            model,
-            model_badge: model,
-            difficulty: { Easy: 'Cơ bản', Medium: 'Tiêu chuẩn', Hard: 'Nâng cao' }[scenario.difficulty] || scenario.difficulty,
-          };
-        }));
-        setScenarioStatus('ready');
+        // Giữ kịch bản fallback đã nạp sẵn
       }
     }
     loadBackendScenarios();
@@ -101,7 +107,10 @@ export function App() {
   const handleLogin = async (username, password) => {
     const user = await authApi.login(username, password);
     setCurrentUser(user);
+    try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
     setAuthStatus('authenticated');
+    notifyAgendaChange();
+    setScenarioReloadToken((v) => v + 1);
     if (user.role === 'advisor') {
       setCurrentTab('copilot');
       setCopilotOpened(true);
@@ -126,6 +135,7 @@ export function App() {
     try {
       await authApi.logout();
     } finally {
+      try { localStorage.removeItem('p043_user'); } catch (e) { /* ignore */ void e; }
       setCurrentUser(null);
       setAuthStatus('anonymous');
       setCurrentTab('copilot');
@@ -138,6 +148,7 @@ export function App() {
 
   const handleChangePassword = async (currentPassword, newPassword) => {
     await authApi.changePassword(currentPassword, newPassword);
+    try { localStorage.removeItem('p043_user'); } catch (e) { /* ignore */ void e; }
     setCurrentUser(null);
     setAuthStatus('anonymous');
   };
@@ -158,17 +169,18 @@ export function App() {
     }
   };
 
-  if (authStatus === 'loading') {
-    return <div className="auth-loading" role="status">Đang kiểm tra phiên đăng nhập…</div>;
-  }
-
   if (authStatus === 'anonymous') {
     return <LoginView onLogin={handleLogin} />;
   }
 
   if (currentUser?.must_change_password) {
-    return <ChangePasswordView username={currentUser.username}
-      onChangePassword={handleChangePassword} onLogout={handleLogout} />;
+    return (
+      <ChangePasswordView
+        username={currentUser.username}
+        onChangePassword={handleChangePassword}
+        onLogout={handleLogout}
+      />
+    );
   }
 
   if (currentUser?.role === 'manager') {
@@ -182,8 +194,8 @@ export function App() {
   }
 
   const advisorProfile = {
-    name: currentUser.display_name,
-    username: currentUser.username,
+    name: currentUser?.display_name || 'Phạm Đình Duy',
+    username: currentUser?.username || 'advisor.demo',
     role: 'Tư vấn viên',
   };
 
@@ -209,15 +221,15 @@ export function App() {
       <main className={`main-content${currentTab === 'copilot' ? ' copilot-main-content' : ''}${currentTab === 'knowledge' ? ' knowledge-main-content' : ''}`}>
         {(currentTab === 'copilot' || copilotOpened) && (
           <div style={{ display: currentTab === 'copilot' ? 'flex' : 'none', flex: 1, minHeight: 0, height: '100%', flexDirection: 'column' }}>
-          <CopilotView
-            currentUser={currentUser}
-            initialQuery={copilotQuery}
-            onOpenDocument={(documentId, reference = null) => {
-              setSourceDocumentId(documentId);
-              setSourceReference(reference);
-              setCurrentTab('knowledge');
-            }}
-          />
+            <CopilotView
+              currentUser={currentUser}
+              initialQuery={copilotQuery}
+              onOpenDocument={(documentId, reference = null) => {
+                setSourceDocumentId(documentId);
+                setSourceReference(reference);
+                setCurrentTab('knowledge');
+              }}
+            />
           </div>
         )}
 
@@ -243,7 +255,6 @@ export function App() {
             sourceReference={sourceReference}
           />
         )}
-
       </main>
 
       {/* NOTIFICATIONS FLYOUT */}

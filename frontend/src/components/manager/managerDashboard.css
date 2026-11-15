@@ -270,3 +270,400 @@
 @media (prefers-reduced-motion: reduce) {
   .md-drawer { animation: none; }
 }
+
+/* ==========================================================================
+   MANAGER ACCOUNTS VIEW (BALANCED 2-COLUMN TEAM DIRECTORY & ACCOUNT CREATION)
+   ========================================================================== */
+.manager-accounts-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.manager-accounts-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.manager-accounts-header-titles h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0 0 4px;
+  letter-spacing: -0.4px;
+}
+
+.manager-accounts-header-titles p {
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.manager-accounts-header-stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.manager-accounts-stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.manager-accounts-stat-chip.is-active {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #059669;
+}
+
+.manager-accounts-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+}
+
+.manager-accounts-grid {
+  display: grid;
+  grid-template-columns: 380px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .manager-accounts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.manager-accounts-card {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.manager-accounts-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.manager-accounts-card-head.is-between {
+  justify-content: space-between;
+}
+
+.manager-card-head-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.manager-card-icon {
+  color: #0f766e;
+  flex-shrink: 0;
+}
+
+.manager-card-head-title h2 {
+  font-size: 16px;
+  font-weight: 750;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.manager-card-head-title p {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin: 2px 0 0;
+}
+
+.manager-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.manager-form-field label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.manager-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.manager-input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.manager-input-wrap input {
+  width: 100%;
+  padding: 9px 12px 9px 34px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #F8FAFC;
+  font-size: 13.5px;
+  color: var(--color-text-primary);
+  transition: all 0.15s ease;
+}
+
+.manager-input-wrap input:focus {
+  background: #FFFFFF;
+  outline: none;
+  border-color: #65DCCB;
+  box-shadow: 0 0 0 3px rgba(101, 220, 203, 0.18);
+}
+
+.manager-form-hint {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.manager-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: rgba(101, 220, 203, 0.14);
+  border: 1.5px solid #65DCCB;
+  color: #0f766e;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(101, 220, 203, 0.2);
+  transition: all 0.15s ease;
+  margin-top: 4px;
+}
+
+.manager-btn-primary:hover:not(:disabled) {
+  background: rgba(101, 220, 203, 0.28);
+  border-color: #35B9A7;
+  color: #09524c;
+  box-shadow: 0 0 16px rgba(101, 220, 203, 0.35);
+  transform: translateY(-1px);
+}
+
+.manager-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.manager-btn-minimal {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(101, 220, 203, 0.08);
+  border: 1px solid rgba(101, 220, 203, 0.4);
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.manager-btn-minimal:hover:not(:disabled) {
+  background: rgba(101, 220, 203, 0.22);
+  border-color: #65DCCB;
+}
+
+.manager-account-success-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #059669;
+  font-size: 12.5px;
+  margin-bottom: 14px;
+}
+
+.manager-accounts-search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.manager-search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-muted);
+}
+
+.manager-accounts-search-bar input {
+  width: 100%;
+  padding: 9px 32px 9px 34px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: #F8FAFC;
+  font-size: 13px;
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.manager-accounts-search-bar input:focus {
+  background: #FFFFFF;
+  border-color: #65DCCB;
+  box-shadow: 0 0 0 3px rgba(101, 220, 203, 0.15);
+}
+
+.manager-search-clear {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.manager-table-wrap {
+  overflow-x: auto;
+}
+
+.manager-accounts-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13.5px;
+}
+
+.manager-accounts-table th {
+  padding: 10px 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border);
+  background: #F8FAFC;
+}
+
+.manager-accounts-table td {
+  padding: 12px 12px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.manager-accounts-table tr:hover td {
+  background: rgba(101, 220, 203, 0.04);
+}
+
+.manager-advisor-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.manager-advisor-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(101, 220, 203, 0.28) 0%, rgba(194, 240, 232, 0.5) 100%);
+  color: #0f766e;
+  font-size: 11.5px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1px solid #65DCCB;
+}
+
+.manager-advisor-names {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.manager-advisor-names strong {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.manager-role-tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(101, 220, 203, 0.14);
+  color: #0f766e;
+}
+
+.manager-username-code {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  background: #F1F5F9;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.manager-sessions-val {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.manager-score-val {
+  font-size: 13px;
+  font-weight: 750;
+  color: #0f766e;
+}
+
+.manager-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #059669;
+  background: rgba(16, 185, 129, 0.08);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.manager-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10B981;
+}
+
+.manager-state-loading,
+.manager-state-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}

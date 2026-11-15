@@ -26,16 +26,16 @@ class ErrorBoundary extends Component {
           display: 'grid',
           placeItems: 'center',
           padding: 24,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#F5F8FA',
           fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", sans-serif',
           color: '#172B3A',
         }}>
           <div style={{
-            maxWidth: 480,
+            maxWidth: 520,
             width: '100%',
             padding: 28,
             borderRadius: 16,
-            background: 'linear-gradient(135deg, #FFFFFF 0%, #F5FBF9 100%)',
+            background: '#FFFFFF',
             border: '1.5px solid rgba(101, 220, 203, 0.4)',
             boxShadow: '0 8px 30px rgba(101, 220, 203, 0.15)',
             textAlign: 'center',
@@ -43,17 +43,37 @@ class ErrorBoundary extends Component {
             <h2 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 10px', color: '#0f766e' }}>
               VinFast AI Sales Enablement
             </h2>
-            <p style={{ fontSize: 13.5, color: '#64748B', lineHeight: 1.5, margin: '0 0 20px' }}>
-              Giao diện vừa được cập nhật phiên bản mới. Bấm nút bên dưới để tải lại trang.
+            <p style={{ fontSize: 13.5, color: '#64748B', lineHeight: 1.5, margin: '0 0 16px' }}>
+              Giao diện gặp sự cố tạm thời. Vui lòng bấm nút bên dưới để tải lại trang.
             </p>
+            {this.state.error?.message && (
+              <pre style={{
+                textAlign: 'left',
+                background: '#F8FAFC',
+                padding: '10px 14px',
+                borderRadius: 8,
+                fontSize: 12,
+                color: '#E11D48',
+                overflowX: 'auto',
+                margin: '0 0 18px',
+                border: '1px solid #E2E8F0',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+              }}>
+                {this.state.error.message}
+              </pre>
+            )}
             <button
               type="button"
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                this.setState({ hasError: false, error: null });
+                window.location.reload();
+              }}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                padding: '9px 22px',
+                padding: '9px 24px',
                 borderRadius: 999,
                 background: 'rgba(101, 220, 203, 0.18)',
                 border: '1.5px solid #65DCCB',

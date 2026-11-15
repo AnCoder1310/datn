@@ -1,14 +1,27 @@
 export const TIMEZONE = 'Asia/Ho_Chi_Minh';
-export const filters = {
-  today: 'Hôm nay',
-  upcoming: 'Sắp đến',
-  stale: 'Cần cập nhật',
-  unscheduled: 'Cần xếp lịch',
-  review: 'Cần duyệt',
-  completed: 'Hoàn thành',
-};
 
-export const itemLabel = (task) => (task.item_type === 'appointment' ? 'Lịch hẹn' : 'Công việc');
+export const filterTabs = [
+  { key: 'today', label: 'Hôm nay' },
+  { key: 'upcoming', label: 'Sắp đến' },
+  { key: 'stale', label: 'Cần cập nhật' },
+  { key: 'unscheduled', label: 'Cần xếp lịch' },
+  { key: 'review', label: 'Cần duyệt' },
+  { key: 'completed', label: 'Hoàn thành' },
+];
+
+export const filters = Object.assign(
+  [...filterTabs],
+  {
+    today: 'Hôm nay',
+    upcoming: 'Sắp đến',
+    stale: 'Cần cập nhật',
+    unscheduled: 'Cần xếp lịch',
+    review: 'Cần duyệt',
+    completed: 'Hoàn thành',
+  }
+);
+
+export const itemLabel = (task) => (task?.item_type === 'appointment' ? 'Lịch hẹn' : 'Công việc');
 
 export function cleanDemoText(text) {
   if (!text) return '';
@@ -140,6 +153,7 @@ export function waitingDuration(value, now = Date.now()) {
 }
 
 export function taskState(task, now = Date.now()) {
+  if (!task) return 'Cần xếp lịch';
   if (task.status === 'completed') return 'Hoàn thành';
   if (task.status === 'cancelled') return 'Đã hủy';
   if (task.status === 'needs_review') return 'Cần duyệt';
@@ -152,9 +166,11 @@ export function taskState(task, now = Date.now()) {
 export function layoutDay(items, day) {
   const start = new Date(`${day}T00:00:00+07:00`).getTime();
   const end = start + 86400000;
-  const segments = items
+  const safeItems = Array.isArray(items) ? items : [];
+  const segments = safeItems
     .filter(
       (item) =>
+        item?.starts_at && item?.ends_at &&
         new Date(item.starts_at).getTime() < end && new Date(item.ends_at).getTime() > start
     )
     .map((item) => ({
@@ -164,7 +180,7 @@ export function layoutDay(items, day) {
     }))
     .sort(
       (a, b) =>
-        a.start - b.start || b.end - a.end || a.item.id.localeCompare(b.item.id)
+        a.start - b.start || b.end - a.end || String(a.item.id).localeCompare(String(b.item.id))
     );
   let group = [];
   let groupEnd = 0;

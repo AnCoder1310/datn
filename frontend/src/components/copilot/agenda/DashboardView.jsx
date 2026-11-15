@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import {
   ArrowRight,
+  BarChart3,
   CalendarDays,
   CheckCircle2,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Circle,
@@ -17,7 +19,6 @@ import { useAgendaResource } from './agendaResource';
 import {
   cleanDemoText,
   compactWaiting,
-  filters,
   formatTimeRange,
   itemLabel,
   taskState,
@@ -26,20 +27,27 @@ import { useWorkspaceClock } from '../customerWorkspace/useCustomerWorkspace';
 import { VinFastShowcaseHero } from './VinFastShowcaseHero';
 import dashboardFallback from '../../../data/dashboardFallback.json';
 
+const WORK_FILTERS = [
+  { key: 'today', label: 'Hôm nay' },
+  { key: 'upcoming', label: 'Sắp đến' },
+  { key: 'stale', label: 'Cần cập nhật' },
+  { key: 'unscheduled', label: 'Cần xếp lịch' },
+  { key: 'review', label: 'Cần duyệt' },
+  { key: 'completed', label: 'Hoàn thành' },
+];
+
 const STAGE_LABELS = {
-  new: 'Mới liên hệ',
-  discovery: 'Tìm hiểu nhu cầu',
+  new: 'Mới',
+  discovery: 'Tìm hiểu',
   qualified: 'Đang tư vấn',
-  considering: 'Đang cân nhắc',
-  negotiating: 'Đang đàm phán',
-  deposit_process: 'Chuẩn bị đặt cọc',
-  won: 'Đã ký hợp đồng',
-  lost: 'Ngừng chăm sóc',
-  needs_confirmation: 'Cần xác nhận',
+  considering: 'Cân nhắc',
+  negotiating: 'Đàm phán',
+  deposit_process: 'Đặt cọc',
+  won: 'Đã ký',
+  lost: 'Ngừng',
+  needs_confirmation: 'Xác nhận',
 };
 
-// Modern SaaS Palette for pipeline stages (Soft Cyan & Midnight Navy tones)
-// Fresh Aqua Theme for pipeline stages
 const STAGE_COLORS = {
   won: '#10B981',
   deposit_process: '#06B6D4',
@@ -167,10 +175,11 @@ function TaskRow({ item, now, onEdit, onCustomer, onStatus, busy }) {
   );
 }
 
-function Bars({ rows, label, totalCount, selectedKey, onSelect }) {
-  const max = Math.max(1, ...rows.map((row) => row.count));
-  const sum = totalCount || rows.reduce((acc, r) => acc + r.count, 0) || 1;
-  return rows.length ? (
+function Bars({ rows = [], label, totalCount, selectedKey, onSelect }) {
+  const safeRows = Array.isArray(rows) ? rows : [];
+  const max = Math.max(1, ...safeRows.map((row) => row.count || 0));
+  const sum = totalCount || safeRows.reduce((acc, r) => acc + (r.count || 0), 0) || 1;
+  return safeRows.length ? (
     <div className="agenda-bars">
       {rows.map((row) => {
         const pct = Math.round((row.count / sum) * 100);
@@ -267,7 +276,7 @@ export function DashboardView({
       ? data?.waiting_customers || []
       : customerQueueTab === 'priority'
         ? data?.priority_customers || []
-        : data?.customer_intelligence || [];
+        : data?.customers || [];
 
   // Filter by selected vehicle model or funnel stage
   let filteredCustomers = rawQueueList;
@@ -293,9 +302,6 @@ export function DashboardView({
       <header className="agenda-topbar">
         <div className="agenda-topbar-left">
           <h1>Bảng điều khiển</h1>
-          <span className="agenda-topbar-meta">
-            {currentUser?.display_name || 'Tư vấn viên'} · VinFast Smart Sales
-          </span>
         </div>
 
         <div className="agenda-heading-actions">
@@ -334,7 +340,7 @@ export function DashboardView({
         </div>
       )}
 
-      {/* SHOWCASE HERO — AUTOMOTIVE VINFAST VEHICLE SHOWCASE (LIKE TESLA/MODERN EV DASHBOARD) */}
+      {/* SHOWCASE HERO — AUTOMOTIVE VINFAST VEHICLE SHOWCASE */}
       <VinFastShowcaseHero
         modelInterest={data?.model_interest || []}
         customers={data?.customers || []}
@@ -359,162 +365,162 @@ export function DashboardView({
 
       {data && (
         <>
-          {/* ROW 1: 4 SPACIOUS METRIC CARDS (SAAS AESTHETIC) */}
-          <section className="agenda-metric-strip" aria-label="Chỉ số vận hành">
-            <button
-              type="button"
-              className="agenda-metric-cell"
-              onClick={() => {
-                setSelectedModel(null);
-                setSelectedStage(null);
-                setCustomerQueueTab('waiting');
-              }}
-            >
-              <span className="agenda-metric-label">Khách chờ phản hồi</span>
-              <div className="agenda-metric-main">
-                <strong>{data?.kpis?.waiting_customers || 0}</strong>
-                <small>
-                  {data?.waiting_customers?.[0]?.waiting_since
-                    ? compactWaiting(data.waiting_customers[0].waiting_since, now)
-                    : 'Đã phản hồi'}
-                </small>
-              </div>
-            </button>
+          {/* UNIFIED EXECUTIVE COMMAND HUB (INTEGRATED METRICS + PIPELINE IN ONE COHESIVE CARD) */}
+          <section className="agenda-command-hub" aria-label="Trung tâm điều hành kinh doanh">
+            <div className="agenda-command-top">
+              <button
+                type="button"
+                className="agenda-kpi-block"
+                onClick={() => {
+                  setSelectedModel(null);
+                  setSelectedStage(null);
+                  setCustomerQueueTab('waiting');
+                }}
+              >
+                <span className="agenda-kpi-label">Khách chờ</span>
+                <div className="agenda-kpi-val">
+                  <strong>{data?.kpis?.waiting_customers || 0}</strong>
+                  <small>
+                    {data?.waiting_customers?.[0]?.waiting_since
+                      ? compactWaiting(data.waiting_customers[0].waiting_since, now)
+                      : 'Đã phản hồi'}
+                  </small>
+                </div>
+              </button>
 
-            <button
-              type="button"
-              className="agenda-metric-cell"
-              onClick={() => {
-                setSelectedModel(null);
-                setSelectedStage(null);
-                setCustomerQueueTab('priority');
-              }}
-            >
-              <span className="agenda-metric-label">Cơ hội nóng</span>
-              <div className="agenda-metric-main">
-                <strong>
-                  {data?.kpis?.hot_leads || 0}
-                  <span className="agenda-metric-denom">/{data?.kpis?.active_customers || 0}</span>
-                </strong>
-                <small>{data?.kpis?.closing_leads || 0} sát chốt cọc</small>
-              </div>
-            </button>
+              <button
+                type="button"
+                className="agenda-kpi-block"
+                onClick={() => {
+                  setSelectedModel(null);
+                  setSelectedStage(null);
+                  setCustomerQueueTab('priority');
+                }}
+              >
+                <span className="agenda-kpi-label">Cơ hội nóng</span>
+                <div className="agenda-kpi-val">
+                  <strong>
+                    {data?.kpis?.hot_leads || 0}
+                    <span className="agenda-kpi-sub">/{data?.kpis?.active_customers || 0}</span>
+                  </strong>
+                  <small>{data?.kpis?.closing_leads || 0} sát chốt</small>
+                </div>
+              </button>
 
-            <button
-              type="button"
-              className="agenda-metric-cell"
-              onClick={() => changeFilter('today')}
-            >
-              <span className="agenda-metric-label">Lịch hẹn hôm nay</span>
-              <div className="agenda-metric-main">
-                <strong>{data?.kpis?.today_events || 0}</strong>
-                <small>{data?.kpis?.upcoming_events || 0} sắp tới tuần này</small>
-              </div>
-            </button>
+              <button
+                type="button"
+                className="agenda-kpi-block"
+                onClick={() => changeFilter('today')}
+              >
+                <span className="agenda-kpi-label">Lịch hôm nay</span>
+                <div className="agenda-kpi-val">
+                  <strong>{data?.kpis?.today_events || 0}</strong>
+                  <small>{data?.kpis?.upcoming_events || 0} tuần này</small>
+                </div>
+              </button>
 
-            <button
-              type="button"
-              className="agenda-metric-cell"
-              onClick={() => {
-                setSelectedModel(null);
-                setSelectedStage(null);
-                setCustomerQueueTab('priority');
-              }}
-            >
-              <span className="agenda-metric-label">Tổng cọc dự kiến</span>
-              <div className="agenda-metric-main">
-                <strong className="is-money">
-                  {data?.kpis?.pipeline_budget_vnd > 0
-                    ? formatCompactMoney(data.kpis.pipeline_budget_vnd)
-                    : '0 ₫'}
-                </strong>
-                <small>
-                  {data?.kpis?.completed_tasks || 0}/{data?.kpis?.total_tasks || 0} việc xong
-                </small>
-              </div>
-            </button>
-          </section>
+              <button
+                type="button"
+                className="agenda-kpi-block"
+                onClick={() => {
+                  setSelectedModel(null);
+                  setSelectedStage(null);
+                  setCustomerQueueTab('priority');
+                }}
+              >
+                <span className="agenda-kpi-label">Tổng cọc</span>
+                <div className="agenda-kpi-val">
+                  <strong className="is-money">
+                    {data?.kpis?.pipeline_budget_vnd > 0
+                      ? formatCompactMoney(data.kpis.pipeline_budget_vnd)
+                      : '0 ₫'}
+                  </strong>
+                  <small>
+                    {data?.kpis?.completed_tasks || 0}/{data?.kpis?.total_tasks || 0} xong
+                  </small>
+                </div>
+              </button>
+            </div>
 
-          {/* ROW 2: SEGMENTED PIPELINE WITH CRISP FILTER PILLS */}
-          <section className="agenda-pipeline-card" aria-label="Phễu bán hàng">
-            <div className="agenda-pipeline-header">
-              <div className="agenda-pipeline-title-group">
-                <span className="agenda-pipeline-title">Phễu bán hàng</span>
-                <span className="agenda-pipeline-count">
-                  {selectedModel ? `Lọc theo ${selectedModel}: ` : 'Toàn bộ '}
+            {/* INTEGRATED PIPELINE PROGRESS & FILTER PILLS */}
+            <div className="agenda-command-bottom">
+              <div className="agenda-pipeline-strip-head">
+                <span className="agenda-pipeline-strip-title">Phễu</span>
+                <span className="agenda-pipeline-strip-meta">
+                  {selectedModel ? `Lọc theo dòng xe ${selectedModel}: ` : ''}
                   {filteredCustomers.length} khách
                 </span>
+                {(selectedStage || selectedModel) && (
+                  <button
+                    type="button"
+                    className="agenda-pill-clear"
+                    onClick={() => {
+                      setSelectedStage(null);
+                      setSelectedModel(null);
+                    }}
+                  >
+                    <X size={12} /> Bỏ lọc
+                  </button>
+                )}
               </div>
-              {(selectedStage || selectedModel) && (
+
+              {/* Progress track */}
+              <div className="agenda-pipeline-bar" role="meter" aria-label="Tiến độ phễu khách hàng">
+                {(data?.stage_distribution || [])
+                  .filter((item) => item.count > 0)
+                  .map((item) => {
+                    const pct = Math.max(4, (item.count / Math.max(1, totalCustomers)) * 100);
+                    const isSelected = selectedStage === item.stage;
+                    const shade = STAGE_COLORS[item.stage] || '#65DCCB';
+                    return (
+                      <button
+                        type="button"
+                        key={item.stage}
+                        className={`agenda-pipeline-segment ${isSelected ? 'is-active' : ''}`}
+                        style={{ width: `${pct}%`, backgroundColor: shade }}
+                        title={`${getStageLabel(item.stage)}: ${item.count} khách`}
+                        onClick={() => {
+                          setSelectedModel(null);
+                          setSelectedStage(isSelected ? null : item.stage);
+                        }}
+                      />
+                    );
+                  })}
+              </div>
+
+              {/* Stage pills */}
+              <div className="agenda-pipeline-pills" role="tablist" aria-label="Bộ lọc giai đoạn phễu">
                 <button
                   type="button"
-                  className="agenda-pill-clear"
+                  className={`agenda-stage-pill ${!selectedStage && !selectedModel ? 'is-active' : ''}`}
                   onClick={() => {
                     setSelectedStage(null);
                     setSelectedModel(null);
                   }}
                 >
-                  <X size={12} /> Bỏ lọc ({selectedModel || getStageLabel(selectedStage)})
+                  <span>Tất cả</span>
+                  <em>{totalCustomers}</em>
                 </button>
-              )}
-            </div>
-
-            {/* Continuous segmented progress bar */}
-            <div className="agenda-pipeline-bar" role="meter" aria-label="Tiến độ phễu khách hàng">
-              {(data?.stage_distribution || [])
-                .filter((item) => item.count > 0)
-                .map((item) => {
-                  const pct = Math.max(4, (item.count / Math.max(1, totalCustomers)) * 100);
-                  const isSelected = selectedStage === item.stage;
-                  const shade = STAGE_COLORS[item.stage] || '#65DCCB';
-                  return (
-                    <button
-                      type="button"
-                      key={item.stage}
-                      className={`agenda-pipeline-segment ${isSelected ? 'is-active' : ''}`}
-                      style={{ width: `${pct}%`, backgroundColor: shade }}
-                      title={`${getStageLabel(item.stage)}: ${item.count} khách`}
-                      onClick={() => {
-                        setSelectedModel(null);
-                        setSelectedStage(isSelected ? null : item.stage);
-                      }}
-                    />
-                  );
-                })}
-            </div>
-
-            {/* Horizontal stage filter pills */}
-            <div className="agenda-pipeline-pills" role="tablist" aria-label="Bộ lọc giai đoạn phễu">
-              <button
-                type="button"
-                className={`agenda-stage-pill ${!selectedStage && !selectedModel ? 'is-active' : ''}`}
-                onClick={() => {
-                  setSelectedStage(null);
-                  setSelectedModel(null);
-                }}
-              >
-                <span>Tất cả</span>
-                <em>{totalCustomers}</em>
-              </button>
-              {(data?.stage_distribution || [])
-                .filter((item) => item.count > 0)
-                .map((item) => {
-                  const isSelected = selectedStage === item.stage;
-                  return (
-                    <button
-                      type="button"
-                      key={item.stage}
-                      className={`agenda-stage-pill ${isSelected ? 'is-active' : ''}`}
-                      onClick={() => {
-                        setSelectedModel(null);
-                        setSelectedStage(isSelected ? null : item.stage);
-                      }}
-                    >
-                      <span>{getStageLabel(item.stage)}</span>
-                      <em>{item.count}</em>
-                    </button>
-                  );
-                })}
+                {(data?.stage_distribution || [])
+                  .filter((item) => item.count > 0)
+                  .map((item) => {
+                    const isSelected = selectedStage === item.stage;
+                    return (
+                      <button
+                        type="button"
+                        key={item.stage}
+                        className={`agenda-stage-pill ${isSelected ? 'is-active' : ''}`}
+                        onClick={() => {
+                          setSelectedModel(null);
+                          setSelectedStage(isSelected ? null : item.stage);
+                        }}
+                      >
+                        <span>{getStageLabel(item.stage)}</span>
+                        <em>{item.count}</em>
+                      </button>
+                    );
+                  })}
+              </div>
             </div>
           </section>
 
@@ -531,9 +537,9 @@ export function DashboardView({
             </Panel>
           )}
 
-          {/* ROW 3: PRIMARY 2-COLUMN WORKSPACE (CONCISE CUSTOMERS + TASKS) */}
+          {/* ROW 3: PRIMARY 2-COLUMN ACTION WORKSPACE */}
           <div className="agenda-main-grid">
-            {/* LEFT: CUSTOMER LIST (MINIMAL, HIGH VALUE, NO WALL OF TEXT) */}
+            {/* LEFT COLUMN: CUSTOMERS QUEUE */}
             <div className="agenda-column" id="agenda-primary-queue">
               <section className="agenda-panel">
                 <div className="agenda-queue-header">
@@ -549,7 +555,7 @@ export function DashboardView({
                         setCustomerQueueTab('waiting');
                       }}
                     >
-                      <span>Chờ phản hồi</span>
+                      <span>Cần phản hồi</span>
                       <em>{(data?.waiting_customers || []).length}</em>
                     </button>
                     <button
@@ -569,16 +575,16 @@ export function DashboardView({
                     <button
                       type="button"
                       role="tab"
-                      aria-selected={!selectedStage && !selectedModel && customerQueueTab === 'intelligence'}
-                      className={!selectedStage && !selectedModel && customerQueueTab === 'intelligence' ? 'is-active' : ''}
+                      aria-selected={customerQueueTab === 'all' && !selectedStage && !selectedModel}
+                      className={customerQueueTab === 'all' && !selectedStage && !selectedModel ? 'is-active' : ''}
                       onClick={() => {
                         setSelectedStage(null);
                         setSelectedModel(null);
-                        setCustomerQueueTab('intelligence');
+                        setCustomerQueueTab('all');
                       }}
                     >
-                      <span>Băn khoăn</span>
-                      <em>{(data?.customer_intelligence || []).length}</em>
+                      <span>Tất cả</span>
+                      <em>{totalCustomers}</em>
                     </button>
                   </div>
                 </div>
@@ -597,6 +603,9 @@ export function DashboardView({
                         <div className="agenda-minimal-row" key={customer.customer_id}>
                           <div className="agenda-minimal-row-main">
                             <div className="agenda-minimal-line1">
+                              <span className="agenda-avatar-circle">
+                                {customer.customer_name ? customer.customer_name.slice(0, 1).toUpperCase() : 'K'}
+                              </span>
                               <button
                                 type="button"
                                 className="agenda-customer-name-btn"
@@ -632,8 +641,8 @@ export function DashboardView({
                         onClick={() => setShowAllCustomers((prev) => !prev)}
                       >
                         {showAllCustomers
-                          ? 'Thu gọn'
-                          : `Xem thêm ${filteredCustomers.length - 6} khách hàng`}
+                          ? 'Thu gọn danh sách'
+                          : `Xem thêm ${filteredCustomers.length - 6} khách hàng khác`}
                       </button>
                     )}
                   </div>
@@ -643,68 +652,66 @@ export function DashboardView({
               </section>
             </div>
 
-            {/* RIGHT: SCHEDULE & TASKS */}
+            {/* RIGHT COLUMN: TASKS & UPCOMING SCHEDULE */}
             <div className="agenda-column">
-              <Panel
-                id="agenda-work-panel"
-                title="Công việc & Lịch hẹn"
-                action={<span className="agenda-muted-caption">{data?.work_items?.total || 0} mục</span>}
-              >
-                <div className="agenda-filter-tabs" aria-label="Lọc công việc">
-                  {Object.entries(filters).map(([value, label]) => {
-                    const tabCount = workCounts[value];
-                    return (
-                      <button
-                        type="button"
-                        key={value}
-                        className={filter === value ? 'is-active' : ''}
-                        aria-pressed={filter === value}
-                        onClick={() => changeFilter(value)}
-                      >
-                        <span>{label}</span>
-                        {typeof tabCount === 'number' && <em>{tabCount}</em>}
-                      </button>
-                    );
-                  })}
+              <section className="agenda-panel">
+                <div className="agenda-panel-title">
+                  <div>
+                    <h2>Nhiệm vụ</h2>
+                    <p className="agenda-panel-subtitle">{workCounts[filter] || 0} mục cần xử lý</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="agenda-btn-solid"
+                    disabled={!data}
+                    onClick={() => onCreate(data?.customers || [])}
+                  >
+                    <Plus size={13} strokeWidth={2.2} />
+                    <span>Tạo việc</span>
+                  </button>
                 </div>
 
-                {(data?.work_items?.items || []).length ? (
+                <div className="agenda-filter-tabs" aria-label="Lọc công việc">
+                  {WORK_FILTERS.map((f) => (
+                    <button
+                      type="button"
+                      key={f.key}
+                      className={filter === f.key ? 'is-active' : ''}
+                      onClick={() => changeFilter(f.key)}
+                    >
+                      <span>{f.label}</span>
+                      <em>{workCounts[f.key] || 0}</em>
+                    </button>
+                  ))}
+                </div>
+
+                {data?.work_items?.items?.length ? (
                   <div className="agenda-minimal-list">{data.work_items.items.map(row)}</div>
                 ) : (
                   <div className="agenda-empty-work-fallback">
-                    <p className="agenda-empty-inline">
-                      {filter === 'today'
-                        ? 'Hôm nay chưa có lịch cố định giờ.'
-                        : 'Không có mục nào trong bộ lọc này.'}
-                    </p>
-                    {filter === 'today' && (data?.unscheduled?.items || []).length > 0 && (
+                    <Empty>Không có việc nào trong mục này.</Empty>
+                    {data?.unscheduled_urgent_tasks?.length > 0 && (
                       <div className="agenda-fallback-section">
                         <div className="agenda-fallback-header">
-                          <span>Việc chưa xếp giờ ({data.unscheduled.total})</span>
-                          <button
-                            type="button"
-                            className="agenda-inline-link"
-                            onClick={() => changeFilter('unscheduled')}
-                          >
-                            Xem tất cả
-                          </button>
+                          <strong>Việc gấp cần xếp lịch</strong>
+                          <span>({data.unscheduled_urgent_tasks.length})</span>
                         </div>
                         <div className="agenda-minimal-list">
-                          {data.unscheduled.items.slice(0, 4).map(row)}
+                          {data.unscheduled_urgent_tasks.slice(0, 3).map(row)}
                         </div>
                       </div>
                     )}
                   </div>
                 )}
 
-                {(data?.work_items?.total || 0) > 10 && (
+                {data?.work_items?.total > 10 && (
                   <div className="agenda-pagination">
                     <button
                       type="button"
                       className="agenda-btn-minimal"
                       aria-label="Trang trước"
-                      disabled={data.work_items.page <= 1 || resource.loading}
-                      onClick={() => setPage(data.work_items.page - 1)}
+                      disabled={page <= 1 || resource.loading}
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
                     >
                       <ChevronLeft size={14} />
                     </button>
@@ -716,122 +723,132 @@ export function DashboardView({
                       className="agenda-btn-minimal"
                       aria-label="Trang sau"
                       disabled={data.work_items.page * 10 >= data.work_items.total || resource.loading}
-                      onClick={() => setPage(data.work_items.page + 1)}
+                      onClick={() => setPage((p) => p + 1)}
                     >
                       <ChevronRight size={14} />
                     </button>
                   </div>
                 )}
-              </Panel>
 
-              <Panel
-                title="Lịch sắp tới"
-                action={
-                  <button type="button" className="agenda-inline-link" onClick={() => onCalendar()}>
-                    Lịch tuần <ArrowRight size={12} />
-                  </button>
-                }
-              >
-                {(data?.upcoming_events || []).length ? (
-                  <div className="agenda-minimal-list">
-                    {data.upcoming_events.map((item) => (
-                      <button
-                        type="button"
-                        className="agenda-upcoming"
-                        key={item.id}
-                        onClick={() => onCalendar(item.starts_at)}
-                      >
-                        <span className="agenda-upcoming-body">
-                          <strong>{cleanDemoText(item.title)}</strong>
-                          <small>
-                            <Clock3 size={11} /> {formatTimeRange(item.starts_at, item.ends_at, now)} ·{' '}
-                            {cleanDemoText(item.customer_name) || 'Cá nhân'}
-                            {item.location ? ` · ${item.location}` : ''}
-                          </small>
-                        </span>
-                        <ChevronRight size={14} className="agenda-upcoming-chevron" />
+                {/* INTEGRATED UPCOMING SCHEDULE FOOTER */}
+                {(data?.upcoming_events || []).length > 0 && (
+                  <div className="agenda-upcoming-section">
+                    <div className="agenda-upcoming-header">
+                      <span>Lịch hẹn sắp tới</span>
+                      <button type="button" className="agenda-inline-link" onClick={() => onCalendar()}>
+                        Xem lịch tuần <ArrowRight size={12} />
                       </button>
-                    ))}
+                    </div>
+                    <div className="agenda-minimal-list">
+                      {data.upcoming_events.slice(0, 3).map((item) => (
+                        <button
+                          type="button"
+                          className="agenda-upcoming"
+                          key={item.id}
+                          onClick={() => onCalendar(item.starts_at)}
+                        >
+                          <span className="agenda-upcoming-body">
+                            <strong>{cleanDemoText(item.title)}</strong>
+                            <small>
+                              <Clock3 size={11} /> {formatTimeRange(item.starts_at, item.ends_at, now)} ·{' '}
+                              {cleanDemoText(item.customer_name) || 'Cá nhân'}
+                              {item.location ? ` · ${item.location}` : ''}
+                            </small>
+                          </span>
+                          <ChevronRight size={14} className="agenda-upcoming-chevron" />
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                ) : (
-                  <Empty>Chưa có sự kiện sắp đến.</Empty>
                 )}
-              </Panel>
+              </section>
             </div>
           </div>
 
-          {/* ROW 4: BOTTOM INSIGHTS (VEHICLE INTEREST & MESSAGE ACTIVITY) */}
-          <div className="agenda-bottom-grid" id="agenda-portfolio">
-            <Panel title="Nhu cầu theo dòng xe">
-              <Bars
-                rows={(data?.model_interest || []).map((item) => ({
-                  ...item,
-                  key: item.model,
-                }))}
-                label={(item) => item.model}
-                selectedKey={selectedModel}
-                onSelect={(modelKey) => {
-                  setSelectedModel(selectedModel === modelKey ? null : modelKey);
-                  setSelectedStage(null);
-                }}
-              />
-            </Panel>
+          {/* DEEP ANALYTICS ACCORDION (COLLAPSIBLE TO PREVENT PAGE OVERCROWDING) */}
+          <details className="agenda-analytics-accordion">
+            <summary className="agenda-analytics-summary">
+              <div className="agenda-analytics-title">
+                <BarChart3 size={16} />
+                <span>Báo cáo phân tích chuyên sâu (Nhu cầu dòng xe &amp; Tần suất tương tác)</span>
+              </div>
+              <ChevronDown size={15} className="agenda-analytics-chevron" />
+            </summary>
 
-            <Panel
-              title="Tần suất tương tác tin nhắn"
-              action={
-                <select
-                  aria-label="Khoảng thời gian hoạt động"
-                  value={days}
-                  onChange={(event) => setDays(Number(event.target.value))}
+            <div className="agenda-analytics-body">
+              <div className="agenda-bottom-grid" id="agenda-portfolio">
+                <Panel title="Nhu cầu khách theo dòng xe">
+                  <Bars
+                    rows={(data?.model_interest || []).map((item) => ({
+                      ...item,
+                      key: item.model,
+                    }))}
+                    label={(item) => item.model}
+                    selectedKey={selectedModel}
+                    onSelect={(modelKey) => {
+                      setSelectedModel(selectedModel === modelKey ? null : modelKey);
+                      setSelectedStage(null);
+                    }}
+                  />
+                </Panel>
+
+                <Panel
+                  title="Tần suất tương tác tin nhắn"
+                  action={
+                    <select
+                      aria-label="Khoảng thời gian hoạt động"
+                      value={days}
+                      onChange={(event) => setDays(Number(event.target.value))}
+                    >
+                      <option value={7}>7 ngày</option>
+                      <option value={30}>30 ngày</option>
+                    </select>
+                  }
                 >
-                  <option value={7}>7 ngày</option>
-                  <option value={30}>30 ngày</option>
-                </select>
-              }
-            >
-              <div className="agenda-activity-header-row">
-                <div className="agenda-legend">
-                  <span>
-                    <i className="customer" />
-                    Khách ({totalCustomerMsgs})
-                  </span>
-                  <span>
-                    <i className="sales" />
-                    Sales ({totalSalesMsgs})
-                  </span>
-                </div>
-                <span className="agenda-muted-caption">
-                  TB {Math.round((totalCustomerMsgs + totalSalesMsgs) / days)} tin/ngày
-                </span>
-              </div>
-
-              <div
-                className="agenda-activity-chart"
-                role="img"
-                aria-label={`Số tin nhắn khách hàng và sales trong ${days} ngày`}
-              >
-                {(data?.message_activity || []).map((day, index) => (
-                  <div
-                    className="agenda-activity-day"
-                    key={day.date}
-                    title={`${day.date}: Khách ${day.customer}, Sales ${day.sales}`}
-                  >
-                    <span className="agenda-activity-total">{day.customer + day.sales || ''}</span>
-                    <div className="agenda-activity-stack">
-                      <span className="sales" style={{ height: `${(day.sales / activityMax) * 90}px` }} />
-                      <span className="customer" style={{ height: `${(day.customer / activityMax) * 90}px` }} />
+                  <div className="agenda-activity-header-row">
+                    <div className="agenda-legend">
+                      <span>
+                        <i className="customer" />
+                        Khách ({totalCustomerMsgs})
+                      </span>
+                      <span>
+                        <i className="sales" />
+                        Sales ({totalSalesMsgs})
+                      </span>
                     </div>
-                    <small>
-                      {days === 7 || index % 5 === 0 || index === days - 1
-                        ? day.date.slice(5).split('-').reverse().join('/')
-                        : ''}
-                    </small>
+                    <span className="agenda-muted-caption">
+                      TB {Math.round((totalCustomerMsgs + totalSalesMsgs) / days)} tin/ngày
+                    </span>
                   </div>
-                ))}
+
+                  <div
+                    className="agenda-activity-chart"
+                    role="img"
+                    aria-label={`Số tin nhắn khách hàng và sales trong ${days} ngày`}
+                  >
+                    {(data?.message_activity || []).map((day, index) => (
+                      <div
+                        className="agenda-activity-day"
+                        key={day.date}
+                        title={`${day.date}: Khách ${day.customer}, Sales ${day.sales}`}
+                      >
+                        <span className="agenda-activity-total">{day.customer + day.sales || ''}</span>
+                        <div className="agenda-activity-stack">
+                          <span className="sales" style={{ height: `${(day.sales / activityMax) * 90}px` }} />
+                          <span className="customer" style={{ height: `${(day.customer / activityMax) * 90}px` }} />
+                        </div>
+                        <small>
+                          {days === 7 || index % 5 === 0 || index === days - 1
+                            ? day.date.slice(5).split('-').reverse().join('/')
+                            : ''}
+                        </small>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
               </div>
-            </Panel>
-          </div>
+            </div>
+          </details>
         </>
       )}
     </div>
