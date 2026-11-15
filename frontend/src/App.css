@@ -1,21 +1,14 @@
 /* VINFAST AI SALES ENABLEMENT — MODERN SAAS DESIGN SYSTEM */
-/* Fresh Aqua Palette:
-   - Primary: #1D1D1F (Aqua Mint)
-   - Secondary: #1D1D1F (Deep Slate)
-   - Background: #FFFFFF (Pure White)
-   - Accent: #F5F5F7 (Soft Aqua)
-   - Card: #FFFFFF, Border: #E8E8ED, Text-Sec: #6E6E73, Text-Muted: #6E6E73
-*/
-
+/* Apple Minimalist Monochromatic (Đen - Xám - Trắng) */
 :root {
-  --app-primary: #80E5E5;
-  --app-secondary: #172B3A;
-  --app-bg: #F5F8FA;
+  --app-primary: #1D1D1F;
+  --app-secondary: #1D1D1F;
+  --app-bg: #F5F5F7;
   --app-card: #FFFFFF;
-  --app-border: #E5EAEE;
-  --app-text-primary: #172B3A;
-  --app-text-secondary: #64748B;
-  --app-text-muted: #94A3B8;
+  --app-border: #E8E8ED;
+  --app-text-primary: #1D1D1F;
+  --app-text-secondary: #6E6E73;
+  --app-text-muted: #86868B;
 }
 
 .advisor-app,
@@ -54,7 +47,7 @@
   height: 32px;
   border-radius: 8px;
   background: var(--app-primary);
-  color: #172B3A;
+  color: #FFFFFF;
   display: grid;
   place-items: center;
   font-size: 14px;
@@ -107,11 +100,11 @@
 }
 
 .nav-pill.active {
-  background: #F1F5F9;
-  color: #0F172A;
-  border: 1px solid #CBD5E1;
+  background: #1D1D1F;
+  color: #FFFFFF;
+  border: 1px solid #1D1D1F;
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .topbar-meta {
@@ -153,12 +146,12 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #F5F5F7;
-  border: 1px solid var(--app-primary);
+  background: #1D1D1F;
+  border: 1px solid #1D1D1F;
   display: grid;
   place-items: center;
   font-size: 0.75rem;
-  color: #172B3A;
+  color: #FFFFFF;
   font-weight: 700;
 }
 
@@ -223,7 +216,7 @@
   background: #F5F5F7;
   border-color: var(--app-primary);
   border-left: 3px solid var(--app-primary);
-  color: #172B3A;
+  color: #1D1D1F;
   font-weight: 700;
 }
 
@@ -253,7 +246,7 @@
   padding: 4px 12px;
   border-radius: 999px;
   background: #F5F5F7;
-  color: #172B3A;
+  color: #1D1D1F;
   font-size: 0.75rem;
   font-weight: 700;
   margin-bottom: 16px;
@@ -287,7 +280,7 @@
 .secondary-button,
 .chip-button {
   background: #FFFFFF;
-  color: #172B3A;
+  color: #1D1D1F;
   border: 1px solid #E5EAEE;
   border-radius: 10px;
   font-size: 14px;
@@ -328,7 +321,7 @@
 .secondary-button,
 .chip-button {
   background: #FFFFFF;
-  color: #172B3A;
+  color: #1D1D1F;
   border: 1px solid #E5EAEE;
   border-radius: 10px;
   font-size: 14px;
@@ -343,7 +336,7 @@
 .secondary-button:hover,
 .chip-button:hover {
   background: #F5F5F7;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 /* SECTION HEADER */
@@ -553,7 +546,7 @@
 .inline-error {
   background: #F5F5F7;
   border-color: #E8E8ED;
-  color: #172B3A;
+  color: #1D1D1F;
   font-weight: 500;
 }
 

@@ -216,7 +216,7 @@
   text-align: center;
   padding: 4px;
   border-radius: 6px;
-  background: #80E5E5; color: #172B3A;
+  background: #1D1D1F; color: #FFFFFF;
   color: #FFFFFF !important;
   line-height: 1.1;
 }
@@ -319,7 +319,7 @@
 
 .kb-pill--new {
   color: #FFFFFF !important;
-  background: #80E5E5; color: #172B3A;
+  background: #1D1D1F; color: #FFFFFF;
   border: 1px solid #1D1D1F;
   font-weight: 700;
 }

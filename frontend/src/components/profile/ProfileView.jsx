@@ -19,8 +19,6 @@ import {
   Star,
   Target,
   TrendingUp,
-  User,
-  UserCheck,
   Users,
   Zap,
   ArrowRight,
@@ -137,8 +135,8 @@ export function ProfileView({
   currentUser,
   onUpdateProfile,
   onOpenRoleplay,
-  onOpenCopilot,
-  onLogout,
+  onOpenCopilot: _onOpenCopilot,
+  onLogout: _onLogout,
   onSwitchRole,
 }) {
   const [profile, setProfile] = useState(() => {

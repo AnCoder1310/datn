@@ -10,12 +10,12 @@
 */
 
 .copilot-shell {
-  --sw-primary: #80E5E5;
-  --sw-secondary: #172B3A;
+  --sw-primary: #1D1D1F;
+  --sw-secondary: #1D1D1F;
   --sw-bg: #F5F8FA;
   --sw-card: #FFFFFF;
   --sw-border: #E5EAEE;
-  --sw-text-primary: #172B3A;
+  --sw-text-primary: #1D1D1F;
   --sw-text-secondary: #64748B;
   --sw-text-muted: #94A3B8;
 
@@ -80,25 +80,25 @@
 
 .copilot-sidebar > button:hover {
   background: #F1F5F9;
-  color: #172B3A;
+  color: #1D1D1F;
   border-color: transparent;
   transform: translateX(2px);
 }
 
 .copilot-sidebar > button:hover svg {
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .copilot-sidebar > button.is-active {
-  background: rgba(128, 229, 229, 0.15);
-  color: #172B3A;
+  background: #FFFFFF;
+  color: #1D1D1F;
   font-weight: 600;
-  border: 1px solid #80E5E5;
-  box-shadow: 0 2px 6px -1px rgba(128, 229, 229, 0.25);
+  border: 1px solid #E8E8ED;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .copilot-sidebar > button.is-active svg {
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .copilot-sidebar > button.is-active::before {
@@ -109,7 +109,7 @@
   bottom: 9px;
   width: 3.5px;
   border-radius: 0 4px 4px 0;
-  background: #80E5E5;
+  background: #1D1D1F;
 }
 
 .copilot-pages,
@@ -190,22 +190,22 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: 9999px;
-  border: 1.5px solid #80E5E5;
-  background: rgba(128, 229, 229, 0.12);
-  color: #172B3A;
+  border: 1px solid #E8E8ED;
+  background: #FFFFFF;
+  color: #1D1D1F;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 1px 3px rgba(128, 229, 229, 0.15);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   transition: all 0.15s ease;
 }
 
 .agenda-btn-minimal:hover {
-  background: rgba(128, 229, 229, 0.25);
-  border-color: #80E5E5;
-  color: #172B3A;
-  box-shadow: 0 2px 6px rgba(128, 229, 229, 0.25);
+  background: #F5F5F7;
+  border-color: #D1D1D6;
+  color: #1D1D1F;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 
@@ -226,22 +226,22 @@
   gap: 6px;
   padding: 6px 16px;
   border-radius: 9999px;
-  border: 1.5px solid #80E5E5;
-  background: #80E5E5;
-  color: #172B3A;
+  border: 1.5px solid #1D1D1F;
+  background: #1D1D1F;
+  color: #FFFFFF;
   font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(128, 229, 229, 0.35);
-  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: all 0.15s ease-in-out;
 }
 
 .agenda-btn-solid:hover {
-  background: #6cdede;
-  border-color: #59d4d4;
-  color: #172B3A;
-  box-shadow: 0 3px 12px rgba(128, 229, 229, 0.45);
+  background: #2D2D2F;
+  border-color: #2D2D2F;
+  color: #FFFFFF;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
   transform: translateY(-1px);
 }
 
@@ -326,16 +326,16 @@
 }
 
 .vf-model-tab:hover {
-  color: #172B3A;
+  color: #1D1D1F;
   background: #E2E8F0;
 }
 
 .vf-model-tab.is-active {
-  background: rgba(128, 229, 229, 0.2);
-  color: #172B3A;
+  background: #1D1D1F;
+  color: #FFFFFF;
   font-weight: 600;
-  border: 1px solid #80E5E5;
-  box-shadow: 0 1px 3px rgba(128, 229, 229, 0.25);
+  border: 1px solid #1D1D1F;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .vf-model-tab-badge {
@@ -350,7 +350,7 @@
 
 .vf-model-tab.is-active .vf-model-tab-badge {
   background: #CBD5E1;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 /* 2. SHOWROOM STAGE */
@@ -408,7 +408,7 @@
   font-size: 30px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  color: #172B3A;
+  color: #1D1D1F;
   margin: 2px 0 0;
   line-height: 1.2;
 }
@@ -441,7 +441,7 @@
 .vf-price-value {
   font-size: 24px;
   font-weight: 850;
-  color: #172B3A;
+  color: #1D1D1F;
   letter-spacing: -0.4px;
   line-height: 1.2;
 }
@@ -449,7 +449,7 @@
 .vf-price-sub {
   font-size: 11px;
   font-weight: 500;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 /* VEHICLE STAGE (CLEAN WHITE STAGE, NO AMBIENT GLOW / NO SMUDGES) */
@@ -540,7 +540,7 @@
   border: 1px solid #E5EAEE;
   display: grid;
   place-items: center;
-  color: #172B3A;
+  color: #1D1D1F;
   flex-shrink: 0;
 }
 
@@ -558,7 +558,7 @@
 .vf-hud-val {
   font-size: 13.5px;
   font-weight: 800;
-  color: #172B3A;
+  color: #1D1D1F;
   letter-spacing: -0.2px;
 }
 
@@ -585,63 +585,63 @@
   height: 40px;
   padding: 0 20px;
   border-radius: 9999px;
-  background: rgba(128, 229, 229, 0.12);
-  color: #172B3A;
-  border: 1.5px solid #80E5E5;
+  background: #FFFFFF;
+  color: #1D1D1F;
+  border: 1px solid #E8E8ED;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(128, 229, 229, 0.15);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   transition: all 0.15s ease-in-out;
 }
 
 .vf-btn-action:hover {
-  background: rgba(128, 229, 229, 0.25);
-  border-color: #80E5E5;
-  color: #172B3A;
-  box-shadow: 0 2px 6px rgba(128, 229, 229, 0.25);
+  background: #F5F5F7;
+  border-color: #D1D1D6;
+  color: #1D1D1F;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 
 .vf-btn-action.is-primary {
-  background: #80E5E5;
-  color: #172B3A;
-  border: 1.5px solid #80E5E5;
+  background: #1D1D1F;
+  color: #FFFFFF;
+  border: 1px solid #1D1D1F;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(128, 229, 229, 0.35);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .vf-btn-action.is-primary:hover {
-  background: #6cdede;
-  border-color: #59d4d4;
-  color: #172B3A;
+  background: #2D2D2F;
+  border-color: #2D2D2F;
+  color: #FFFFFF;
 }
 
 .vf-btn-action.is-secondary {
-  background: rgba(128, 229, 229, 0.12);
-  color: #172B3A;
-  border: 1.5px solid #80E5E5;
+  background: #FFFFFF;
+  color: #1D1D1F;
+  border: 1px solid #E8E8ED;
   font-weight: 600;
 }
 
 .vf-btn-action.is-secondary:hover {
-  background: rgba(128, 229, 229, 0.25);
-  color: #172B3A;
-  border-color: #80E5E5;
+  background: #F5F5F7;
+  color: #1D1D1F;
+  border-color: #D1D1D6;
 }
 
 .vf-btn-action.is-leads {
-  background: rgba(128, 229, 229, 0.12);
-  color: #172B3A;
-  border: 1.5px solid #80E5E5;
+  background: #FFFFFF;
+  color: #1D1D1F;
+  border: 1px solid #E8E8ED;
   font-weight: 600;
 }
 
 .vf-btn-action.is-leads:hover,
 .vf-btn-action.is-leads.is-active {
-  background: #80E5E5;
-  border-color: #80E5E5;
-  color: #172B3A;
+  background: #1D1D1F;
+  border-color: #1D1D1F;
+  color: #FFFFFF;
 }
 
 /* ==========================================================================
@@ -997,14 +997,14 @@
 .agenda-filter-tabs button:hover {
   background: #F8FAFC;
   border-color: #CBD5E1;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .agenda-queue-tabs button.is-active,
 .agenda-filter-tabs button.is-active {
   background: #F1F5F9;
   border: 1px solid #94A3B8;
-  color: #172B3A;
+  color: #1D1D1F;
   font-weight: 700;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
@@ -1051,7 +1051,7 @@
 .agenda-minimal-row:hover,
 .agenda-task-row:hover {
   background: #FFFFFF;
-  border-color: #172B3A;
+  border-color: #1D1D1F;
   box-shadow: 0 3px 12px rgba(29, 29, 31, 0.08);
   transform: translateY(-1px);
 }
@@ -1152,7 +1152,7 @@
   border-radius: 9999px;
   background: #F1F5F9;
   border: 1px solid #CBD5E1;
-  color: #172B3A;
+  color: #1D1D1F;
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
@@ -1186,7 +1186,7 @@
 .agenda-btn-subtle:hover {
   background: #F8FAFC;
   border-color: #CBD5E1;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .agenda-expand-btn {
@@ -1206,7 +1206,7 @@
 .agenda-expand-btn:hover {
   background: #F1F5F9;
   border-color: #CBD5E1;
-  color: #172B3A;
+  color: #1D1D1F;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
@@ -1250,7 +1250,7 @@
 }
 
 .agenda-task-pill.is-high {
-  background: #172B3A;
+  background: #1D1D1F;
   color: #FFFFFF !important;
   font-weight: 600;
 }
@@ -1415,11 +1415,11 @@
 }
 
 .agenda-legend i.customer {
-  background: #80E5E5;
+  background: #6E6E73;
 }
 
 .agenda-legend i.sales {
-  background: #172B3A;
+  background: #1D1D1F;
 }
 
 .agenda-activity-chart {
@@ -1456,12 +1456,12 @@
 }
 
 .agenda-activity-stack .customer {
-  background: #80E5E5;
+  background: #8E8E93;
   width: 100%;
 }
 
 .agenda-activity-stack .sales {
-  background: #172B3A;
+  background: #1D1D1F;
   width: 100%;
 }
 
@@ -1575,7 +1575,7 @@
 .agenda-calendar-nav-buttons .is-current-week {
   background: #F1F5F9;
   border-color: #94A3B8;
-  color: #172B3A;
+  color: #1D1D1F;
   font-weight: 600;
 }
 
@@ -1704,7 +1704,7 @@
   height: 18px;
   padding: 0 5px;
   border-radius: 4px;
-  background: #172B3A;
+  background: #1D1D1F;
   color: #FFFFFF !important;
   font-size: 10.5px;
   font-weight: 700;
@@ -1722,7 +1722,7 @@
 }
 
 .agenda-calendar-day-heading.is-today .agenda-day-date {
-  background: #172B3A;
+  background: #1D1D1F;
   color: #FFFFFF !important;
   padding: 2px 8px;
   border-radius: 4px;
@@ -1886,7 +1886,7 @@
   position: absolute;
   right: 4px;
   top: -10px;
-  background: #172B3A;
+  background: #1D1D1F;
   color: #FFFFFF !important;
   font-size: 9.5px;
   font-weight: 700;
@@ -1970,7 +1970,7 @@
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(29, 29, 31, 0.08);
-  color: #172B3A;
+  color: #1D1D1F;
   font-size: 12px;
   backdrop-filter: blur(6px);
   box-shadow: 0 1px 4px rgba(29, 29, 31, 0.08);
@@ -1979,13 +1979,13 @@
 
 .vf-spec-capsule:hover {
   background: #FFFFFF;
-  border-color: #172B3A;
+  border-color: #1D1D1F;
   box-shadow: 0 0 12px rgba(29, 29, 31, 0.08);
   transform: translateY(-1px);
 }
 
 .vf-spec-icon-inline {
-  color: #172B3A;
+  color: #1D1D1F;
   flex-shrink: 0;
 }
 
@@ -1994,7 +1994,7 @@
 }
 
 .vf-spec-text strong {
-  color: #172B3A;
+  color: #1D1D1F;
   font-weight: 700;
 }
 
@@ -2017,7 +2017,7 @@
 .vf-hero-price-value {
   font-size: 20px;
   font-weight: 800;
-  color: #172B3A;
+  color: #1D1D1F;
   letter-spacing: -0.3px;
 }
 
@@ -2064,9 +2064,9 @@
 }
 
 .agenda-kpi-block:hover {
-  border-color: #80E5E5;
-  background: rgba(128, 229, 229, 0.06);
-  box-shadow: 0 2px 8px rgba(128, 229, 229, 0.15);
+  border-color: #D1D1D6;
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 
@@ -2086,14 +2086,14 @@
 .agenda-kpi-val strong {
   font-size: 24px;
   font-weight: 800;
-  color: #172B3A;
+  color: #1D1D1F;
   line-height: 1.1;
   letter-spacing: -0.3px;
 }
 
 .agenda-kpi-val strong.is-money {
   font-size: 19px;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .agenda-kpi-sub {
@@ -2126,7 +2126,7 @@
 .agenda-pipeline-strip-title {
   font-size: 13px;
   font-weight: 700;
-  color: #172B3A;
+  color: #1D1D1F;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -2143,7 +2143,7 @@
   height: 26px;
   border-radius: 50%;
   background: #F1F5F9;
-  color: #172B3A;
+  color: #1D1D1F;
   font-weight: 700;
   font-size: 11.5px;
   display: inline-grid;
@@ -2167,7 +2167,7 @@
   justify-content: space-between;
   font-size: 12.5px;
   font-weight: 700;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .agenda-analytics-accordion {
@@ -2189,7 +2189,7 @@
   background: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 100%);
   font-size: 13.5px;
   font-weight: 700;
-  color: #172B3A;
+  color: #1D1D1F;
   user-select: none;
 }
 
@@ -2205,7 +2205,7 @@
 
 .agenda-analytics-chevron {
   transition: transform 0.2s ease;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .agenda-analytics-accordion[open] .agenda-analytics-chevron {

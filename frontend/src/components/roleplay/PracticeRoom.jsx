@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, SendIcon, MicIcon, SpeakerIcon } from '../common/Icons';
-import { Sparkles, Video, VideoOff, ShieldCheck, Clock, X, Captions, CaptionsOff, MessageCircle, Phone, Target, Award, Compass, CheckCircle2, MessageSquare } from 'lucide-react';
+import { Sparkles, Video, VideoOff, ShieldCheck, Clock, X, Captions, CaptionsOff, MessageCircle, Phone, Target, Award, Compass, MessageSquare } from 'lucide-react';
 import { getVehicleImage } from '../../data/vehicleData';
 import { FinishConfirmDialog } from './FinishConfirmDialog';
 import { practiceApi } from '../../api/practiceApi';

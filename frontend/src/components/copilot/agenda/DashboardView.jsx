@@ -49,15 +49,15 @@ const STAGE_LABELS = {
 };
 
 const STAGE_COLORS = {
-  won: '#80E5E5',
-  deposit_process: '#80E5E5',
-  negotiating: '#172B3A',
-  considering: '#172B3A',
-  qualified: '#172B3A',
-  discovery: '#64748B',
-  new: '#E5EAEE',
-  needs_confirmation: '#94A3B8',
-  lost: '#94A3B8',
+  won: '#1D1D1F',
+  deposit_process: '#2D2D2F',
+  negotiating: '#4A4A4C',
+  considering: '#6E6E73',
+  qualified: '#8E8E93',
+  discovery: '#AEAEB2',
+  new: '#D1D1D6',
+  needs_confirmation: '#8E8E93',
+  lost: '#E5E5EA',
 };
 
 function getStageLabel(stageId) {
@@ -471,7 +471,7 @@ export function DashboardView({
                   .map((item) => {
                     const pct = Math.max(4, (item.count / Math.max(1, totalCustomers)) * 100);
                     const isSelected = selectedStage === item.stage;
-                    const shade = STAGE_COLORS[item.stage] || '#80E5E5';
+                    const shade = STAGE_COLORS[item.stage] || '#1D1D1F';
                     return (
                       <button
                         type="button"

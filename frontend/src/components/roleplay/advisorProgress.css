@@ -188,7 +188,7 @@
 }
 
 .ap-scenario:hover {
-  border-color: #172B3A;
+  border-color: #1D1D1F;
   box-shadow: 0 8px 30px -4px rgba(29, 29, 31, 0.08);
   transform: translateY(-2px);
 }
@@ -337,7 +337,7 @@
   border-radius: 8px;
   border: 1px solid #E5EAEE;
   background: #FFFFFF;
-  color: #172B3A;
+  color: #1D1D1F;
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
@@ -419,7 +419,7 @@
   font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .ap-score-value {
@@ -433,7 +433,7 @@
   font-size: 40px;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: #172B3A;
+  color: #1D1D1F;
   line-height: 1;
 }
 
@@ -446,7 +446,7 @@
   margin: 4px 0 0;
   font-size: 13px;
   font-weight: 600;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 /* SPARKLINE TREND CHART */
@@ -460,14 +460,14 @@
 }
 
 .ap-spark polyline {
-  stroke: #80E5E5;
+  stroke: #1D1D1F;
   stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .ap-spark circle {
-  fill: #80E5E5;
+  fill: #1D1D1F;
   stroke: #FFFFFF;
   stroke-width: 2;
 }
@@ -520,8 +520,8 @@
 
 .ap-skills-info:hover {
   background: #F5F5F7;
-  color: #172B3A;
-  border-color: #172B3A;
+  color: #1D1D1F;
+  border-color: #1D1D1F;
 }
 
 .ap-radar-frame {
@@ -574,20 +574,20 @@
 
 .ap-radar-area {
   fill: rgba(29, 29, 31, 0.08);
-  stroke: #80E5E5;
+  stroke: #1D1D1F;
   stroke-width: 2.2;
   stroke-linejoin: round;
 }
 
 .ap-radar-partial {
   fill: none;
-  stroke: #80E5E5;
+  stroke: #1D1D1F;
   stroke-width: 2.2;
   stroke-linejoin: round;
 }
 
 .ap-radar-current circle {
-  fill: #80E5E5;
+  fill: #1D1D1F;
   stroke: #FFFFFF;
   stroke-width: 2;
 }
@@ -596,13 +596,13 @@
   font-family: inherit;
   font-size: 12px;
   font-weight: 600;
-  fill: #80E5E5;
+  fill: #1D1D1F;
 }
 
 .ap-radar-score {
   font-size: 13px;
   font-weight: 700;
-  fill: #80E5E5;
+  fill: #1D1D1F;
 }
 
 .ap-radar-delta {
@@ -663,7 +663,7 @@
   border: 1px solid #E5EAEE;
   border-radius: 16px;
   background: #FFFFFF;
-  color: #172B3A;
+  color: #1D1D1F;
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
 }
@@ -684,7 +684,7 @@
   margin: 0;
   font-size: 18px;
   font-weight: 700;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .ap-skill-help header button {
@@ -702,7 +702,7 @@
 
 .ap-skill-help header button:hover {
   background: #F5F5F7;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .ap-skill-help p {
@@ -721,7 +721,7 @@
 .ap-skill-help dt {
   font-size: 13.5px;
   font-weight: 700;
-  color: #172B3A;
+  color: #1D1D1F;
 }
 
 .ap-skill-help dd {
@@ -736,7 +736,7 @@
   min-height: 42px;
   border: none;
   border-radius: 10px;
-  background: #80E5E5; color: #172B3A;
+  background: #1D1D1F; color: #FFFFFF;
   color: #FFFFFF;
   font-family: inherit;
   font-size: 14px;

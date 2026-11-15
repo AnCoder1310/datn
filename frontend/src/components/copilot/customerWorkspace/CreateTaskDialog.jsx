@@ -1,6 +1,6 @@
 import './customerWorkspace.css';
 import { useEffect, useState } from "react";
-import { AlertTriangle, Clock, MapPin, Calendar, Check, X } from "lucide-react";
+import { AlertTriangle, Clock } from "lucide-react";
 import { salesCopilotApi } from "../../../api/salesCopilotApi";
 import { DetailDialog } from "./WorkspacePrimitives";
 import { defaultTaskWindow, formatDateTime, localInput, toUTC } from "../agenda/agendaData";

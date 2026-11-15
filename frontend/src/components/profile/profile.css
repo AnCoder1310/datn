@@ -1,12 +1,11 @@
 /* ==========================================================================
-   VINFAST SALES ENABLEMENT — UNIFIED EXECUTIVE PROFILE (MONOCHROME & SOFT CYAN)
+   VINFAST SALES ENABLEMENT — UNIFIED EXECUTIVE PROFILE (APPLE MONOCHROMATIC)
    Colors strictly:
-   - Primary: #80E5E5 (Soft Cyan highlight)
-   - Secondary: #172B3A / #0F172A (Midnight Navy text, strong elements, dark buttons)
-   - Background: #F5F8FA / #F8FAFC (Cloud White surface)
-   - Neutral Cards: #FFFFFF
-   - Borders: #E2E8F0 / #E5EAEE
-   - Secondary Text: #64748B, Muted: #94A3B8
+   - Primary: #1D1D1F (Charcoal Black)
+   - Background: #F5F5F7 (Apple Light Gray)
+   - Surfaces: #FFFFFF (Pure White)
+   - Borders: #E8E8ED
+   - Secondary Text: #6E6E73, Muted: #86868B
    ========================================================================== */
 
 .vf-profile-container {
@@ -37,11 +36,11 @@
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
   z-index: 100;
   animation: vf-toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid rgba(128, 229, 229, 0.3);
+  border: 1px solid #2D2D2F;
 }
 
 .vf-profile-toast svg {
-  color: #80E5E5;
+  color: #FFFFFF;
 }
 
 @keyframes vf-toast-in {
@@ -63,7 +62,7 @@
 
 .vf-hero-backdrop {
   height: 124px;
-  background: linear-gradient(135deg, #0F172A 0%, #172B3A 60%, #1E293B 100%);
+  background: linear-gradient(135deg, #1D1D1F 0%, #2D2D2F 100%);
   position: relative;
   overflow: hidden;
 }
@@ -74,7 +73,7 @@
   right: 8%;
   width: 320px;
   height: 220px;
-  background: radial-gradient(circle, rgba(128, 229, 229, 0.18) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
   filter: blur(40px);
   pointer-events: none;
 }
@@ -127,8 +126,8 @@
 }
 
 .vf-hero-avatar-star svg {
-  color: #80E5E5;
-  fill: #80E5E5;
+  color: #FFFFFF;
+  fill: #FFFFFF;
 }
 
 .vf-hero-status-pill {
@@ -149,15 +148,15 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #80E5E5;
-  box-shadow: 0 0 0 2px rgba(128, 229, 229, 0.3);
+  background: #1D1D1F;
+  box-shadow: 0 0 0 2px rgba(29, 29, 31, 0.2);
   animation: vf-pulse 2s infinite;
 }
 
 @keyframes vf-pulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(128, 229, 229, 0.5); }
-  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(128, 229, 229, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(128, 229, 229, 0); }
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 29, 31, 0.4); }
+  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(29, 29, 31, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 29, 31, 0); }
 }
 
 .vf-hero-details {
@@ -253,7 +252,7 @@
   color: #334155;
   margin: 4px 0 0;
   padding-left: 12px;
-  border-left: 3px solid #80E5E5;
+  border-left: 3px solid #1D1D1F;
 }
 
 .vf-hero-actions {
@@ -279,32 +278,32 @@
 }
 
 .vf-btn-hero.is-primary {
-  background: #80E5E5;
-  color: #172B3A;
-  border: 1.5px solid #80E5E5;
+  background: #1D1D1F;
+  color: #FFFFFF;
+  border: 1.5px solid #1D1D1F;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(128, 229, 229, 0.35);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .vf-btn-hero.is-primary:hover {
-  background: #6cdede;
-  border-color: #59d4d4;
-  color: #172B3A;
+  background: #2D2D2F;
+  border-color: #2D2D2F;
+  color: #FFFFFF;
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(128, 229, 229, 0.45);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 }
 
 .vf-btn-hero.is-secondary {
-  background: rgba(128, 229, 229, 0.12);
-  color: #172B3A;
-  border: 1.5px solid #80E5E5;
+  background: #FFFFFF;
+  color: #1D1D1F;
+  border: 1.5px solid #E8E8ED;
   font-weight: 600;
 }
 
 .vf-btn-hero.is-secondary:hover {
-  background: rgba(128, 229, 229, 0.25);
-  border-color: #80E5E5;
-  color: #172B3A;
+  background: #F5F5F7;
+  border-color: #D1D1D6;
+  color: #1D1D1F;
   transform: translateY(-1px);
 }
 
@@ -361,9 +360,9 @@
 }
 
 .vf-kpi-card:hover .vf-kpi-icon-wrap {
-  background: #0F172A;
-  color: #80E5E5;
-  border-color: #0F172A;
+  background: #1D1D1F;
+  color: #FFFFFF;
+  border-color: #1D1D1F;
 }
 
 .vf-kpi-info {
@@ -593,7 +592,7 @@
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #0F172A 0%, #80E5E5 100%);
+  background: linear-gradient(90deg, #1D1D1F 0%, #4A4A4C 100%);
   transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -725,9 +724,9 @@
 }
 
 .vf-cert-card:hover .vf-cert-icon-wrap {
-  background: #0F172A;
-  color: #80E5E5;
-  border-color: #0F172A;
+  background: #1D1D1F;
+  color: #FFFFFF;
+  border-color: #1D1D1F;
 }
 
 .vf-cert-info {
