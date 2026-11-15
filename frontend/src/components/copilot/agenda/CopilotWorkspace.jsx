@@ -1,3 +1,4 @@
+import '../customerWorkspace/customerWorkspace.css';
 import { useEffect, useState } from 'react';
 import { CalendarDays, LayoutDashboard, UsersRound } from 'lucide-react';
 import { salesCopilotApi } from '../../../api/salesCopilotApi';

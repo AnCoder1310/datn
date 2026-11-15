@@ -1,5 +1,5 @@
 import { BellIcon } from '../common/Icons';
-import { BotMessageSquare, GraduationCap, LibraryBig, UsersRound } from 'lucide-react';
+import { BotMessageSquare, GraduationCap, LibraryBig, UsersRound, UserCheck } from 'lucide-react';
 import { AccountMenu } from './AccountMenu';
 
 export function Header({
@@ -16,6 +16,7 @@ export function Header({
     { id: 'copilot', label: 'Trợ lý Co-pilot', icon: <BotMessageSquare size={17} strokeWidth={2} aria-hidden="true" /> },
     { id: 'roleplay', label: 'Phòng luyện tập', icon: <GraduationCap size={17} strokeWidth={2} aria-hidden="true" /> },
     { id: 'knowledge', label: 'Kho kiến thức', icon: <LibraryBig size={17} strokeWidth={2} aria-hidden="true" /> },
+    { id: 'profile', label: 'Hồ sơ cá nhân', icon: <UserCheck size={17} strokeWidth={2} aria-hidden="true" /> },
   ];
 
   return (
@@ -60,7 +61,7 @@ export function Header({
               title="Chuyển nhanh sang cổng Quản lý"
             >
               <UsersRound size={13} strokeWidth={2.2} />
-              <span>Chuyển sang Quản lý</span>
+              <span>Quản lý</span>
             </button>
           )}
 
@@ -82,6 +83,7 @@ export function Header({
             roleLabel={advisorProfile?.role || 'Tư vấn viên'}
             onLogout={onLogout}
             onSwitchRole={onSwitchRole}
+            onOpenProfile={() => onTabChange('profile')}
           />
         </div>
       </div>

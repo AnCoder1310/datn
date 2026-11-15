@@ -10,6 +10,15 @@ export function CustomerList({ customers, selectedId, onSelect, query, onQueryCh
   const unprocessed = customers.filter((customer) => customer.pendingAnalysis > 0 && customer.messageTotal > 0);
   const selectedIds = customers.filter((customer) => checked[customer.id]).map((customer) => customer.id);
   const allUnprocessedSelected = unprocessed.length > 0 && unprocessed.every((customer) => checked[customer.id]);
+  const isAllSelected = customers.length > 0 && customers.every((customer) => checked[customer.id]);
+
+  function toggleSelectAll() {
+    if (isAllSelected) {
+      setChecked({});
+    } else {
+      setChecked(Object.fromEntries(customers.map((c) => [c.id, true])));
+    }
+  }
   const tabs = [
     { id: 'all', title: 'Tất cả', count: customers.length },
     { id: 'caring', title: 'Đang chăm sóc', count: customers.filter((customer) => !['new', 'won', 'lost', 'needs_confirmation'].includes(customer.stageId)).length },
@@ -40,7 +49,7 @@ export function CustomerList({ customers, selectedId, onSelect, query, onQueryCh
       <h2>Khách hàng <span>({customers.length})</span></h2>
       {!batchProgress?.running && customers.length > 0 && (
         selecting ? (
-          <button type="button" className="sw-text-button sw-select-cancel" onClick={() => { setSelecting(false); setChecked({}); }}>Hủy chọn</button>
+          <button type="button" className="sw-select-cancel-pill" onClick={() => { setSelecting(false); setChecked({}); }}>Hủy chọn</button>
         ) : (
           <button type="button" className={`sw-batch-trigger ${unprocessed.length > 0 ? 'has-pending' : ''}`} onClick={() => { setSelecting(true); setChecked({}); }} title="Chọn một vài hoặc tất cả hội thoại để AI phân tích">
             <Sparkles size={13} />
@@ -63,33 +72,43 @@ export function CustomerList({ customers, selectedId, onSelect, query, onQueryCh
     )}
     {selecting && !batchProgress?.running && (
       <div className="sw-selection-bar" role="region" aria-label="Tùy chọn phân tích hàng loạt">
-        <div className="sw-selection-bar-top">
-          {unprocessed.length > 0 ? (
-            <button type="button" className="sw-select-all-btn" onClick={toggleSelectAllUnprocessed}>
-              <span className={`sw-row-checkbox ${allUnprocessedSelected ? 'is-checked' : ''}`}>{allUnprocessedSelected && <Check size={11} />}</span>
-              <span>Chọn tất cả có tin mới ({unprocessed.length})</span>
+        <div className="sw-selection-bar-header">
+          <div className="sw-selection-bar-actions">
+            <button type="button" className="sw-select-all-pill" onClick={toggleSelectAll}>
+              <span className={`sw-row-checkbox ${isAllSelected ? "is-checked" : ""}`}>
+                {isAllSelected && <Check size={11} />}
+              </span>
+              <span>{isAllSelected ? "Bỏ chọn tất cả" : `Chọn tất cả (${customers.length})`}</span>
             </button>
-          ) : (
-            <span className="sw-selection-hint">Tích chọn hội thoại muốn phân tích lại</span>
+            {unprocessed.length > 0 && (
+              <button type="button" className="sw-select-all-pill is-secondary" onClick={toggleSelectAllUnprocessed}>
+                <span className={`sw-row-checkbox ${allUnprocessedSelected ? "is-checked" : ""}`}>
+                  {allUnprocessedSelected && <Check size={11} />}
+                </span>
+                <span>Tin mới ({unprocessed.length})</span>
+              </button>
+            )}
+          </div>
+          {selectedIds.length > 0 && (
+            <span className="sw-selected-count-badge">Đã chọn {selectedIds.length}</span>
           )}
-          {selectedIds.length > 0 && <button type="button" className="sw-text-button" onClick={() => setChecked({})}>Bỏ chọn ({selectedIds.length})</button>}
         </div>
         <button
           type="button"
-          className="sw-primary-button sw-selection-run-btn"
-          disabled={selectedIds.length === 0 && unprocessed.length === 0}
-          onClick={() => startBatch(selectedIds.length > 0 ? selectedIds : unprocessed.map((c) => c.id))}
+          className="sw-selection-run-btn"
+          disabled={selectedIds.length === 0}
+          onClick={() => startBatch(selectedIds)}
         >
-          <Sparkles size={13} />
+          <Sparkles size={14} />
           <span>
             {selectedIds.length > 0
-              ? `Phân tích ${selectedIds.length} cuộc đã chọn`
-              : `Phân tích tất cả có tin mới (${unprocessed.length})`}
+              ? `Phân tích ${selectedIds.length} hội thoại đã chọn`
+              : "Chọn ít nhất 1 hội thoại để phân tích"}
           </span>
         </button>
       </div>
     )}
-    <div className="sw-list-search-row"><label className="sw-search sw-list-search"><Search size={17} /><input aria-label="Tìm kiếm khách hàng" placeholder="Tìm kiếm khách hàng..." value={query} onChange={(event) => onQueryChange(event.target.value)} /></label><IconButton label={filter === 'attention' ? 'Bỏ lọc khách cần chú ý' : 'Lọc khách cần chú ý'} className={filter === 'attention' ? 'is-active' : ''} onClick={() => onFilterChange(filter === 'attention' ? 'all' : 'attention')}><SlidersHorizontal size={17} /></IconButton></div>
+        <div className="sw-list-search-row"><label className="sw-search sw-list-search"><Search size={17} /><input aria-label="Tìm kiếm khách hàng" placeholder="Tìm kiếm khách hàng..." value={query} onChange={(event) => onQueryChange(event.target.value)} /></label><IconButton label={filter === 'attention' ? 'Bỏ lọc khách cần chú ý' : 'Lọc khách cần chú ý'} className={filter === 'attention' ? 'is-active' : ''} onClick={() => onFilterChange(filter === 'attention' ? 'all' : 'attention')}><SlidersHorizontal size={17} /></IconButton></div>
     <div className="sw-customer-filters" aria-label="Lọc trạng thái khách hàng">{tabs.map((tab) => <button key={tab.id} type="button" aria-pressed={filter === tab.id} className={filter === tab.id ? 'is-active' : ''} onClick={() => onFilterChange(tab.id)}>{tab.title}<span>{tab.count}</span></button>)}</div>
     <div className="sw-list-sort"><span>{filtered.length} khách hàng</span><span>Tin nhắn gần nhất <ChevronDown size={12} /></span></div>
     {filter === 'attention' && <p className="sw-attention-explanation">Khách chờ phản hồi hoặc có công việc quan trọng cần cập nhật trạng thái.</p>}

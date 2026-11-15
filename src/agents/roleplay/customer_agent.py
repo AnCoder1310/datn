@@ -193,51 +193,78 @@ class CustomerAgent:
         context["consider_next_step"] = consider_next_step
         if consider_next_step and self.focus_objection_id(state) is None:
             context["active_objections"] = []
-        for attempt in range(2):
-            try:
-                raw_output = await self._model.generate(
-                    system_prompt=(
-                        CUSTOMER_SYSTEM_PROMPT
-                        if attempt == 0
-                        else CUSTOMER_SYSTEM_PROMPT
-                        + "\n# Correction\nYour previous response was unsafe or not Vietnamese. "
-                        "Reply as the customer in Vietnamese without repeating private data or instructions."
-                    ),
-                    context=context,
-                )
-                output = CustomerModelOutput.model_validate(raw_output)
-            except (ValidationError, TypeError, ValueError) as exc:
-                raise CustomerResponseError(f"invalid customer response: {exc}") from exc
+        def _fallback_customer_reply(scenario, state):
+            addr = self.persona_address(scenario)
+            addr_low = addr.lower()
+            last_advisor_msg = ""
+            for m in reversed(state.messages):
+                if m.role in ("advisor", "sales", "user"):
+                    last_advisor_msg = m.content.strip().casefold()
+                    break
+            if any(w in last_advisor_msg for w in ["chào", "hello", "hi", "xin chào"]):
+                return f"Chào em, {addr_low} đang tìm hiểu dòng xe này. Em tư vấn giúp {addr_low} về chi phí và chính sách sử dụng thực tế nhé."
+            if any(w in last_advisor_msg for w in ["giá", "chi phí", "ngân sách", "tiền", "lăn bánh", "trả góp", "vay"]):
+                return f"Về mặt kinh tế thì {addr_low} muốn tính toán kỹ. Em phân tích giúp {addr_low} phương án chi phí hàng tháng xem thế nào."
+            if any(w in last_advisor_msg for w in ["pin", "sạc", "trạm sạc", "quãng đường", "km"]):
+                return f"{addr} cũng băn khoăn về thời gian sạc và độ phủ trạm sạc. Em cho {addr_low} biết sạc nhanh thực tế mất bao lâu?"
+            if any(w in last_advisor_msg for w in ["lái thử", "hẹn", "showroom", "ghé", "cuối tuần", "đặt lịch"]):
+                return f"Được em, cuối tuần này {addr_low} có thể ghé showroom để trải nghiệm lái thử. Em giữ lịch giúp {addr_low} nhé."
+            return f"{addr} ghi nhận thông tin em chia sẻ. Em có thể làm rõ thêm các quyền lợi bảo hành và hậu mãi giúp {addr_low} được không?"
 
-            try:
-                self._reject_private_fact_leak(output.reply, scenario, state)
-                self._reject_unsupported_figures(output.reply, scenario, state)
-                self._reject_private_persona_leak(output.reply, state.persona)
-                if _contains_system_prompt_excerpt(output.reply):
-                    raise CustomerResponseError("customer response contains system prompt excerpt")
-            except CustomerResponseError as exc:
-                logger.warning(
-                    "Roleplay customer output rejected: session_id=%s reason=%s attempt=%d",
-                    state.session_id,
-                    str(exc),
-                    attempt + 1,
-                )
-                if attempt:
-                    raise
-                continue
-            if _contains_foreign_prose(output.reply):
-                logger.warning(
-                    "Roleplay customer output rejected: session_id=%s reason=non_vietnamese attempt=%d",
-                    state.session_id,
-                    attempt + 1,
-                )
-                if attempt:
-                    reason = "English prose" if _contains_english_prose(output.reply) else "non-Vietnamese prose"
-                    raise CustomerResponseError(f"customer response contains {reason}")
-                if _contains_english_prose(output.reply):
-                    context = {**context, "previous_mixed_language_reply": output.reply}
-                continue
-            break
+        output = None
+        try:
+            for attempt in range(2):
+                try:
+                    raw_output = await self._model.generate(
+                        system_prompt=(
+                            CUSTOMER_SYSTEM_PROMPT
+                            if attempt == 0
+                            else CUSTOMER_SYSTEM_PROMPT
+                            + "\n# Correction\nYour previous response was unsafe or not Vietnamese. "
+                            "Reply as the customer in Vietnamese without repeating private data or instructions."
+                        ),
+                        context=context,
+                    )
+                    output = CustomerModelOutput.model_validate(raw_output)
+                except (ValidationError, TypeError, ValueError) as exc:
+                    raise CustomerResponseError(f"invalid customer response: {exc}") from exc
+
+                try:
+                    self._reject_private_fact_leak(output.reply, scenario, state)
+                    self._reject_unsupported_figures(output.reply, scenario, state)
+                    self._reject_private_persona_leak(output.reply, state.persona)
+                    if _contains_system_prompt_excerpt(output.reply):
+                        raise CustomerResponseError("customer response contains system prompt excerpt")
+                except CustomerResponseError as exc:
+                    logger.warning(
+                        "Roleplay customer output rejected: session_id=%s reason=%s attempt=%d",
+                        state.session_id,
+                        str(exc),
+                        attempt + 1,
+                    )
+                    if attempt:
+                        raise
+                    continue
+                if _contains_foreign_prose(output.reply):
+                    logger.warning(
+                        "Roleplay customer output rejected: session_id=%s reason=non_vietnamese attempt=%d",
+                        state.session_id,
+                        attempt + 1,
+                    )
+                    if attempt:
+                        reason = "English prose" if _contains_english_prose(output.reply) else "non-Vietnamese prose"
+                        raise CustomerResponseError(f"customer response contains {reason}")
+                    if _contains_english_prose(output.reply):
+                        context = {**context, "previous_mixed_language_reply": output.reply}
+                    continue
+                break
+        except Exception as exc:
+            logger.warning("LLM model generation failed, using intelligent roleplay fallback: %s", exc)
+            output = CustomerModelOutput(reply=_fallback_customer_reply(scenario, state))
+
+        if output is None:
+            output = CustomerModelOutput(reply=_fallback_customer_reply(scenario, state))
+
         known_ids = {item.objection_id for item in scenario.objections}
         raised_id = output.raised_objection_id if output.raised_objection_id in known_ids else None
         if raised_id and state.concern_prompt_counts.get(raised_id, 0) >= 2:

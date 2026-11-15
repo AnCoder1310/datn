@@ -7,6 +7,7 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR"
+export PYTHONPATH="$DIR"
 
 echo "=========================================================="
 echo "  🚗 VINFAST AI SALES ENABLEMENT — SYSTEM STARTUP"
@@ -68,8 +69,20 @@ cleanup() {
 }
 trap cleanup SIGINT SIGTERM EXIT
 
-# Đợi Backend sẵn sàng
-sleep 2
+# Đợi Backend phản hồi sẵn sàng
+echo "[i] Đang kiểm tra kết nối Backend..."
+READY=0
+for i in {1..30}; do
+    if curl -s -f http://127.0.0.1:8000/health >/dev/null 2>&1; then
+        echo "[✓] Backend đã phản hồi sẵn sàng (http://127.0.0.1:8000/health)!"
+        READY=1
+        break
+    fi
+    sleep 0.5
+done
+if [ $READY -eq 0 ]; then
+    echo "[!] Chú ý: Backend đang khởi tạo nền..."
+fi
 
 # 5. Khởi chạy Frontend Vite trên port 3000
 echo "[i] Đang khởi chạy Frontend Vite..."

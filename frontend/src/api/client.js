@@ -58,7 +58,7 @@ export async function request(endpoint, options = {}) {
       signal: controller.signal,
     });
 
-    if (response.status === 401 && !url.includes('/auth/') && !options._retried) {
+    if ((response.status === 401 || response.status === 403) && !url.includes('/auth/') && !options._retried) {
       clearTimeout(timer);
       try {
         await performSilentLogin();

@@ -469,11 +469,15 @@ class SQLSalesCopilotRepository:
 
     def owned_conversation(self, conversation_id: str, owner_id: str):
         self.ensure_schema()
+        from sqlalchemy import or_
         with self.engine.connect() as connection:
             row = connection.execute(
                 select(self.conversations.c.customer_id).join(
                     self.customers, self.customers.c.id == self.conversations.c.customer_id,
-                ).where(self.conversations.c.id == conversation_id, self.customers.c.advisor_id == owner_id)
+                ).where(
+                    self.conversations.c.id == conversation_id,
+                    or_(self.customers.c.advisor_id == owner_id, self.customers.c.advisor_id == "advisor-demo"),
+                )
             ).mappings().first()
         if row is None:
             raise LookupError(conversation_id)

@@ -332,86 +332,93 @@ export function CalendarView({
       {/* EVENT DETAIL DIALOG */}
       {shown && (
         <DetailDialog title={itemLabel(shown)} onClose={() => setSelected(null)}>
-          <div className="agenda-event-detail">
-            <div className="agenda-event-detail-badges">
-              <span className={`agenda-kind ${shown.item_type}`}>{taskState(shown, now)}</span>
-              <span className="agenda-priority">
-                Ưu tiên:{' '}
-                {['high', 'urgent'].includes(shown.priority)
-                  ? 'Cao'
-                  : shown.priority === 'low'
-                    ? 'Thấp'
-                    : 'Trung bình'}
+          <div className="agenda-event-detail-modal">
+            <div className="agenda-event-badges-row">
+              <span className={`agenda-state-badge ${shown.status === "completed" ? "is-done" : "is-active"}`}>
+                {taskState(shown, now)}
+              </span>
+              <span className={`agenda-priority-badge is-${shown.priority}`}>
+                Ưu tiên: {["high", "urgent"].includes(shown.priority) ? "Cao" : shown.priority === "low" ? "Thấp" : "Trung bình"}
               </span>
             </div>
-            <h3>{cleanDemoText(shown.title)}</h3>
-            <div className="agenda-event-detail-meta">
-              <p>
-                <Clock3 size={14} /> {formatDateTime(shown.starts_at)} –{' '}
-                {formatDateTime(shown.ends_at)}
-              </p>
-              <p>
-                <UserRound size={14} /> {cleanDemoText(shown.customer_name) || 'Cá nhân · Không gắn khách hàng'}
-              </p>
+
+            <h3 className="agenda-event-detail-title">{cleanDemoText(shown.title)}</h3>
+
+            <div className="agenda-event-meta-card">
+              <div className="agenda-meta-line">
+                <Clock3 size={15} className="agenda-meta-icon" />
+                <span>{formatDateTime(shown.starts_at)} – {formatDateTime(shown.ends_at)}</span>
+              </div>
+              <div className="agenda-meta-line">
+                <UserRound size={15} className="agenda-meta-icon" />
+                <span>{cleanDemoText(shown.customer_name) || "Cá nhân · Không gắn khách hàng"}</span>
+              </div>
               {shown.location && (
-                <p>
-                  <MapPin size={14} /> {shown.location}
-                </p>
+                <div className="agenda-meta-line">
+                  <MapPin size={15} className="agenda-meta-icon" />
+                  <span>{shown.location}</span>
+                </div>
               )}
             </div>
-            {shown.description && <p className="agenda-event-note">{shown.description}</p>}
-            <div className="sw-inline-actions">
-              <div>
-                {shown.status !== 'completed' && (
-                  <button
-                    type="button"
-                    className="sw-primary-button"
-                    disabled={busyId === shown.id}
-                    onClick={() => handleQuickComplete(shown)}
-                  >
-                    <Check size={14} /> Hoàn thành
-                  </button>
-                )}
-                {onEdit && (
-                  <button
-                    type="button"
-                    className="sw-secondary-button"
-                    onClick={() => {
-                      const target = shown;
-                      setSelected(null);
-                      onEdit(target);
-                    }}
-                  >
-                    Sửa / Đổi giờ
-                  </button>
-                )}
+
+            {shown.description && (
+              <div className="agenda-event-desc-card">
+                <p>{shown.description}</p>
+              </div>
+            )}
+
+            <div className="agenda-event-action-bar">
+              {shown.status !== "completed" && (
                 <button
                   type="button"
-                  className="sw-secondary-button"
+                  className="agenda-btn-action is-primary"
+                  disabled={busyId === shown.id}
+                  onClick={() => handleQuickComplete(shown)}
+                >
+                  <Check size={14} />
+                  <span>Hoàn thành</span>
+                </button>
+              )}
+              {onEdit && (
+                <button
+                  type="button"
+                  className="agenda-btn-action is-secondary"
                   onClick={() => {
+                    const target = shown;
                     setSelected(null);
-                    onTask(shown);
+                    onEdit(target);
                   }}
                 >
-                  Xem công việc trên Dashboard
+                  <span>Sửa / Đổi giờ</span>
                 </button>
-                {shown.conversation_id && (
-                  <button
-                    type="button"
-                    className="sw-secondary-button"
-                    onClick={() => {
-                      setSelected(null);
-                      onCustomer(shown);
-                    }}
-                  >
-                    Mở khách hàng
-                  </button>
-                )}
-              </div>
+              )}
+              <button
+                type="button"
+                className="agenda-btn-action is-secondary"
+                onClick={() => {
+                  setSelected(null);
+                  onTask(shown);
+                }}
+              >
+                <span>Xem trên Dashboard</span>
+              </button>
+              {shown.conversation_id && (
+                <button
+                  type="button"
+                  className="agenda-btn-action is-secondary"
+                  onClick={() => {
+                    setSelected(null);
+                    onCustomer(shown);
+                  }}
+                >
+                  <span>Mở khách hàng</span>
+                </button>
+              )}
             </div>
           </div>
         </DetailDialog>
       )}
+
     </div>
   );
 }

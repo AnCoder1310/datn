@@ -1,9 +1,10 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { ChevronDown, LogoutIcon, UsersIcon } from "../common/Icons";
+import { ChevronDown, LogoutIcon } from "../common/Icons";
+import { Users, UserCheck } from "lucide-react";
 import "./accountMenu.css";
 
-// Shared by the advisor and manager top bars: the avatar opens a small account card.
-export function AccountMenu({ name, username, roleLabel, onLogout, onSwitchRole }) {
+// Shared by top bars: the avatar opens a small account card with multi-role switcher
+export function AccountMenu({ name, username, roleLabel, onLogout, onSwitchRole, onOpenProfile }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
   const triggerRef = useRef(null);
@@ -58,22 +59,52 @@ export function AccountMenu({ name, username, roleLabel, onLogout, onSwitchRole 
             </span>
           </div>
           <dl className="account-menu-facts">
-            <dt>Vai trò</dt>
+            <dt>Vai trò hiện tại</dt>
             <dd>{roleLabel}</dd>
           </dl>
 
-          {onSwitchRole && (
+          {onOpenProfile && (
             <button
               type="button"
-              className="account-menu-switch"
+              className="account-menu-profile-btn"
               onClick={() => {
                 setOpen(false);
-                onSwitchRole(username === "advisor.demo" ? "manager" : "advisor");
+                onOpenProfile();
               }}
             >
-              <UsersIcon aria-hidden="true" style={{ width: 15, height: 15 }} />
-              {username === "advisor.demo" ? "Chuyển sang Quản lý" : "Chuyển sang Tư vấn viên"}
+              <UserCheck size={14} />
+              <span>Xem hồ sơ chi tiết & KPI</span>
             </button>
+          )}
+
+          {onSwitchRole && (
+            <div className="account-menu-role-section">
+              <span className="account-menu-role-title">CHUYỂN VAI TRÒ HỆ THỐNG</span>
+              
+              <button
+                type="button"
+                className={`account-menu-switch-item ${username === "advisor.demo" ? "is-current" : ""}`}
+                onClick={() => {
+                  setOpen(false);
+                  onSwitchRole("advisor");
+                }}
+              >
+                <UserCheck size={14} />
+                <span>Tư vấn viên (Phạm Đình Duy)</span>
+              </button>
+
+              <button
+                type="button"
+                className={`account-menu-switch-item ${username === "manager.demo" ? "is-current" : ""}`}
+                onClick={() => {
+                  setOpen(false);
+                  onSwitchRole("manager");
+                }}
+              >
+                <Users size={14} />
+                <span>Quản lý (Manager Demo)</span>
+              </button>
+            </div>
           )}
 
           <button type="button" className="account-menu-logout" onClick={onLogout}>

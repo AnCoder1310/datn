@@ -32,7 +32,13 @@ export function useAgendaResource(owner, key, fetcher, active = true) {
       const data = await pending.get(cacheKey);
       if (generation.current === requestGeneration) setState({ key: cacheKey, data, loading: false, error: '' });
     } catch (error) {
-      if (generation.current === requestGeneration) setState((previous) => ({ ...previous, loading: false, error: error.message || 'Chưa tải được dữ liệu.' }));
+      if (generation.current === requestGeneration) {
+        setState((previous) => ({ ...previous, loading: false, error: error.message || 'Chưa tải được dữ liệu.' }));
+        // Tự động thử lại khi backend sẵn sàng
+        setTimeout(() => {
+          if (generation.current === requestGeneration) void load(true);
+        }, 2500);
+      }
     }
   }, [cacheKey]);
   useEffect(() => {

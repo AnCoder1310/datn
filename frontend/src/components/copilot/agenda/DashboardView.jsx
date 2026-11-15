@@ -49,15 +49,15 @@ const STAGE_LABELS = {
 };
 
 const STAGE_COLORS = {
-  won: '#1D1D1F',
-  deposit_process: '#1D1D1F',
-  negotiating: '#6E6E73',
-  considering: '#1D1D1F',
-  qualified: '#1D1D1F',
-  discovery: '#6E6E73',
-  new: '#F5F5F7',
-  needs_confirmation: '#1D1D1F',
-  lost: '#6E6E73',
+  won: '#80E5E5',
+  deposit_process: '#80E5E5',
+  negotiating: '#172B3A',
+  considering: '#172B3A',
+  qualified: '#172B3A',
+  discovery: '#64748B',
+  new: '#E5EAEE',
+  needs_confirmation: '#94A3B8',
+  lost: '#94A3B8',
 };
 
 function getStageLabel(stageId) {
@@ -471,7 +471,7 @@ export function DashboardView({
                   .map((item) => {
                     const pct = Math.max(4, (item.count / Math.max(1, totalCustomers)) * 100);
                     const isSelected = selectedStage === item.stage;
-                    const shade = STAGE_COLORS[item.stage] || '#1D1D1F';
+                    const shade = STAGE_COLORS[item.stage] || '#80E5E5';
                     return (
                       <button
                         type="button"
@@ -740,7 +740,7 @@ export function DashboardView({
                       </button>
                     </div>
                     <div className="agenda-minimal-list">
-                      {data.upcoming_events.slice(0, 3).map((item) => (
+                      {(data?.upcoming_events || []).slice(0, 3).map((item) => (
                         <button
                           type="button"
                           className="agenda-upcoming"

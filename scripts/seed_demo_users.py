@@ -35,7 +35,7 @@ async def seed() -> None:
         raise RuntimeError("Demo account seeding is only allowed outside production")
     service = AuthService(SQLAuthRepository(settings.database_url))
     accounts = (
-        ("advisor-demo", "advisor.demo", "Tư vấn viên Demo", UserRole.ADVISOR, "DEMO_ADVISOR_PASSWORD"),
+        ("advisor-demo", "advisor.demo", "Phạm Đình Duy", UserRole.ADVISOR, "DEMO_ADVISOR_PASSWORD"),
         ("manager-demo", "manager.demo", "Quản lý Demo", UserRole.MANAGER, "DEMO_MANAGER_PASSWORD"),
     )
     for user_id, username, display_name, role, password_variable in accounts:

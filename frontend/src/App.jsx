@@ -8,6 +8,7 @@ import { KnowledgeView } from './components/knowledge/KnowledgeView';
 import { LoginView } from './components/auth/LoginView';
 import { ChangePasswordView } from './components/auth/ChangePasswordView';
 import { ManagerReviewView } from './components/manager/ManagerReviewView';
+import { ProfileView } from './components/profile/ProfileView';
 
 import { authApi } from './api/authApi';
 import { practiceApi } from './api/practiceApi';
@@ -38,7 +39,13 @@ export function App() {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const cached = localStorage.getItem('p043_user');
-      if (cached) return JSON.parse(cached);
+      if (cached) {
+        const u = JSON.parse(cached);
+        if (u && (u.role === 'advisor' || u.role === 'manager')) {
+          return u;
+        }
+        localStorage.removeItem('p043_user');
+      }
     } catch (e) { /* ignore */ void e; }
     return DEMO_FALLBACK_USER;
   });
@@ -54,38 +61,52 @@ export function App() {
   const [copilotQuery, setCopilotQuery] = useState('');
   const [copilotOpened, setCopilotOpened] = useState(true);
 
-  // Đồng bộ phiên thực tế với backend trong nền
+  // Đồng bộ phiên thực tế với backend trong nền & tự động kết nối lại khi backend sẵn sàng
   useEffect(() => {
     let active = true;
+    let retryTimer = null;
     async function restoreSession() {
       try {
         const user = await authApi.me();
         if (!active) return;
+        if (user && (user.role === 'advisor' || user.role === 'manager')) {
+          setCurrentUser(user);
+          try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
+          if (user.role === 'advisor') {
+            setCurrentTab((prev) => (prev === 'manager' ? 'copilot' : prev));
+          } else if (user.role === 'manager') {
+            setCurrentTab('manager');
+          }
+          setAuthStatus('authenticated');
+          notifyAgendaChange();
+          setScenarioReloadToken((v) => v + 1);
+          return;
+        }
+      } catch {
+        // Backend chưa sẵn sàng hoặc phiên cũ hết hạn
+      }
+
+      // Tự động kích hoạt tài khoản Demo Advisor trên backend để phiên làm việc luôn hợp lệ
+      try {
+        const user = await authApi.login('advisor.demo', 'DemoAdvisor123!');
+        if (!active) return;
         setCurrentUser(user);
         try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
-        if (user.role === 'advisor') {
-          setCurrentTab('copilot');
-        }
         setAuthStatus('authenticated');
         notifyAgendaChange();
         setScenarioReloadToken((v) => v + 1);
       } catch {
-        // Tự động kích hoạt tài khoản Demo Advisor trên backend để phiên làm việc luôn hợp lệ
-        try {
-          const user = await authApi.login('advisor.demo', 'DemoAdvisor123!');
-          if (!active) return;
-          setCurrentUser(user);
-          try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
-          setAuthStatus('authenticated');
-          notifyAgendaChange();
-          setScenarioReloadToken((v) => v + 1);
-        } catch {
-          // Tiếp tục sử dụng DEMO_FALLBACK_USER, không chặn giao diện
+        // Nếu backend chưa khởi động xong, thử lại sau 2.5s để tự động nhận dữ liệu
+        if (active) {
+          retryTimer = setTimeout(restoreSession, 2500);
         }
       }
     }
     restoreSession();
-    return () => { active = false; };
+    return () => {
+      active = false;
+      if (retryTimer) clearTimeout(retryTimer);
+    };
   }, []);
 
   // Tải danh sách kịch bản thực tế từ backend khi advisor đã sẵn sàng
@@ -183,7 +204,8 @@ export function App() {
     );
   }
 
-  if (currentUser?.role === 'manager') {
+  // MÀN HÌNH QUẢN LÝ
+  if (currentUser?.role === 'manager' || currentTab === 'manager') {
     return (
       <ManagerReviewView
         currentUser={currentUser}
@@ -253,6 +275,16 @@ export function App() {
           <KnowledgeView
             sourceDocumentId={sourceDocumentId}
             sourceReference={sourceReference}
+          />
+        )}
+
+        {currentTab === 'profile' && (
+          <ProfileView
+            currentUser={currentUser}
+            onOpenRoleplay={() => setCurrentTab('roleplay')}
+            onOpenCopilot={() => setCurrentTab('copilot')}
+            onLogout={handleLogout}
+            onSwitchRole={handleSwitchRole}
           />
         )}
       </main>

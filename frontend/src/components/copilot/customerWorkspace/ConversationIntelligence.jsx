@@ -32,22 +32,44 @@ export function ConversationSummary({ customer, onAnalyze, analyzing, onSourceCl
     {changes && <details className="sw-analysis-changes"><summary>Xem thay đổi sau phân tích</summary><ul>{changes.map((change, index) => <li key={index}>{change}</li>)}</ul></details>}
 
     <section className="sw-ci-section sw-ci-quick-profile">
-      <h3>Hồ sơ nhanh</h3>
-      <div className="sw-quick-profile-grid">
-        <div className="sw-quick-profile-cell"><span>Xe quan tâm</span><strong>{customer.model}</strong></div>
-        <div className="sw-quick-profile-cell"><span>Thanh toán</span><strong>{customer.payment}</strong></div>
-        <div className="sw-quick-profile-cell"><span>Ngân sách</span><strong>{customer.budget}</strong></div>
-        <div className="sw-quick-profile-cell"><span>Thời điểm mua</span><strong>{customer.profile?.purchase_timeline || 'Chưa xác định'}</strong></div>
+      <div className="sw-ci-section-head">
+        <h3>Hồ sơ nhanh</h3>
       </div>
-      <details className="sw-intelligence-section sw-ci-facts">
-        <summary>Sửa / Xác nhận dữ kiện chi tiết</summary>
-        <CustomerProfile customer={customer} onSourceClick={onSourceClick} onConfirmFact={onConfirmFact} />
+      <div className="sw-quick-profile-grid">
+        <div className="sw-quick-profile-cell">
+          <span className="sw-qp-label">Xe quan tâm</span>
+          <strong className="sw-qp-value">{customer.model || "Chưa xác định"}</strong>
+        </div>
+        <div className="sw-quick-profile-cell">
+          <span className="sw-qp-label">Thanh toán</span>
+          <strong className="sw-qp-value">{customer.payment || "Chưa xác định"}</strong>
+        </div>
+        <div className="sw-quick-profile-cell">
+          <span className="sw-qp-label">Ngân sách</span>
+          <strong className="sw-qp-value">{customer.budget || "Chưa xác định"}</strong>
+        </div>
+        <div className="sw-quick-profile-cell">
+          <span className="sw-qp-label">Thời điểm mua</span>
+          <strong className="sw-qp-value">{customer.profile?.purchase_timeline || "Chưa xác định"}</strong>
+        </div>
+      </div>
+      <details className="sw-ci-facts-accordion">
+        <summary className="sw-ci-facts-summary">
+          <span>Sửa / Xác nhận dữ kiện chi tiết</span>
+        </summary>
+        <div className="sw-ci-facts-body">
+          <CustomerProfile customer={customer} onSourceClick={onSourceClick} onConfirmFact={onConfirmFact} />
+        </div>
       </details>
     </section>
 
     <section className="sw-ci-section sw-ci-recap">
-      <h3>Tổng quan tình hình</h3>
-      <p>{recap || 'Chưa có tổng quan được lưu. Bấm Phân tích hội thoại để AI tổng hợp.'}</p>
+      <div className="sw-ci-section-head">
+        <h3>Tổng quan tình hình</h3>
+      </div>
+      <div className="sw-recap-box">
+        <p>{recap || "Chưa có tổng quan được lưu. Bấm Phân tích hội thoại để AI tổng hợp."}</p>
+      </div>
     </section>
 
     {sortedPoints.length > 0 && (

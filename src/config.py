@@ -206,6 +206,26 @@ class Settings(BaseSettings):
     similarity_top_k: int = 4
 
     @model_validator(mode="after")
+    def resolve_relative_data_paths(self) -> "Settings":
+        from pathlib import Path
+        ai_sale_dir = Path(__file__).resolve().parent.parent
+        if self.database_url.startswith("sqlite:///"):
+            raw = self.database_url[len("sqlite:///"):]
+            if not Path(raw).is_absolute() and not Path(raw).exists():
+                candidate = ai_sale_dir / raw.lstrip("./")
+                if candidate.exists() or candidate.parent.exists():
+                    self.database_url = f"sqlite:///{candidate.resolve()}"
+        if not Path(self.chroma_persist_dir).is_absolute() and not Path(self.chroma_persist_dir).exists():
+            candidate = ai_sale_dir / self.chroma_persist_dir.lstrip("./")
+            if candidate.exists() or candidate.parent.exists():
+                self.chroma_persist_dir = str(candidate.resolve())
+        if not Path(self.knowledge_manifest_dir).is_absolute() and not Path(self.knowledge_manifest_dir).exists():
+            candidate = ai_sale_dir / self.knowledge_manifest_dir.lstrip("./")
+            if candidate.exists() or candidate.parent.exists():
+                self.knowledge_manifest_dir = str(candidate.resolve())
+        return self
+
+    @model_validator(mode="after")
     def validate_production_settings(self) -> "Settings":
         if self.app_env != "production":
             return self

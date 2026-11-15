@@ -238,26 +238,187 @@ function Tasks({ customer, onToggle, onCreate, busy, ownerId, creating, onCancel
         {task.description && <p className="sw-task-description">{task.description}</p>}
         <div className="sw-task-meta"><span><Clock3 size={12} />{task.starts_at ? `${formatDateTime(task.starts_at)} – ${formatDateTime(task.ends_at)}` : 'Cần xếp lịch'}</span><span>{itemLabel(task)}</span><span className={`sw-priority sw-priority-${task.priority}`}>{['high', 'urgent'].includes(task.priority) ? 'Cao' : task.priority === 'medium' ? 'Trung bình' : 'Thấp'}</span></div>
         <p className="sw-task-origin">{task.manual ? 'Thủ công' : 'AI đề xuất'} · Phụ trách: {task.ownerId === ownerId ? 'Bạn' : task.ownerId || 'Chưa phân công'}{task.status === 'needs_review' && ' · Cần duyệt'}</p>
-        <div className="sw-task-actions">{task.sourceMessageIds.map((id, index) => <button type="button" key={id} className="sw-text-button" onClick={() => onSourceClick(id)}>Tin nguồn {index + 1}</button>)}<button type="button" className="sw-text-button" onClick={() => setEditing(task.id)}>Sửa công việc</button>{task.status === 'needs_review' && <button type="button" className="sw-secondary-button" disabled={busy[task.id]} onClick={() => setEditing(task.id)}>Duyệt và xếp lịch</button>}<button type="button" className="sw-text-button" disabled={busy[task.id]} onClick={async () => { setActionError(''); try { await onEdit(task.id, { status: 'cancelled' }); } catch (error) { setActionError(error.message); } }}>Hủy mục</button></div>
+        <div className="sw-task-actions">
+          {task.sourceMessageIds.map((id, index) => (
+            <button
+              type="button"
+              key={id}
+              className="sw-task-btn sw-task-btn-source"
+              onClick={() => onSourceClick(id)}
+            >
+              Tin nguồn {index + 1}
+            </button>
+          ))}
+          <button
+            type="button"
+            className="sw-task-btn sw-task-btn-edit"
+            onClick={() => setEditing(task.id)}
+          >
+            Sửa công việc
+          </button>
+          {task.status === "needs_review" && (
+            <button
+              type="button"
+              className="sw-task-btn sw-task-btn-approve"
+              disabled={busy[task.id]}
+              onClick={() => setEditing(task.id)}
+            >
+              Duyệt và xếp lịch
+            </button>
+          )}
+          <button
+            type="button"
+            className="sw-task-btn sw-task-btn-cancel"
+            disabled={busy[task.id]}
+            onClick={async () => {
+              setActionError("");
+              try {
+                await onEdit(task.id, { status: "cancelled" });
+              } catch (error) {
+                setActionError(error.message);
+              }
+            }}
+          >
+            Hủy mục
+          </button>
+        </div>
       </>}
     </div>)}</section>)}
   </div>;
 }
 
 export function LeadStageEditor({ customer, busy, onSave }) {
-  const [stage, setStage] = useState(leadStages.some((s) => s.id === customer.stageId) ? customer.stageId : ''); const [reason, setReason] = useState(''); const [error, setError] = useState('');
-  const lead = customer.lead;
-  async function save(value) { setError(''); try { await onSave(value, reason); } catch (failure) { setError(failure.message); } }
-  return <div className="sw-stage-editor"><p className="sw-secondary">{lead.stage_source === 'sales' ? 'Sales đã chọn' : ['ai', 'rules'].includes(lead.stage_source) ? 'Suy ra từ bằng chứng' : 'Chưa phân tích'} · {customer.stage}</p>
-    {lead.rationale && <p className="sw-secondary">Căn cứ: {lead.rationale}</p>}
-    {lead.evidence?.map((e, i) => <details key={i}><summary>Bằng chứng {i + 1}</summary><blockquote>{e.quote}</blockquote></details>)}
-    {lead.override?.reason && <p className="sw-secondary">Ghi chú: {lead.override.reason}</p>}
-    <form className="sw-task-form" onSubmit={(event) => { event.preventDefault(); void save(stage); }}>
-      <label>Giai đoạn bán hàng<select required value={stage} disabled={busy} onChange={(event) => setStage(event.target.value)}><option value="" disabled>Cần xác nhận giai đoạn</option>{leadStages.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
-      <label>Lý do / bằng chứng (bắt buộc khi đóng cơ hội)<textarea required={['won', 'lost'].includes(stage)} rows={2} maxLength={400} value={reason} disabled={busy} onChange={(event) => setReason(event.target.value)} /></label>
-      <p className="sw-secondary">AI không ghi đè giai đoạn sales chọn.</p>{error && <p className="sw-freshness" role="alert">{error}</p>}
-      <div className="sw-inline-actions">{lead.stage_source === 'sales' ? <button type="button" className="sw-text-button" disabled={busy} onClick={() => save(null)}>Dùng lại đề xuất AI</button> : <span />}<button type="submit" className="sw-primary-button" disabled={busy}>{busy ? 'Đang lưu…' : 'Lưu giai đoạn'}</button></div>
-    </form></div>;
+  const [stage, setStage] = useState(leadStages.some((s) => s.id === customer.stageId) ? customer.stageId : "");
+  const [reason, setReason] = useState("");
+  const [error, setError] = useState("");
+  const lead = customer.lead || {};
+
+  async function save(value) {
+    setError("");
+    try {
+      await onSave(value, reason);
+    } catch (failure) {
+      setError(failure.message);
+    }
+  }
+
+  const isSalesChosen = lead.stage_source === "sales";
+  const stageSourceText = isSalesChosen
+    ? "Sales đã chọn"
+    : ["ai", "rules"].includes(lead.stage_source)
+    ? "AI đề xuất"
+    : "Chưa phân tích";
+
+  return (
+    <div className="sw-stage-editor">
+      <div className="sw-stage-summary-card">
+        <div className="sw-stage-summary-head">
+          <span className={`sw-stage-source-badge ${isSalesChosen ? "is-sales" : "is-ai"}`}>
+            {stageSourceText}
+          </span>
+          <strong className="sw-stage-name">{customer.stage || "Chưa phân loại"}</strong>
+        </div>
+        {lead.rationale && (
+          <div className="sw-stage-info-row">
+            <span className="sw-stage-info-label">Căn cứ:</span>
+            <span className="sw-stage-info-val">{lead.rationale}</span>
+          </div>
+        )}
+        {lead.override?.reason && (
+          <div className="sw-stage-info-row">
+            <span className="sw-stage-info-label">Ghi chú:</span>
+            <span className="sw-stage-info-val">{lead.override.reason}</span>
+          </div>
+        )}
+        {Array.isArray(lead.evidence) && lead.evidence.length > 0 && (
+          <div className="sw-stage-evidence-list">
+            {lead.evidence.map((e, i) => (
+              <details key={i} className="sw-stage-evidence-item">
+                <summary>Bằng chứng {i + 1}</summary>
+                <blockquote>{e.quote}</blockquote>
+              </details>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <form
+        className="sw-stage-form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void save(stage);
+        }}
+      >
+        <div className="sw-form-group">
+          <label htmlFor="sw-stage-select" className="sw-form-label">
+            Giai đoạn bán hàng
+          </label>
+          <select
+            id="sw-stage-select"
+            className="sw-form-select"
+            required
+            value={stage}
+            disabled={busy}
+            onChange={(event) => setStage(event.target.value)}
+          >
+            <option value="" disabled>Chọn giai đoạn...</option>
+            {leadStages.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="sw-form-group">
+          <label htmlFor="sw-stage-reason" className="sw-form-label">
+            Lý do / bằng chứng {["won", "lost"].includes(stage) && <span className="sw-required">*</span>}
+          </label>
+          <textarea
+            id="sw-stage-reason"
+            className="sw-form-textarea"
+            required={["won", "lost"].includes(stage)}
+            rows={2}
+            maxLength={400}
+            placeholder="Nhập ghi chú hoặc lý do thay đổi..."
+            value={reason}
+            disabled={busy}
+            onChange={(event) => setReason(event.target.value)}
+          />
+        </div>
+
+        <p className="sw-stage-hint">
+          Hệ thống ưu tiên giai đoạn do Sales chỉ định và không ghi đè tự động.
+        </p>
+
+        {error && (
+          <p className="sw-stage-error" role="alert">
+            {error}
+          </p>
+        )}
+
+        <div className="sw-stage-footer-actions">
+          {isSalesChosen && (
+            <button
+              type="button"
+              className="sw-stage-revert-btn"
+              disabled={busy}
+              onClick={() => save(null)}
+            >
+              Dùng lại đề xuất AI
+            </button>
+          )}
+          <button
+            type="submit"
+            className="sw-stage-submit-btn"
+            disabled={busy || !stage}
+          >
+            {busy ? "Đang lưu…" : "Lưu giai đoạn"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 }
 
 export function CustomerToolsDrawer({ onOpenDocument, type, customer, onClose, onSourceClick, onToggleTask, onCreateTask, taskBusy, knowledge, onSearch, onLoadHistory, onQueryChange, ownerId, onEditTask, onConfirmFact, creatingTask, onCancelCreate, onCreate, highlightedTaskId, onAnalyze, analyzing, analysisChanges, onShowTool, suggestionState, onDismissSuggestions, onSaveSuggestedBatch }) {

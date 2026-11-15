@@ -57,42 +57,64 @@
   color: var(--color-text-secondary);
 }
 
+.kb-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 .kb-search {
   width: 320px;
   max-width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 38px;
-  padding: 8px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-white);
-  color: var(--color-text-secondary);
-  transition: border-color 0.15s ease;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid #E2E8F0;
+  border-radius: 9999px;
+  background: #F8FAFC;
+  color: #64748B;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .kb-search:focus-within {
-  border-color: var(--color-aqua-primary);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+  background: #FFFFFF;
+  border-color: #0F172A;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+  color: #0F172A;
 }
 
 .kb-search svg {
   flex: none;
+  color: #64748B;
+  transition: color 0.15s ease;
+}
+
+.kb-search:focus-within svg {
+  color: #0F172A;
 }
 
 .kb-search input {
   border: 0;
   min-width: 0;
   width: 100%;
-  background: none;
-  color: var(--color-text-primary);
-  font-size: 13px;
+  background: transparent;
+  color: #0F172A;
+  font-size: 13.5px;
+  font-weight: 450;
   outline: 0;
 }
 
 .kb-search input::placeholder {
-  color: var(--color-text-muted);
+  color: #94A3B8;
 }
 
 /* CATEGORY TABS */
@@ -116,7 +138,7 @@
   border: 1.5px solid transparent;
   border-radius: 8px;
   background: transparent;
-  color: #6E6E73;
+  color: #64748B;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
@@ -124,17 +146,17 @@
 }
 
 .kb-tab:hover:not([aria-pressed='true']) {
-  color: #1D1D1F;
-  background: rgba(29, 29, 31, 0.08);
-  border-color: rgba(29, 29, 31, 0.08);
+  color: #0F172A;
+  background: #F8FAFC;
+  border-color: #CBD5E1;
 }
 
 .kb-tab[aria-pressed='true'] {
-  background: rgba(29, 29, 31, 0.08);
-  border: 1.5px solid #1D1D1F;
-  color: #1D1D1F;
+  background: #F1F5F9;
+  border: 1px solid #94A3B8;
+  color: #0F172A;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .kb-tab-count {
@@ -147,8 +169,8 @@
 }
 
 .kb-tab[aria-pressed='true'] .kb-tab-count {
-  background: #1D1D1F;
-  color: #FFFFFF !important;
+  background: #CBD5E1;
+  color: #0F172A !important;
 }
 
 /* FRESH UPDATES STRIP */
@@ -194,7 +216,7 @@
   text-align: center;
   padding: 4px;
   border-radius: 6px;
-  background: #1D1D1F;
+  background: #80E5E5; color: #172B3A;
   color: #FFFFFF !important;
   line-height: 1.1;
 }
@@ -297,7 +319,7 @@
 
 .kb-pill--new {
   color: #FFFFFF !important;
-  background: #1D1D1F;
+  background: #80E5E5; color: #172B3A;
   border: 1px solid #1D1D1F;
   font-weight: 700;
 }
@@ -332,40 +354,38 @@
 
 .kb-button {
   min-height: 36px;
-  border: 1.5px solid #1D1D1F;
-  background: rgba(29, 29, 31, 0.08);
-  color: #1D1D1F;
+  border: 1px solid #E2E8F0;
+  background: #FFFFFF;
+  color: #475569;
   border-radius: 9999px;
   padding: 6px 14px;
   font-size: 12.5px;
   font-weight: 600;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 0 8px rgba(29, 29, 31, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   transition: all 0.15s ease;
 }
 
 .kb-button:hover {
-  background: rgba(29, 29, 31, 0.08);
-  border-color: #6E6E73;
-  color: #1D1D1F;
-  box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08);
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+  color: #0F172A;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 
 .kb-button--primary {
-  background: rgba(29, 29, 31, 0.08);
-  border: 1.5px solid #1D1D1F;
-  color: #1D1D1F;
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  color: #0F172A;
   font-weight: 700;
-  box-shadow: 0 0 12px rgba(29, 29, 31, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .kb-button--primary:hover {
-  background: rgba(29, 29, 31, 0.08);
-  border-color: #6E6E73;
-  color: #1D1D1F;
-  box-shadow: 0 2px 8px rgba(29, 29, 31, 0.08);
+  background: #E2E8F0;
+  border-color: #94A3B8;
+  color: #000000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   transform: translateY(-1px);
 }
 

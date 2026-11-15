@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, SendIcon, MicIcon, SpeakerIcon } from '../common/Icons';
-import { Video, VideoOff, ShieldCheck, Clock, X, Captions, CaptionsOff, MessageCircle, Phone } from 'lucide-react';
+import { Sparkles, Video, VideoOff, ShieldCheck, Clock, X, Captions, CaptionsOff, MessageCircle, Phone, Target, Award, Compass, CheckCircle2, MessageSquare } from 'lucide-react';
 import { getVehicleImage } from '../../data/vehicleData';
 import { FinishConfirmDialog } from './FinishConfirmDialog';
 import { practiceApi } from '../../api/practiceApi';
@@ -37,7 +37,10 @@ function makeBands(green) {
         if (distance >= inner && distance < radius) dots.push({ left: radius + x * step - size / 2, top: radius + y * step - size / 2 });
       }
     }
-    return { radius, size, color: `rgba(0, 0, 0,${alpha})`, dots };
+    const color = green
+      ? `rgba(16, 185, 129, ${(alpha * 0.45).toFixed(3)})`
+      : `rgba(148, 163, 184, ${(alpha * 0.22).toFixed(3)})`;
+    return { radius, size, color, dots };
   });
 }
 const BLUE_BANDS = makeBands(false);
@@ -58,25 +61,145 @@ function CustomerAvatar({ thinking = false, large = false }) {
 }
 function CustomerContext({ session, scenario }) {
   const channel = session?.sales_channel || scenario?.sales_channel;
-  const channels = { fanpage: 'Fanpage', showroom: 'Showroom', phone: 'điện thoại', hotline: 'Hotline', zalo: 'Zalo', online: 'trực tuyến' };
+  const channels = {
+    fanpage: 'Fanpage',
+    showroom: 'Showroom',
+    phone: 'Điện thoại',
+    hotline: 'Hotline',
+    zalo: 'Zalo',
+    online: 'Trực tuyến',
+  };
+  const channelLabel = channels[channel] || channel || 'Fanpage';
   const objective = session?.training_objective || scenario?.training_objective;
-  return <div className="pr-context-content">
-    {session?.visible_context && <section><h3>{channel ? `Khách nhắn qua ${channels[channel] || channel}` : 'Bối cảnh khách'}</h3><p>{session.visible_context}</p></section>}
-    {objective && <section><h3>Mục tiêu</h3><p>{objective}</p></section>}
-    <section><h3>Bạn được chấm theo 5 kỹ năng</h3><ol>{['Khám phá nhu cầu', 'Kiến thức sản phẩm', 'Xử lý phản đối', 'Chính xác chính sách', 'Chốt bước tiếp theo'].map((skill) => <li key={skill}>{skill}</li>)}</ol></section>
-  </div>;
+
+  const skills = [
+    { num: '01', title: 'Khám phá nhu cầu', desc: 'Lắng nghe & làm rõ bài toán di chuyển/chi phí' },
+    { num: '02', title: 'Kiến thức sản phẩm', desc: 'Tư vấn thông số xe, pin, trạm sạc & ADAS' },
+    { num: '03', title: 'Xử lý phản đối', desc: 'Giải tỏa lo lắng về độ bền pin & chi phí' },
+    { num: '04', title: 'Chính xác chính sách', desc: 'Ưu đãi lệ phí trước bạ, bảo hành 10 năm' },
+    { num: '05', title: 'Chốt bước tiếp theo', desc: 'Hẹn lái thử trực tiếp hoặc đặt cọc giữ xe' },
+  ];
+
+  return (
+    <div className="pr-context-wrap">
+      {/* 1. KHÁCH HÀNG & LỜI MỞ ĐẦU */}
+      {session?.visible_context && (
+        <section className="pr-context-card pr-card-customer">
+          <div className="pr-card-header">
+            <div className="pr-customer-pill-wrap">
+              <span className="pr-customer-avatar-tag">KH</span>
+              <span className="pr-customer-channel-badge">
+                <MessageCircle size={11} strokeWidth={2.4} />
+                <span>Khách qua {channelLabel}</span>
+              </span>
+            </div>
+            <span className="pr-online-dot-wrap" title="Khách đang kết nối">
+              <span className="pr-online-dot" />
+              <span>Kết nối</span>
+            </span>
+          </div>
+
+          <div className="pr-customer-quote-box">
+            <span className="pr-quote-mark">“</span>
+            <p className="pr-customer-quote-text">{session.visible_context}</p>
+          </div>
+        </section>
+      )}
+
+      {/* 2. MỤC TIÊU PHIÊN LUYỆN TẬP */}
+      {objective && (
+        <section className="pr-context-card pr-card-objective">
+          <div className="pr-card-header">
+            <div className="pr-card-header-left">
+              <span className="pr-card-icon-wrap is-objective">
+                <Target size={13} strokeWidth={2.4} />
+              </span>
+              <h3 className="pr-card-title">Mục tiêu tư vấn</h3>
+            </div>
+            <span className="pr-target-tag">Trọng tâm</span>
+          </div>
+          <p className="pr-objective-text">{objective}</p>
+        </section>
+      )}
+
+      {/* 3. 5 TIÊU CHÍ CHẤM ĐIỂM AI */}
+      <section className="pr-context-card pr-card-skills">
+        <div className="pr-card-header">
+          <div className="pr-card-header-left">
+            <span className="pr-card-icon-wrap is-skills">
+              <Award size={13} strokeWidth={2.4} />
+            </span>
+            <h3 className="pr-card-title">5 kỹ năng chấm điểm</h3>
+          </div>
+          <span className="pr-criteria-tag">AI Evaluator</span>
+        </div>
+
+        <div className="pr-skills-list">
+          {skills.map((skill) => (
+            <div className="pr-skill-row" key={skill.num}>
+              <span className="pr-skill-num">{skill.num}</span>
+              <div className="pr-skill-info">
+                <strong className="pr-skill-name">{skill.title}</strong>
+                <span className="pr-skill-desc">{skill.desc}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. MẸO TƯ VẤN (COACH HINT) */}
+      <div className="pr-context-tip-card">
+        <Sparkles size={14} className="pr-tip-icon" />
+        <div className="pr-tip-text">
+          <strong>Mẹo:</strong> Hãy lắng nghe và đặt câu hỏi mở trước khi tư vấn giá lăn bánh & pin.
+        </div>
+      </div>
+    </div>
+  );
 }
 function Transcript({ messages, waiting, listRef, playCustomer, speakingId }) {
   const origin = Date.parse(messages[0]?.timestamp);
-  return <ol className="pr-transcript" role="log" aria-label="Hội thoại" ref={listRef}>
-    {!messages.length && <li>Bạn là tư vấn viên — hãy mở lời chào khách trước.</li>}
-    {messages.map((message, i) => <li key={message.message_id || i} className={message.role === 'advisor' ? 'pr-transcript-advisor' : ''}>
-      <strong>{message.role === 'advisor' ? 'Bạn' : 'Khách'}{message.timestamp && Number.isFinite(origin) && ` · ${clock(Math.max(0, Math.floor((Date.parse(message.timestamp) - origin) / 1000)))}`}</strong>
-      <p>{message.content}</p>
-      {message.role === 'customer' && <button className="pr-replay" onClick={() => playCustomer(message)} disabled={speakingId === message.message_id} aria-label="Phát giọng khách"><SpeakerIcon /></button>}
-    </li>)}
-    {waiting && <li role="status">Khách đang suy nghĩ…</li>}
-  </ol>;
+  return (
+    <ol className="pr-transcript" role="log" aria-label="Hội thoại" ref={listRef}>
+      {!messages.length && (
+        <li className="pr-transcript-empty">
+          <Sparkles size={16} />
+          <p>Bạn là tư vấn viên — hãy mở lời chào khách trước bằng cách bấm giữ nút nói bên dưới.</p>
+        </li>
+      )}
+      {messages.map((message, i) => (
+        <li key={message.message_id || i} className={`pr-transcript-item ${message.role === 'advisor' ? 'pr-transcript-advisor' : ''}`}>
+          <div className="pr-transcript-meta">
+            <span className="pr-transcript-role-tag">{message.role === 'advisor' ? 'Tư vấn viên' : 'Khách hàng'}</span>
+            {message.timestamp && Number.isFinite(origin) && (
+              <span className="pr-transcript-time">
+                {clock(Math.max(0, Math.floor((Date.parse(message.timestamp) - origin) / 1000)))}
+              </span>
+            )}
+          </div>
+          <div className="pr-transcript-bubble">
+            <p>{message.content}</p>
+            {message.role === 'customer' && (
+              <button
+                className="pr-replay"
+                onClick={() => playCustomer(message)}
+                disabled={speakingId === message.message_id}
+                aria-label="Phát giọng khách"
+              >
+                <SpeakerIcon />
+              </button>
+            )}
+          </div>
+        </li>
+      ))}
+      {waiting && (
+        <li className="pr-transcript-waiting" role="status">
+          <span className="pr-typing"><i /><i /><i /></span>
+          <span>Khách đang suy nghĩ…</span>
+        </li>
+      )}
+    </ol>
+  );
 }
 
 export function PracticeRoom({
@@ -90,6 +213,7 @@ export function PracticeRoom({
   const [messages, setMessages] = useState(session?.messages || []);
 
   const [inputMessage, setInputMessage] = useState('');
+  const [voicePanelTab, setVoicePanelTab] = useState('context');
   const [loading, setLoading] = useState(false);
   const [turnCount, setTurnCount] = useState(session?.turn_count || 0);
   const [stage, setStage] = useState(session?.conversation_stage || 'opening');
@@ -569,9 +693,52 @@ export function PracticeRoom({
       {terminationStatus !== 'active' && <p className={`pr-termination ${terminationStatus === 'advisor_misconduct' ? 'pr-misconduct' : ''}`} role="status">{terminationStatus === 'advisor_misconduct' ? 'Phiên luyện tập đã dừng do ngôn từ không phù hợp.' : 'Cuộc trò chuyện đã kết thúc. Hãy xem đánh giá.'}</p>}
       <div className="pr-body">
         {mode === 'text' ? <>
-          <aside className="pr-context" aria-label="Bối cảnh khách"><h2>Bối cảnh khách</h2>{context}</aside>
+          <aside className="pr-context" aria-label="Bối cảnh khách">
+            <div className="pr-context-top-title">
+              <div className="pr-context-title-group">
+                <Compass size={16} strokeWidth={2.2} />
+                <h2>Bối cảnh tình huống</h2>
+              </div>
+              <span className="pr-context-role-badge">Tư vấn 1:1</span>
+            </div>
+            {context}
+          </aside>
           <div className="pr-chat"><ol className="pr-messages" role="log" aria-label="Hội thoại" ref={chatListRef}>
-            {!messages.length && <li className="pr-empty" role="status">Bạn là tư vấn viên.<br />Hãy mở lời chào khách trước.</li>}
+            {!messages.length && (
+              <li className="pr-empty-coach" role="status">
+                <div className="pr-coach-badge">
+                  <Sparkles size={16} />
+                  <span>Sẵn sàng phiên luyện tập</span>
+                </div>
+                <h3 className="pr-coach-title">Bạn là tư vấn viên — Hãy mở lời chào khách trước</h3>
+                <p className="pr-coach-desc">Chủ động tìm hiểu nhu cầu, tư vấn phiên bản và chính sách pin phù hợp với bối cảnh của khách hàng.</p>
+                <div className="pr-coach-suggestions">
+                  <span className="pr-coach-label">Gợi ý mở đầu nhanh:</span>
+                  <button
+                    type="button"
+                    className="pr-suggestion-chip"
+                    onClick={() => {
+                      const text = "Dạ em chào anh/chị, em là tư vấn viên VinFast. Em có thể hỗ trợ anh/chị tìm hiểu thông tin gì về xe hôm nay ạ?";
+                      setInputMessage(text);
+                      inputRef.current?.focus();
+                    }}
+                  >
+                    “Dạ em chào anh/chị, em là tư vấn viên VinFast. Em có thể hỗ trợ thông tin gì về xe hôm nay ạ?”
+                  </button>
+                  <button
+                    type="button"
+                    className="pr-suggestion-chip"
+                    onClick={() => {
+                      const text = "Chào anh/chị! Em thấy mình đang tìm hiểu xe điện VinFast, anh/chị đang cân nhắc xe cho nhu cầu gia đình hay công việc ạ?";
+                      setInputMessage(text);
+                      inputRef.current?.focus();
+                    }}
+                  >
+                    “Chào anh/chị! Không biết mình đang cân nhắc xe cho gia đình hay công việc ạ?”
+                  </button>
+                </div>
+              </li>
+            )}
             {messages.map((message, i) => <li key={message.message_id || i} className={`pr-message ${message.role === 'advisor' ? 'pr-advisor' : ''}`}>
               <span className="pr-message-avatar" aria-hidden="true">{message.role === 'advisor' ? 'TV' : 'KH'}</span><div className="pr-message-main"><div className="pr-message-meta"><strong>{message.role === 'advisor' ? 'Bạn' : 'Khách'}</strong>{message.timestamp && <><span>·</span><time dateTime={message.timestamp}>{new Date(message.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</time></>}</div><div className="pr-bubble"><p>{message.content}</p>{message.role === 'customer' && <button className="pr-replay" onClick={() => playCustomer(message)} disabled={speakingId === message.message_id} aria-label="Phát giọng khách"><SpeakerIcon /></button>}</div>{message.role === 'advisor' && i === messages.length - 1 && <span className="pr-receipt">{waiting ? 'Đã xem' : 'Đã gửi'}</span>}</div>
             </li>)}
@@ -596,7 +763,52 @@ export function PracticeRoom({
             </>}
             {toast}
           </div>
-          {!focusMirror && <details className="pr-transcript-panel" open={!phone}><summary>Hội thoại ({messages.length})</summary><details className="pr-voice-context"><summary>Bối cảnh khách và mục tiêu</summary>{context}</details><h2>{mirrorOn ? 'Toàn bộ hội thoại' : 'Hội thoại'}</h2>{transcript}{!autoSendPreference && composer}</details>}
+          {!focusMirror && (
+            <aside className="pr-voice-sidebar" aria-label="Bảng thông tin cuộc gọi">
+              {/* TAB HEADER SWITCHER */}
+              <div className="pr-voice-tab-header">
+                <div className="pr-voice-segmented-tabs" role="tablist" aria-label="Chuyển chế độ xem">
+                  <button
+                    type="button"
+                    className={`pr-voice-tab-btn ${voicePanelTab === 'context' ? 'is-active' : ''}`}
+                    onClick={() => setVoicePanelTab('context')}
+                    aria-selected={voicePanelTab === 'context'}
+                  >
+                    <Compass size={14} />
+                    <span>Bối cảnh & Mục tiêu</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`pr-voice-tab-btn ${voicePanelTab === 'transcript' ? 'is-active' : ''}`}
+                    onClick={() => setVoicePanelTab('transcript')}
+                    aria-selected={voicePanelTab === 'transcript'}
+                  >
+                    <MessageSquare size={14} />
+                    <span>Ghi chép hội thoại</span>
+                    {messages.length > 0 && <span className="pr-tab-count">{messages.length}</span>}
+                  </button>
+                </div>
+              </div>
+
+              {/* CONTENT AREA */}
+              <div className="pr-voice-sidebar-content">
+                {voicePanelTab === 'context' ? (
+                  <div className="pr-voice-context-scroll">
+                    {context}
+                  </div>
+                ) : (
+                  <div className="pr-voice-transcript-wrap">
+                    <div className="pr-voice-transcript-head">
+                      <h3>{mirrorOn ? 'Toàn bộ hội thoại' : 'Bản ghi lời thoại'}</h3>
+                      <span className="pr-voice-live-badge">Trực tiếp</span>
+                    </div>
+                    {transcript}
+                    {!autoSendPreference && composer}
+                  </div>
+                )}
+              </div>
+            </aside>
+          )}
         </>}
       </div>
       {(slow && waiting || pendingReply) && <div className="pr-slow" role="status"><span>{slow ? 'Khách đang cân nhắc lâu hơn thường lệ.' : 'Tin nhắn đã lưu. Khách hàng chưa phản hồi.'}</span>{pendingReply && <button onClick={handleRetryReply} disabled={loading || finishing || transcribing || recorder.recordingState !== 'idle'}>Gửi lại yêu cầu</button>}</div>}

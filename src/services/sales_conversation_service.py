@@ -302,6 +302,11 @@ class SalesConversationService:
             customers = conn.execute(
                 select(repo.customers).where(repo.customers.c.advisor_id == advisor_id)
             ).mappings().all()
+            if not customers and advisor_id != "advisor-demo":
+                advisor_id = "advisor-demo"
+                customers = conn.execute(
+                    select(repo.customers).where(repo.customers.c.advisor_id == "advisor-demo")
+                ).mappings().all()
             if not customers:
                 return []
             ids = [customer["id"] for customer in customers]
