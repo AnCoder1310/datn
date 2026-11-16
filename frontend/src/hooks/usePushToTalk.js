@@ -24,6 +24,7 @@ export function usePushToTalk(onRecorded) {
 
   const release = () => {
     clearTimeout(timerRef.current);
+    try { streamRef.current?._recognition?.stop?.(); } catch { /* ignore */ }
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
     recorderRef.current = null;
@@ -32,6 +33,7 @@ export function usePushToTalk(onRecorded) {
   const stop = (reason = 'release') => {
     if (reason === 'limit') stopReasonRef.current = 'limit';
     pendingStopRef.current = true;
+    try { streamRef.current?._recognition?.stop?.(); } catch { /* ignore */ }
     if (recorderRef.current?.state === 'recording') recorderRef.current.stop();
   };
 
@@ -61,6 +63,28 @@ export function usePushToTalk(onRecorded) {
       }
       stopReasonRef.current = 'release';
       streamRef.current = stream;
+
+      const SpeechRec = typeof window !== 'undefined' ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null;
+      if (SpeechRec) {
+        try {
+          const rec = new SpeechRec();
+          rec.lang = 'vi-VN';
+          rec.continuous = true;
+          rec.interimResults = true;
+          rec.maxAlternatives = 1;
+          rec.onresult = (evt) => {
+            let fullText = '';
+            for (let i = 0; i < evt.results.length; i++) {
+              fullText += (evt.results[i][0]?.transcript || '') + ' ';
+            }
+            if (stream) stream._transcript = fullText.trim();
+          };
+          rec.onerror = () => {};
+          rec.start();
+          stream._recognition = rec;
+        } catch { /* ignore */ }
+      }
+
       const mimeType = FORMATS.find((format) => MediaRecorder.isTypeSupported?.(format));
       const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
       if (!['audio/webm', 'audio/mp4', 'audio/ogg', 'audio/wav'].includes(recorder.mimeType.split(';')[0])) {
@@ -80,11 +104,12 @@ export function usePushToTalk(onRecorded) {
       recorder.onstop = () => {
         const durationSeconds = (Date.now() - startedAtRef.current) / 1000;
         const blob = new Blob(chunksRef.current, { type: recorder.mimeType });
+        const localTranscript = streamRef.current?._transcript || '';
         release();
         if (!mountedRef.current || failedRef.current) return;
         setRecordingState('idle');
-        if (blob.size && durationSeconds >= 0.1) {
-          onRecordedRef.current(blob, Math.min(durationSeconds, MAX_RECORDING_MS / 1000), stopReasonRef.current);
+        if ((blob.size && durationSeconds >= 0.1) || localTranscript) {
+          onRecordedRef.current(blob, Math.min(durationSeconds, MAX_RECORDING_MS / 1000), stopReasonRef.current, localTranscript);
         } else {
           setRecordingError('Không có âm thanh. Giữ nút nói lâu hơn rồi thử lại.');
         }
@@ -109,6 +134,7 @@ export function usePushToTalk(onRecorded) {
       mountedRef.current = false;
       clearTimeout(timerRef.current);
       if (recorderRef.current?.state === 'recording') recorderRef.current.stop();
+      try { streamRef.current?._recognition?.stop?.(); } catch { /* ignore */ }
       streamRef.current?.getTracks().forEach((track) => track.stop());
     };
   }, []);

@@ -285,27 +285,41 @@ export function PracticeRoom({
 
   useEffect(() => { modeRef.current = mode; }, [mode]);
 
-  const onRecorded = async (blob, durationSeconds, reason) => {
+  const onRecorded = async (blob, durationSeconds, reason, localTranscript = '') => {
     if (reason === 'limit') setLimitToast(Date.now());
-    if (blob.size > 4_000_000) {
+    if (blob.size > 4_000_000 && !localTranscript) {
       showError({ code: 'voice_invalid_audio' });
       return;
     }
     setVoiceHint('');
     setTranscribing(true);
     try {
-      const result = await practiceApi.transcribeVoice(session.session_id, blob, durationSeconds);
-      if (!result.transcript.trim()) {
+      let transcriptText = '';
+      try {
+        const result = await practiceApi.transcribeVoice(session.session_id, blob, durationSeconds);
+        if (result?.transcript?.trim()) {
+          transcriptText = result.transcript.trim();
+        }
+      } catch (requestError) {
+        if (!localTranscript?.trim()) {
+          showError(requestError);
+          return;
+        }
+      }
+
+      if (!transcriptText && localTranscript?.trim()) {
+        transcriptText = localTranscript.trim();
+      }
+
+      if (!transcriptText) {
         showError({ code: 'voice_invalid_audio' });
         return;
       }
-      setInputMessage(result.transcript);
+
+      setInputMessage(transcriptText);
       if (autoSendPreference) {
-        setTranscribing(false);
-        await sendHandlerRef.current?.(result.transcript, true);
+        await sendHandlerRef.current?.(transcriptText, true);
       }
-    } catch (requestError) {
-      showError(requestError);
     } finally {
       setTranscribing(false);
     }
@@ -316,18 +330,33 @@ export function PracticeRoom({
   const playCustomer = async (message, automatic = false) => {
     if (!message || message.role !== 'customer') return;
     if (automatic && modeRef.current !== 'voice') return;
-    if (!voiceGender) {
-      showError({ code: 'voice_not_configured' });
-      return;
-    }
-    const cacheKey = `${message.message_id}:${voiceGender}`;
+    const gender = voiceGender || 'female';
+    const cacheKey = `${message.message_id}:${gender}`;
     setSpeakingId(message.message_id);
     try {
       let url = audioUrlsRef.current.get(cacheKey);
       if (!url) {
-        const blob = await practiceApi.customerSpeech(session.session_id, message.message_id, voiceGender);
-        url = URL.createObjectURL(blob);
-        audioUrlsRef.current.set(cacheKey, url);
+        try {
+          const blob = await practiceApi.customerSpeech(session.session_id, message.message_id, gender);
+          url = URL.createObjectURL(blob);
+          audioUrlsRef.current.set(cacheKey, url);
+        } catch (apiErr) {
+          // Khi backend chưa cấu hình Google TTS, phát giọng tiếng Việt tự động bằng Web SpeechSynthesis
+          if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(message.content);
+            utterance.lang = 'vi-VN';
+            utterance.rate = 1.05;
+            const voices = window.speechSynthesis.getVoices();
+            const viVoice = voices.find((v) => v.lang.startsWith('vi'));
+            if (viVoice) utterance.voice = viVoice;
+            utterance.onend = () => setSpeakingId(null);
+            utterance.onerror = () => setSpeakingId(null);
+            window.speechSynthesis.speak(utterance);
+            return;
+          }
+          throw apiErr;
+        }
       }
       if (automatic && modeRef.current !== 'voice') {
         setSpeakingId(null);
