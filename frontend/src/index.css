@@ -1638,6 +1638,35 @@ a {
 }
 
 /* USER PROFILE & ACTIONS */
+
+.header-portal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.header-portal-btn:hover {
+  background: #DCFCE7;
+  border-color: #86EFAC;
+  color: #14532D;
+}
+
+.header-portal-btn.is-active {
+  background: #166534;
+  border-color: #166534;
+  color: #FFFFFF;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -3559,7 +3588,36 @@ a {
   .top-header-inner { padding-left: 16px; padding-right: 16px; }
   .brand-title { font-size: 0.84rem; }
   .brand-subtitle { display: none; }
-  .header-actions { gap: 4px; }
+  
+.header-portal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.header-portal-btn:hover {
+  background: #DCFCE7;
+  border-color: #86EFAC;
+  color: #14532D;
+}
+
+.header-portal-btn.is-active {
+  background: #166534;
+  border-color: #166534;
+  color: #FFFFFF;
+}
+
+.header-actions { gap: 4px; }
   .user-details { display: none; }
   .header-logout-btn { font-size: 0; }
   .header-logout-btn svg { width: 18px; height: 18px; }

@@ -115,17 +115,17 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
     requestAnimationFrame(() => composerRef.current?.focus());
   }
 
-  async function sendMessage() {
+  async function sendMessage(role = 'sales') {
     const id = selectedId;
     const content = (drafts[id] || '').trim();
     if (!content || workspace.sending || !customer?.loaded) return;
     try {
-      const message = await workspace.sendMessage(id, content);
+      const message = await workspace.sendMessage(id, content, role);
       if (message) {
         storage.update('drafts', id, (prev) => (prev?.trim() === content ? '' : prev));
         if (selectedRef.current === id) {
           setHighlight(null);
-          setToast('Đã gửi tin nhắn.');
+          setToast(role === 'customer' ? 'Đã gửi tin nhắn giả lập từ khách hàng.' : 'Đã gửi tin nhắn tư vấn.');
         }
       }
     } catch (error) {
@@ -280,7 +280,7 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
               highlight={highlight}
               composerValue={drafts[selectedId] || ''}
               onComposerChange={(value) => storage.update('drafts', selectedId, value)}
-              onSend={sendMessage}
+              onSend={(role) => sendMessage(role)}
               sending={workspace.sending}
               loading={workspace.loadingDetail || !customer.loaded}
               error={workspace.detailError}

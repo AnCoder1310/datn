@@ -212,11 +212,12 @@ function MessageComposer({
   onCreateTask,
 }) {
   const [dismissedDraftId, setDismissedDraftId] = useState(null);
+  const [senderRole, setSenderRole] = useState('sales'); // 'sales' | 'customer'
 
   function submit(event) {
     event?.preventDefault();
     if (!value.trim() || sending || disabled) return;
-    onSend();
+    onSend(senderRole);
   }
 
   return (
@@ -236,11 +237,37 @@ function MessageComposer({
         />
       )}
 
-      <div className="sw-composer-box">
+      {/* SENDER ROLE TOGGLE (SALES VS CUSTOMER SIMULATOR) */}
+      <div className="sw-role-toggle-bar">
+        <span className="sw-role-label">Gửi với tư cách:</span>
+        <div className="sw-role-pill-group">
+          <button
+            type="button"
+            className={`sw-role-pill ${senderRole === 'sales' ? 'is-active' : ''}`}
+            onClick={() => setSenderRole('sales')}
+          >
+            Tư vấn viên (Sales)
+          </button>
+          <button
+            type="button"
+            className={`sw-role-pill is-customer-pill ${senderRole === 'customer' ? 'is-active' : ''}`}
+            onClick={() => setSenderRole('customer')}
+            title="Đóng vai khách hàng đặt câu hỏi để kiểm tra AI bóc tách việc và gợi ý trả lời"
+          >
+            Khách hàng (Giả lập)
+          </button>
+        </div>
+      </div>
+
+      <div className={`sw-composer-box ${senderRole === 'customer' ? 'is-customer-mode' : ''}`}>
         <textarea
           ref={inputRef}
           aria-label={`Tin nhắn cho ${customer.name}`}
-          placeholder="Nhập nội dung tư vấn khách hàng... (Enter để gửi, Shift+Enter xuống dòng)"
+          placeholder={
+            senderRole === 'customer'
+              ? "Nhập câu hỏi/tin nhắn đóng vai khách (VD: 'Mai 14h em qua showroom lái thử VF 7 nhé', 'Chung cư chưa có chỗ sạc thì sao em?')..."
+              : "Nhập nội dung tư vấn khách hàng... (Enter để gửi, Shift+Enter xuống dòng)"
+          }
           rows={1}
           maxLength={6000}
           disabled={disabled}
@@ -506,7 +533,7 @@ export function ConversationWorkspace({
           <MessageComposer
             value={composerValue}
             onChange={onComposerChange}
-            onSend={onSend}
+            onSend={(role) => onSend(role)}
             inputRef={composerRef}
             customer={customer}
             sending={sending}

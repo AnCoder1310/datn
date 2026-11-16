@@ -169,14 +169,14 @@ export function useCustomerWorkspace(currentUser, active = true) {
     setDetails((all) => ({ ...all, [id]: next }));
   }
 
-  async function sendMessage(id, content) {
+  async function sendMessage(id, content, senderRole = 'sales') {
     if (mutations.current.has(`send:${id}`)) return null;
     mutations.current.add(`send:${id}`);
     setSendingIds((previous) => ({ ...previous, [id]: true }));
     try {
-      const message = await salesCopilotApi.sendMessage(id, content);
+      const message = await salesCopilotApi.sendMessage(id, content, senderRole);
       updateDetail(id, (detail) => ({ ...detail, message_total: detail.message_total + (detail.messages.some((item) => item.id === message.id) ? 0 : 1), last_message_seq: message.seq, messages: mergeMessages(detail.messages, [message]) }));
-      setItems((previous) => previous.map((item) => item.conversation_id === id ? { ...item, last_message: message.content, last_message_at: message.sent_at, last_sender_role: 'sales' } : item));
+      setItems((previous) => previous.map((item) => item.conversation_id === id ? { ...item, last_message: message.content, last_message_at: message.sent_at, last_sender_role: senderRole } : item));
       return message;
     } finally { mutations.current.delete(`send:${id}`); setSendingIds((previous) => ({ ...previous, [id]: false })); }
   }

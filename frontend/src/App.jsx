@@ -9,6 +9,7 @@ import { LoginView } from './components/auth/LoginView';
 import { ChangePasswordView } from './components/auth/ChangePasswordView';
 import { ManagerReviewView } from './components/manager/ManagerReviewView';
 import { ProfileView } from './components/profile/ProfileView';
+import { PublicTestDrivePortal } from './components/public/PublicTestDrivePortal';
 
 import { authApi } from './api/authApi';
 import { practiceApi } from './api/practiceApi';
@@ -310,6 +311,16 @@ export function App() {
           <KnowledgeView
             sourceDocumentId={sourceDocumentId}
             sourceReference={sourceReference}
+          />
+        )}
+
+                {currentTab === 'portal' && (
+          <PublicTestDrivePortal
+            onBack={() => setCurrentTab('copilot')}
+            onOpenLeadInCrm={() => {
+              setCurrentTab('copilot');
+              setCopilotOpened(true);
+            }}
           />
         )}
 

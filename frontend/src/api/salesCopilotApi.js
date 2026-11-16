@@ -41,10 +41,17 @@ export const salesCopilotApi = {
     return mutate(`/sales-copilot/tasks/${taskId}`, { method: 'PATCH', body: JSON.stringify(changes) });
   },
 
-  async sendMessage(conversationId, content) {
+  async sendMessage(conversationId, content, sender_role = 'sales') {
     return mutate(`/sales-copilot/conversations/${conversationId}/messages`, {
       method: 'POST',
-      body: JSON.stringify({ content, sender_role: 'sales' }),
+      body: JSON.stringify({ content, sender_role }),
+    });
+  },
+
+  async submitPublicTestDrive(data) {
+    return mutate('/sales-copilot/public/test-drive', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
   },
 

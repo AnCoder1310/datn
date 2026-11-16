@@ -1,0 +1,476 @@
+/* ==============================================================================
+   VINFAST PUBLIC TEST DRIVE BOOKING PORTAL STYLES
+   Minimalist SaaS / Apple-inspired Automotive Aesthetic
+   ============================================================================== */
+
+.vf-portal-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #F8FAFC;
+  color: #0F172A;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* NAVBAR */
+.vf-portal-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #E2E8F0;
+  padding: 12px 24px;
+}
+
+.vf-portal-nav-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vf-portal-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.vf-portal-logo {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+
+.vf-portal-brand strong {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #0F172A;
+}
+
+.vf-portal-brand small {
+  display: block;
+  font-size: 11.5px;
+  color: #64748B;
+  font-weight: 400;
+}
+
+.vf-portal-btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid #CBD5E1;
+  background: #FFFFFF;
+  color: #334155;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.vf-portal-btn-back:hover {
+  background: #F1F5F9;
+  color: #0F172A;
+  border-color: #94A3B8;
+}
+
+/* CONTAINER */
+.vf-portal-container {
+  flex: 1;
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+}
+
+/* GRID */
+.vf-portal-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* VEHICLE SHOWCASE CARD */
+.vf-vehicle-selector-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+}
+
+.vf-vehicle-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #F1F5F9;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.vf-vehicle-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+
+.vf-vehicle-price-tag {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0284C7;
+  margin-bottom: 20px;
+}
+
+.vf-portal-img-stage {
+  width: 100%;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%);
+  border-radius: 14px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  border: 1px solid #F1F5F9;
+}
+
+.vf-portal-car-img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s ease;
+}
+
+.vf-portal-car-img:hover {
+  transform: scale(1.03);
+}
+
+/* SPECS ROW */
+.vf-portal-specs-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+}
+
+.vf-spec-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #0284C7;
+}
+
+.vf-spec-item small {
+  display: block;
+  font-size: 10.5px;
+  color: #64748B;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.vf-spec-item strong {
+  display: block;
+  font-size: 13px;
+  color: #0F172A;
+  font-weight: 700;
+}
+
+/* MODEL CHIPS */
+.vf-model-chips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vf-choose-lbl {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.vf-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vf-portal-model-pill {
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid #E2E8F0;
+  background: #FFFFFF;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.vf-portal-model-pill:hover {
+  border-color: #94A3B8;
+  background: #F8FAFC;
+}
+
+.vf-portal-model-pill.is-active {
+  background: #0F172A;
+  color: #FFFFFF;
+  border-color: #0F172A;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+}
+
+/* FORM CARD */
+.vf-form-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+}
+
+.vf-form-card-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 4px;
+}
+
+.vf-form-card-header p {
+  font-size: 13px;
+  color: #64748B;
+  margin: 0 0 22px;
+}
+
+.vf-portal-error-banner {
+  padding: 10px 14px;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+  font-size: 12.5px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.vf-booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vf-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vf-form-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.vf-req {
+  color: #EF4444;
+}
+
+.vf-form-group input,
+.vf-form-group select,
+.vf-form-group textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  border-radius: 10px;
+  border: 1px solid #CBD5E1;
+  background: #FFFFFF;
+  color: #0F172A;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.vf-form-group input:focus,
+.vf-form-group select:focus,
+.vf-form-group textarea:focus {
+  border-color: #0284C7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.vf-portal-submit-btn {
+  margin-top: 8px;
+  padding: 13px 20px;
+  background: #0284C7;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+  transition: all 0.15s ease;
+}
+
+.vf-portal-submit-btn:hover:not(:disabled) {
+  background: #0369A1;
+  transform: translateY(-1px);
+}
+
+.vf-portal-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.vf-form-disclaimer {
+  font-size: 11.5px;
+  color: #94A3B8;
+  text-align: center;
+  margin: 6px 0 0;
+  line-height: 1.4;
+}
+
+/* SUCCESS CARD */
+.vf-portal-success-card {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+  padding: 36px 32px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.vf-success-icon-wrap {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #ECFDF5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+}
+
+.vf-success-icon {
+  color: #10B981;
+}
+
+.vf-portal-success-card h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 8px;
+}
+
+.vf-success-desc {
+  font-size: 13.5px;
+  color: #64748B;
+  line-height: 1.5;
+  margin: 0 0 24px;
+}
+
+.vf-success-summary-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  text-align: left;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vf-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.vf-summary-row span {
+  color: #64748B;
+}
+
+.vf-summary-row strong {
+  color: #0F172A;
+}
+
+.vf-accent-text {
+  color: #0284C7 !important;
+}
+
+.vf-success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vf-btn-view-crm {
+  padding: 12px 20px;
+  background: #0F172A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.vf-btn-view-crm:hover {
+  background: #1E293B;
+}
+
+.vf-btn-register-more {
+  padding: 10px 16px;
+  background: transparent;
+  color: #64748B;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.vf-btn-register-more:hover {
+  color: #0F172A;
+  background: #F1F5F9;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .vf-portal-grid {
+    grid-template-columns: 1fr;
+  }
+}

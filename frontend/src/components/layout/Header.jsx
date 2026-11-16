@@ -1,5 +1,5 @@
 import { BellIcon } from '../common/Icons';
-import { BotMessageSquare, GraduationCap, LibraryBig, UserCheck } from 'lucide-react';
+import { BotMessageSquare, GraduationCap, LibraryBig, UserCheck, Car } from 'lucide-react';
 import { AccountMenu } from './AccountMenu';
 
 export function Header({
@@ -52,6 +52,15 @@ export function Header({
 
         {/* HEADER ACTIONS */}
         <div className="header-actions">
+          <button
+            type="button"
+            className={"header-portal-btn" + (currentTab === "portal" ? " is-active" : "")}
+            onClick={() => onTabChange('portal')}
+            title="Mở Cổng đăng ký lái thử dành cho khách hàng ngoài"
+          >
+            <Car size={15} />
+            <span>Khách đặt lái thử</span>
+          </button>
 
 
           {hasNotifications && (

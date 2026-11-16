@@ -16,7 +16,9 @@ from starlette.concurrency import run_in_threadpool
 from src.api.copilot import current_copilot_user
 from src.models.auth import AuthenticatedUser
 from src.models.copilot import CopilotQueryRequest, QueryText
+from datetime import timedelta, timezone
 from src.models.sales_copilot import (
+    SenderRole,
     ChatMessageCreate,
     ChatMessageResponse,
     ConversationResponse,
@@ -315,9 +317,10 @@ async def send_sales_message(
     request: Request,
     user: AuthenticatedUser = Depends(get_current_user),
 ):
-    """Sales sends a new message to the conversation."""
+    """Sales or customer simulator appends a message to the conversation."""
     service: SalesConversationService = request.app.state.sales_conversation_service
-    return await run_in_threadpool(service.add_sales_message, conversation_id, payload.content)
+    role = payload.sender_role if payload.sender_role else SenderRole.SALES
+    return await run_in_threadpool(service.add_message, conversation_id, payload.content, role)
 
 
 @router.post("/conversations/{conversation_id}/analyze", dependencies=[Depends(require_conversation_access)])
@@ -505,3 +508,65 @@ async def seed_demo_data(
     service: SalesConversationService = request.app.state.sales_conversation_service
     res = await run_in_threadpool(service.seed_real_conversations_from_docx, "data/message_sales.docx", user.user_id)
     return {"status": "success", "seeded": res}
+
+
+class PublicTestDriveRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=120)
+    phone: str = Field(min_length=8, max_length=20)
+    model: str = Field(default="VF 7", max_length=50)
+    location: str | None = Field(default="Showroom VinFast", max_length=200)
+    notes: str | None = Field(default="", max_length=500)
+    preferred_date: str | None = None
+
+
+@router.post("/public/test-drive", status_code=201)
+async def submit_public_test_drive(payload: PublicTestDriveRequest, request: Request):
+    """Public customer portal for booking a test drive or submitting inquiry without logging in."""
+    repo = request.app.state.sales_copilot_repository
+    advisor_id = "advisor-demo"
+    customer_id = await run_in_threadpool(
+        repo.create_customer,
+        name=payload.name.strip(),
+        advisor_id=advisor_id,
+        phone=payload.phone.strip(),
+        location=payload.location.strip() if payload.location else "Hà Nội",
+    )
+    conv_id = await run_in_threadpool(repo.get_or_create_conversation, customer_id)
+    
+    snapshot = CustomerProfileSnapshot(
+        interested_models=[payload.model.strip()],
+        purchase_timeline="Trong tháng này",
+        charging_condition="home_ground",
+        usage_purpose="Gia đình và đi làm hàng ngày",
+    )
+    await run_in_threadpool(repo.save_facts_and_snapshot, customer_id, [], snapshot)
+    
+    content = f"Xin chào VinFast, tôi là {payload.name.strip()}. Tôi muốn đăng ký lái thử xe {payload.model.strip()} tại {payload.location or 'Showroom VinFast'}."
+    if payload.preferred_date:
+        content += f" Thời gian mong muốn: {payload.preferred_date}."
+    if payload.notes:
+        content += f" Nhu cầu thêm: {payload.notes.strip()}"
+        
+    await run_in_threadpool(repo.add_message, conv_id, SenderRole.CUSTOMER, content)
+    
+    task_payload = {
+        "title": f"Tư vấn & xếp lịch lái thử {payload.model.strip()} cho {payload.name.strip()}",
+        "item_type": "task",
+        "priority": "high",
+        "customer_id": customer_id,
+        "starts_at": datetime.now(timezone.utc),
+        "ends_at": datetime.now(timezone.utc) + timedelta(hours=4),
+        "location": payload.location or "Showroom VinFast",
+        "description": f"Khách đăng ký lái thử trực tuyến: {payload.phone.strip()}",
+    }
+    try:
+        await run_in_threadpool(SalesAgendaService(repo).create, advisor_id, task_payload)
+    except Exception:
+        pass
+
+    return {
+        "success": True,
+        "customer_id": customer_id,
+        "conversation_id": conv_id,
+        "message": "Đăng ký lái thử thành công! Chuyên viên VinFast sẽ liên hệ lại ngay trong ít phút.",
+    }

@@ -224,14 +224,20 @@ class SalesConversationService:
             lead_status=lead_status,
         )
 
-    def add_sales_message(self, conversation_id: str, content: str) -> ChatMessageResponse:
-        """Sales appends a manual message to the conversation."""
+    def add_message(
+        self, conversation_id: str, content: str, sender_role: SenderRole = SenderRole.SALES
+    ) -> ChatMessageResponse:
+        """Appends a message to the conversation with specified sender role."""
         return self.repository.add_message(
             conversation_id=conversation_id,
-            sender_role=SenderRole.SALES,
+            sender_role=sender_role,
             content=content.strip(),
             sent_at=datetime.now(UTC),
         )
+
+    def add_sales_message(self, conversation_id: str, content: str) -> ChatMessageResponse:
+        """Sales appends a manual message to the conversation."""
+        return self.add_message(conversation_id, content, SenderRole.SALES)
 
     def update_lead_stage(
         self, conversation_id: str, advisor_id: str, stage: LeadStage | None, reason: str = "",

@@ -3943,3 +3943,69 @@
     font-weight: 600;
   }
 }
+
+/* ==============================================================================
+   SENDER ROLE TOGGLE (SALES VS CUSTOMER SIMULATOR)
+   ============================================================================== */
+.sw-role-toggle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background: #F8FAFC;
+  border: 1px solid var(--crm-border, #E2E8F0);
+  border-radius: 10px 10px 0 0;
+  border-bottom: none;
+  font-size: 11.5px;
+}
+
+.sw-role-label {
+  color: #64748B;
+  font-weight: 500;
+}
+
+.sw-role-pill-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #EDF2F7;
+  padding: 2px 4px;
+  border-radius: 999px;
+}
+
+.sw-role-pill {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sw-role-pill:hover {
+  color: #0F172A;
+}
+
+.sw-role-pill.is-active {
+  background: #FFFFFF;
+  color: #0F172A;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.sw-role-pill.is-customer-pill.is-active {
+  background: #10B981;
+  color: #FFFFFF;
+}
+
+.sw-composer-box.is-customer-mode {
+  border-color: #10B981 !important;
+  background: #F0FDF4;
+}
+
+.sw-composer-box.is-customer-mode textarea {
+  color: #064E3B;
+}
