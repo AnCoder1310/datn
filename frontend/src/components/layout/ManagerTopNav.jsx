@@ -7,7 +7,6 @@ import {
   SparkleIcon,
   ShieldCheckIcon,
 } from "../common/Icons";
-import { BotMessageSquare } from "lucide-react";
 import { AccountMenu } from "./AccountMenu";
 
 export function ManagerTopNav({
@@ -16,7 +15,6 @@ export function ManagerTopNav({
   currentUser,
   pendingCount = 0,
   onLogout,
-  onSwitchRole,
 }) {
   const menuItems = [
     { id: "dashboard", label: "Tổng quan", icon: DashboardIcon },
@@ -69,24 +67,12 @@ export function ManagerTopNav({
         </nav>
 
         <div className="header-actions">
-          {onSwitchRole && (
-            <button
-              type="button"
-              className="quick-switch-role-pill"
-              onClick={() => onSwitchRole('advisor')}
-              title="Chuyển nhanh sang cổng Tư vấn viên"
-            >
-              <BotMessageSquare size={13} strokeWidth={2.2} />
-              <span>Chuyển sang Tư vấn viên</span>
-            </button>
-          )}
 
           <AccountMenu
             name={displayName}
             username={currentUser?.username}
             roleLabel="Quản lý"
             onLogout={onLogout}
-            onSwitchRole={onSwitchRole}
           />
         </div>
       </div>

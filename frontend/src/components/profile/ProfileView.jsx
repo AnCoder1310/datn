@@ -137,7 +137,6 @@ export function ProfileView({
   onOpenRoleplay,
   onOpenCopilot: _onOpenCopilot,
   onLogout: _onLogout,
-  onSwitchRole,
 }) {
   const [profile, setProfile] = useState(() => {
     try {
@@ -343,18 +342,6 @@ export function ProfileView({
               <KeyRound size={14} />
               <span>Đổi mật khẩu</span>
             </button>
-
-            {onSwitchRole && (
-              <button
-                type="button"
-                className="vf-btn-hero is-outline"
-                onClick={() => onSwitchRole('manager')}
-                title="Đổi cổng làm việc"
-              >
-                <Users size={14} />
-                <span>Cổng Quản lý</span>
-              </button>
-            )}
           </div>
         </div>
       </section>

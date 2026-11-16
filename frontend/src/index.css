@@ -1685,27 +1685,7 @@ a {
   padding: 0 4px;
 }
 
-.quick-switch-role-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  background: #FFFFFF;
-  border: 1px solid #E8E8ED;
-  color: #1D1D1F;
-  font-size: 12.5px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-}
 
-.quick-switch-role-pill:hover {
-  background: #F5F5F7;
-  border-color: #E8E8ED;
-  color: #1D1D1F;
-}
 
 .header-logout-btn {
   display: flex;

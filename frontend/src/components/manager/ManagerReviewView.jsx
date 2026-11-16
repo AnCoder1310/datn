@@ -83,7 +83,7 @@ function HistoryTable({ history, advisorNames, scenarioNames, onOpenReview }) {
   );
 }
 
-export function ManagerReviewView({ currentUser, onLogout, onSwitchRole }) {
+export function ManagerReviewView({ currentUser, onLogout }) {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [selected, setSelected] = useState(null);
   const [actionError, setActionError] = useState("");
@@ -143,7 +143,6 @@ export function ManagerReviewView({ currentUser, onLogout, onSwitchRole }) {
         currentUser={currentUser}
         pendingCount={queue.length}
         onLogout={onLogout}
-        onSwitchRole={onSwitchRole}
       />
       <main className="manager-app-content">
         {actionError && (

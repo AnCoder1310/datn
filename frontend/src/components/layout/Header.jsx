@@ -1,5 +1,5 @@
 import { BellIcon } from '../common/Icons';
-import { BotMessageSquare, GraduationCap, LibraryBig, UsersRound, UserCheck } from 'lucide-react';
+import { BotMessageSquare, GraduationCap, LibraryBig, UserCheck } from 'lucide-react';
 import { AccountMenu } from './AccountMenu';
 
 export function Header({
@@ -10,7 +10,6 @@ export function Header({
   onOpenNotifications,
   advisorProfile,
   onLogout,
-  onSwitchRole,
 }) {
   const tabs = [
     { id: 'copilot', label: 'Trợ lý Co-pilot', icon: <BotMessageSquare size={17} strokeWidth={2} aria-hidden="true" /> },
@@ -53,17 +52,7 @@ export function Header({
 
         {/* HEADER ACTIONS */}
         <div className="header-actions">
-          {onSwitchRole && (
-            <button
-              type="button"
-              className="quick-switch-role-pill"
-              onClick={() => onSwitchRole('manager')}
-              title="Chuyển nhanh sang cổng Quản lý"
-            >
-              <UsersRound size={13} strokeWidth={2.2} />
-              <span>Quản lý</span>
-            </button>
-          )}
+
 
           {hasNotifications && (
             <button
@@ -82,7 +71,6 @@ export function Header({
             username={advisorProfile?.username}
             roleLabel={advisorProfile?.role || 'Tư vấn viên'}
             onLogout={onLogout}
-            onSwitchRole={onSwitchRole}
             onOpenProfile={() => onTabChange('profile')}
           />
         </div>

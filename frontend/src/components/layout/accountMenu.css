@@ -193,50 +193,7 @@
   }
 }
 
-.account-menu-role-section {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--color-border, #E2E8F0);
-}
 
-.account-menu-role-title {
-  font-size: 10px;
-  font-weight: 700;
-  color: #64748B;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  margin-bottom: 2px;
-}
-
-.account-menu-switch-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #E2E8F0;
-  background: #F8FAFC;
-  color: #1E293B;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.15s ease;
-}
-
-.account-menu-switch-item:hover {
-  background: #F1F5F9;
-  border-color: #0F172A;
-  color: #0F172A;
-}
-
-.account-menu-switch-item.is-current {
-  background: #0F172A;
-  color: #FFFFFF;
-  border-color: #0F172A;
-}
 
 .account-menu-profile-btn {
   display: flex;

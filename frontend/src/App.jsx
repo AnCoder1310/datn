@@ -149,6 +149,13 @@ export function App() {
     loadBackendScenarios();
   }, [authStatus, currentUser?.role, scenarioReloadToken, currentTab]);
 
+  // Đảm bảo tài khoản tư vấn viên luôn ở đúng giao diện tư vấn
+  useEffect(() => {
+    if (currentUser?.role === 'advisor' && currentTab === 'manager') {
+      setCurrentTab('copilot');
+    }
+  }, [currentUser?.role, currentTab]);
+
   const handleLogin = async (username, password) => {
     const user = await authApi.login(username, password);
     setCurrentUser(user);
@@ -164,17 +171,6 @@ export function App() {
     }
   };
 
-  const handleSwitchRole = async (targetRole) => {
-    try {
-      if (targetRole === 'manager') {
-        await handleLogin('manager.demo', 'DemoManager123!');
-      } else {
-        await handleLogin('advisor.demo', 'DemoAdvisor123!');
-      }
-    } catch (e) {
-      console.error('Không thể chuyển vai trò:', e);
-    }
-  };
 
   const handleLogout = async () => {
     try {
@@ -246,12 +242,11 @@ export function App() {
   }
 
   // MÀN HÌNH QUẢN LÝ
-  if (currentUser?.role === 'manager' || currentTab === 'manager') {
+  if (currentUser?.role === 'manager') {
     return (
       <ManagerReviewView
         currentUser={currentUser}
         onLogout={handleLogout}
-        onSwitchRole={handleSwitchRole}
       />
     );
   }
@@ -277,7 +272,6 @@ export function App() {
         onOpenNotifications={() => setIsNotifOpen(true)}
         advisorProfile={advisorProfile}
         onLogout={handleLogout}
-        onSwitchRole={handleSwitchRole}
       />
 
       {/* MAIN CONTENT AREA */}
@@ -326,7 +320,6 @@ export function App() {
             onOpenRoleplay={() => setCurrentTab('roleplay')}
             onOpenCopilot={() => setCurrentTab('copilot')}
             onLogout={handleLogout}
-            onSwitchRole={handleSwitchRole}
           />
         )}
       </main>
