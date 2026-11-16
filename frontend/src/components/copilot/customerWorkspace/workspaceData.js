@@ -1,9 +1,14 @@
 import { customerIntelligence } from './customerIntelligence.js';
 
 const stageLabels = {
-  new: ['Mới liên hệ', 'gray'], discovery: ['Tìm hiểu nhu cầu', 'blue'], qualified: ['Đang tư vấn', 'blue'],
-  considering: ['Đang cân nhắc', 'amber'], negotiating: ['Đang đàm phán', 'purple'],
-  deposit_process: ['Chuẩn bị đặt cọc', 'amber'], won: ['Đã ký hợp đồng', 'green'], lost: ['Ngừng chăm sóc', 'gray'],
+  new: ['Mới liên hệ', 'gray'],
+  discovery: ['Tìm hiểu nhu cầu', 'blue'],
+  qualified: ['Đang tư vấn', 'blue'],
+  considering: ['Đang cân nhắc', 'amber'],
+  negotiating: ['Đang đàm phán', 'purple'],
+  deposit_process: ['Chuẩn bị đặt cọc', 'amber'],
+  won: ['Đã ký hợp đồng', 'green'],
+  lost: ['Ngừng chăm sóc', 'gray'],
 };
 export const leadStages = Object.entries(stageLabels).map(([id, [label]]) => ({ id, label }));
 
@@ -33,11 +38,48 @@ export function normalizeSearch(value) {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
 }
 
-export function filterCustomers(customers, query, filter) {
+export function filterCustomers(customers, query = '', filter = 'all', sort = 'urgency') {
   const search = normalizeSearch(query.trim());
-  return customers.filter((customer) => {
-    const matchesStatus = filter === 'attention' ? customer.attention : filter === 'caring' ? !['new', 'won', 'lost'].includes(customer.stageId) : true;
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  const filtered = customers.filter((customer) => {
+    let matchesStatus = true;
+    if (filter === 'attention') {
+      matchesStatus = Boolean(customer.attention);
+    } else if (filter === 'today') {
+      matchesStatus = (customer.tasks || []).some((t) => t.starts_at?.startsWith(todayStr)) || customer.attention;
+    } else if (filter === 'active' || filter === 'caring') {
+      matchesStatus = ['new', 'discovery', 'qualified', 'considering', 'negotiating', 'deposit_process'].includes(customer.stageId);
+    } else if (filter === 'won') {
+      matchesStatus = customer.stageId === 'won';
+    } else if (filter === 'lost') {
+      matchesStatus = customer.stageId === 'lost';
+    } else {
+      matchesStatus = true;
+    }
     return matchesStatus && (!search || normalizeSearch(`${customer.name} ${customer.model} ${customer.phone}`).includes(search));
+  });
+
+  return filtered.sort((a, b) => {
+    if (sort === 'urgency') {
+      if (a.attention !== b.attention) return a.attention ? -1 : 1;
+      if ((b.pendingAnalysis || 0) !== (a.pendingAnalysis || 0)) return (b.pendingAnalysis || 0) - (a.pendingAnalysis || 0);
+      return (timestamp(b.updatedAt) || 0) - (timestamp(a.updatedAt) || 0);
+    }
+    if (sort === 'waiting') {
+      const waitA = a.waitingSince ? timestamp(a.waitingSince) : (timestamp(a.lastMessageTime) || 0);
+      const waitB = b.waitingSince ? timestamp(b.waitingSince) : (timestamp(b.lastMessageTime) || 0);
+      return waitA - waitB;
+    }
+    if (sort === 'recent') {
+      return (timestamp(b.updatedAt) || 0) - (timestamp(a.updatedAt) || 0);
+    }
+    if (sort === 'deadline') {
+      const minDueA = Math.min(...(a.tasks || []).filter((t) => !t.completed).map((t) => timestamp(t.ends_at) || Infinity), Infinity);
+      const minDueB = Math.min(...(b.tasks || []).filter((t) => !t.completed).map((t) => timestamp(t.ends_at) || Infinity), Infinity);
+      return minDueA - minDueB;
+    }
+    return 0;
   });
 }
 
@@ -88,15 +130,17 @@ export function toWorkspaceCustomer(item, detail, savedDraft, index = 0, now = D
   const rawName = detail?.customer_name || item.customer_name || 'Khách hàng';
   const name = String(rawName).replace(/^\[Mẫu\]\s*/i, '').trim();
   const models = Array.isArray(profile.interested_models) ? profile.interested_models : item.interested_models || [];
-  const model = models.join(', ') || 'Chưa xác định xe';
-  const stageId = (detail ? detail.lead_status?.stage : item.lead_stage) ?? 'needs_confirmation';
-  const [stage, tone] = stageLabels[stageId] || ['Cần xác nhận giai đoạn', 'gray'];
+  const model = models.join(', ') || item.model || '';
+  const stageId = detail?.lead_status?.stage || item.stage || 'new';
+  const [stage = 'Mới liên hệ', tone = 'gray'] = stageLabels[stageId] || [];
   const messages = (detail?.messages || []).map(toWorkspaceMessage);
-  // Paginated sources are validated by the owned-conversation messages endpoint when opened.
+  // Source messages that are not visible in the thread must not be clickable.
+  // When total messages is known, paginated messages may not contain every valid message yet, but clicking should still load and reveal the source.
+  // Before thread history is loaded, unconfirmed messages are unverified.
   const validSources = new Set(messages.map((message) => message.id));
   const sourceAllowed = (id) => id && (detail?.message_total !== undefined || validSources.has(id));
   const updatedAt = detail?.memory?.updated_at || detail?.last_analyzed_at || item.last_analyzed_at;
-  const primaryModel = models[0]?.match(/VF\s*([3-9])/i)?.[1];
+  const primaryModel = models[0]?.match(/VF\s*([3-9]|Wild)/i)?.[1] || item.model?.match(/VF\s*([3-9]|Wild)/i)?.[1] || '';
   const tasks = (detail?.tasks || []).filter((task) => task.status !== 'cancelled').map(toWorkspaceTask);
   const throughSeq = detail?.memory?.analyzed_through_seq;
   const lastSeq = detail?.last_message_seq ?? item.last_message_seq ?? messages.at(-1)?.seq ?? 0;
@@ -118,10 +162,17 @@ export function toWorkspaceCustomer(item, detail, savedDraft, index = 0, now = D
     type: event.event_type || 'general',
     tone: ['amber', 'blue', 'green', 'gray'][eventIndex % 4], sourceMessageId: sourceAllowed(event.source_message_id) ? event.source_message_id : null,
   }));
+
+  const chargingConditionLabel = {
+    home_ground: 'Sạc tại nhà riêng (gara/sân)',
+    public_charger: 'Trạm sạc công cộng V-GREEN',
+    apartment: 'Chung cư (chưa trạm riêng)',
+  }[profile.charging_condition] || profile.charging_condition || item.charging_condition || 'Chưa khảo sát';
+
   return {
     id: item.conversation_id, customerId: item.customer_id, name,
     initials: name.split(/\s+/).filter(Boolean).at(-1)?.charAt(0) || 'K', color: palette[index % palette.length],
-    model, primaryModel, image: primaryModel ? `/vehicles/vf-${primaryModel}.jpg` : null, segment: 'Thông tin sản phẩm',
+    model, primaryModel, image: primaryModel ? `/vehicles/vf-${primaryModel.toLowerCase()}.jpg` : null, segment: 'Thông tin sản phẩm',
     budget: profile.budget_notes || formatMoney(profile.budget_vnd) || item.budget_notes || formatMoney(item.budget_vnd) || 'Chưa xác định',
     deposit: formatMoney(profile.down_payment_vnd), payment: ({ cash: 'Trả thẳng', installment: 'Trả góp', mixed: 'Kết hợp' })[profile.payment_method] || profile.payment_method || 'Chưa xác định',
     location: detail?.customer_location || item.location || 'Chưa cập nhật', phone: item.phone || 'Chưa cập nhật',
@@ -137,11 +188,18 @@ export function toWorkspaceCustomer(item, detail, savedDraft, index = 0, now = D
     consultationProgress: {
       summary: detail?.memory?.detailed_summary || '',
       consultedTopics: events.filter((event) => event.type === 'consulted'),
-      // A sales reply or a completed task alone does not prove the customer's issue is resolved.
       resolvedIssues: events.filter((event) => event.type === 'resolved' && event.sourceMessageId),
       openQuestions: [...new Set([...(detail?.memory?.pending_items || []), ...(profile.unresolved_questions || [])])],
     },
-    concerns: profile.objections_and_concerns || [],
+    concerns: profile.objections_and_concerns || item.objections || [],
+    chargingCondition: chargingConditionLabel,
+    purchaseTimeline: profile.purchase_timeline || item.purchase_timeline || 'Chưa xác định',
+    competitorModels: profile.competitor_models || item.competitor_models || [],
+    maxMonthlyPayment: formatMoney(profile.max_monthly_payment_vnd),
+    loanTermYears: profile.loan_term_years ? `${profile.loan_term_years} năm` : '',
+    waitingSince: item.waiting_since || detail?.waiting_since || null,
+    unresolvedQuestions: profile.unresolved_questions || [],
+    buyingSignals: profile.buying_signals || [],
     facts: (profile.facts || []).map((fact) => ({ ...fact, source_message_ids: (fact.source_message_ids || []).filter(sourceAllowed) })),
     lead: detail?.lead_status || {},
     draftId: savedDraft?.draft_id, draftGeneratedAt: savedDraft?.generated_at,

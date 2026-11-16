@@ -13,7 +13,7 @@ export function Activities({ customer, onSourceClick }) {
   return <section className="sw-activities"><h3>Mốc chăm sóc</h3><p className="sw-secondary">Sự kiện đã trích xuất từ hội thoại.</p>{!customer.events.length && <p className="sw-info-note">Chưa có mốc chăm sóc được lưu.</p>}<div className="sw-detail-timeline">{customer.events.map((event) => <div className="sw-activity" key={event.id}><small>{event.time}</small><strong>{event.text}</strong>{event.sourceMessageId ? <button type="button" className="sw-text-button" onClick={() => onSourceClick(event.sourceMessageId)}>Xem tin nguồn<ChevronRight size={12} /></button> : <small>Chưa có liên kết nguồn</small>}</div>)}</div></section>;
 }
 
-function MessageTaskSuggestionsPanel({ customer, suggestionState, onDismiss, onSaveBatch }) {
+export function MessageTaskSuggestionsPanel({ customer, suggestionState, onDismiss, onSaveBatch }) {
   const [items, setItems] = useState([]);
   const [expandedIdx, setExpandedIdx] = useState(null);
   const [saving, setSaving] = useState(false);
