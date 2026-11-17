@@ -72,52 +72,65 @@ export function App() {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [copilotQuery, setCopilotQuery] = useState('');
   const [copilotOpened, setCopilotOpened] = useState(true);
+  const [sessionConfirmed, setSessionConfirmed] = useState(false);
 
   // Đồng bộ phiên thực tế với backend trong nền & tự động kết nối lại khi backend sẵn sàng
   useEffect(() => {
     let active = true;
     let retryTimer = null;
     async function restoreSession() {
-      try {
-        const user = await authApi.me();
-        if (!active) return;
-        if (user && (user.role === 'advisor' || user.role === 'manager')) {
-          let effectiveUser = user;
-          try {
-            const savedProfile = localStorage.getItem('vinfast_profile_custom');
-            if (savedProfile) {
-              const p = JSON.parse(savedProfile);
-              if (p?.name?.trim()) {
-                effectiveUser = { ...user, display_name: p.name.trim() };
-                if (p.name.trim() !== user.display_name) {
-                  void authApi.updateProfile(p.name.trim()).catch(() => {});
+      const hasSession = (() => {
+        try { return localStorage.getItem('p043_has_session') === 'true'; } catch { return false; }
+      })();
+
+      if (hasSession) {
+        try {
+          const user = await authApi.me();
+          if (!active) return;
+          if (user && (user.role === 'advisor' || user.role === 'manager')) {
+            let effectiveUser = user;
+            try {
+              const savedProfile = localStorage.getItem('vinfast_profile_custom');
+              if (savedProfile) {
+                const p = JSON.parse(savedProfile);
+                if (p?.name?.trim()) {
+                  effectiveUser = { ...user, display_name: p.name.trim() };
+                  if (p.name.trim() !== user.display_name) {
+                    void authApi.updateProfile(p.name.trim()).catch(() => {});
+                  }
                 }
               }
+            } catch { /* ignore */ }
+            setCurrentUser(effectiveUser);
+            try { localStorage.setItem('p043_user', JSON.stringify(effectiveUser)); } catch (e) { /* ignore */ void e; }
+            if (user.role === 'advisor') {
+              setCurrentTab((prev) => (prev === 'manager' ? 'copilot' : prev));
+            } else if (user.role === 'manager') {
+              setCurrentTab('manager');
             }
-          } catch { /* ignore */ }
-          setCurrentUser(effectiveUser);
-          try { localStorage.setItem('p043_user', JSON.stringify(effectiveUser)); } catch (e) { /* ignore */ void e; }
-          if (user.role === 'advisor') {
-            setCurrentTab((prev) => (prev === 'manager' ? 'copilot' : prev));
-          } else if (user.role === 'manager') {
-            setCurrentTab('manager');
+            setAuthStatus('authenticated');
+            setSessionConfirmed(true);
+            notifyAgendaChange();
+            setScenarioReloadToken((v) => v + 1);
+            return;
           }
-          setAuthStatus('authenticated');
-          notifyAgendaChange();
-          setScenarioReloadToken((v) => v + 1);
-          return;
+        } catch {
+          try { localStorage.removeItem('p043_has_session'); } catch {}
+          // Session expired or invalid, fall through to auto-login
         }
-      } catch {
-        // Backend chưa sẵn sàng hoặc phiên cũ hết hạn
       }
 
-      // Tự động kích hoạt tài khoản Demo Advisor trên backend để phiên làm việc luôn hợp lệ
+      // Tự động kích hoạt tài khoản Demo Advisor trên backend để phiên làm việc luôn hợp lệ (tránh gọi me() gây 401 khi chưa có cookie)
       try {
         const user = await authApi.login('advisor.demo', 'DemoAdvisor123!');
         if (!active) return;
+        try {
+          localStorage.setItem('p043_has_session', 'true');
+          localStorage.setItem('p043_user', JSON.stringify(user));
+        } catch (e) { /* ignore */ void e; }
         setCurrentUser(user);
-        try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
         setAuthStatus('authenticated');
+        setSessionConfirmed(true);
         notifyAgendaChange();
         setScenarioReloadToken((v) => v + 1);
       } catch {
@@ -134,9 +147,9 @@ export function App() {
     };
   }, []);
 
-  // Tải danh sách kịch bản thực tế từ backend khi advisor đã sẵn sàng
+  // Tải danh sách kịch bản thực tế từ backend khi advisor đã sẵn sàng và phiên đã xác thực
   useEffect(() => {
-    if (authStatus !== 'authenticated' || currentUser?.role !== 'advisor') return;
+    if (!sessionConfirmed || authStatus !== 'authenticated' || currentUser?.role !== 'advisor') return;
     async function loadBackendScenarios() {
       try {
         const backendList = await practiceApi.getScenarios();
@@ -148,7 +161,7 @@ export function App() {
       }
     }
     loadBackendScenarios();
-  }, [authStatus, currentUser?.role, scenarioReloadToken, currentTab]);
+  }, [sessionConfirmed, authStatus, currentUser?.role, scenarioReloadToken, currentTab]);
 
   // Đảm bảo tài khoản tư vấn viên luôn ở đúng giao diện tư vấn
   useEffect(() => {
@@ -162,6 +175,7 @@ export function App() {
     setCurrentUser(user);
     try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
     setAuthStatus('authenticated');
+    setSessionConfirmed(true);
     notifyAgendaChange();
     setScenarioReloadToken((v) => v + 1);
     if (user.role === 'advisor') {
@@ -177,8 +191,12 @@ export function App() {
     try {
       await authApi.logout();
     } finally {
-      try { localStorage.removeItem('p043_user'); } catch (e) { /* ignore */ void e; }
+      try {
+        localStorage.removeItem('p043_user');
+        localStorage.removeItem('p043_has_session');
+      } catch (e) { /* ignore */ void e; }
       setCurrentUser(null);
+      setSessionConfirmed(false);
       setAuthStatus('anonymous');
       setCurrentTab('copilot');
       setScenarios([]);

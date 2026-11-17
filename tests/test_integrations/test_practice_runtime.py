@@ -180,3 +180,39 @@ async def test_adapter_rejects_malformed_structured_output():
 
     with pytest.raises(StructuredModelInvocationError):
         await adapter.generate(system_prompt="customer-system", context={"messages": []})
+
+
+def test_deterministic_fallback_greeting_does_not_trigger_next_step():
+    from src.integrations.practice_runtime import _deterministic_fallback
+    scenario = ScenarioRepository(SCENARIOS).get("SCENARIO_01_VF5_TAXI")
+    analysis = _deterministic_fallback(
+        TurnAnalysis,
+        {
+            "advisor_message": "Dạ em chào anh/chị, em là tư vấn viên VinFast. Em có thể hỗ trợ anh/chị tìm hiểu thông tin gì về xe hôm nay ạ?",
+            "scenario": scenario.model_dump(mode="json"),
+            "state": {"active_objection_ids": []},
+        },
+    )
+    assert analysis.next_step_attempted is False
+
+
+def test_deterministic_fallback_first_turn_customer_opening_reply():
+    from src.integrations.practice_runtime import _deterministic_fallback
+    scenario = ScenarioRepository(SCENARIOS).get("SCENARIO_01_VF5_TAXI")
+    output = _deterministic_fallback(
+        CustomerModelOutput,
+        {
+            "scenario_id": scenario.scenario_id,
+            "persona": scenario.persona,
+            "visible_context": scenario.visible_context,
+            "replying_to_advisor_opening": True,
+            "consider_next_step": False,
+            "messages": [{"role": "advisor", "content": "Dạ em chào anh"}],
+            "active_objections": [{"objection_id": "OBJ_VF5_BATTERY_VS_GAS", "objection_text": "Chi phí pin"}],
+            "acceptable_outcomes": [{"outcome_id": "test_drive", "requires_resolved_objections": ["OBJ_VF5_BATTERY_VS_GAS"]}],
+            "resolved_objection_ids": [],
+        },
+    )
+    assert output.accepted_next_step is False
+    assert "bài toán chi phí cũng rất hợp lý" not in output.reply
+    assert "Vios" in output.reply or "VF 5" in output.reply

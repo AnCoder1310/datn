@@ -52,7 +52,7 @@ def _deterministic_fallback(schema: type, context: dict[str, Any]) -> Any:
     schema_name = getattr(schema, "__name__", "")
     if schema_name == "TurnAnalysis":
         from src.agents.roleplay.turn_analyzer import TurnAnalysis
-        advisor_msg = str(context.get("advisor_message", "")).lower()
+        advisor_msg = str(context.get("advisor_message", "")).strip().lower()
         scenario = context.get("scenario", {})
         
         products = []
@@ -84,61 +84,181 @@ def _deterministic_fallback(schema: type, context: dict[str, Any]) -> Any:
                 detected_intents.append(t)
                 discovered_fact_ids.append(f)
                 
+        is_greeting = any(w in advisor_msg for w in ["chào", "xin chào", "hello", "hi"]) and not any(k in advisor_msg for k in ["lái thử", "đặt cọc", "ký hợp đồng", "đặt lịch"])
+        is_ping = advisor_msg in ["alo", "a lô", "ok", "oke", "dạ", "vâng", "ừ", "uh", "um", "hi", "hey"] or len(advisor_msg.split()) < 3
+
         addressed = []
-        for obj in scenario.get("objections", []):
-            obj_id = obj.get("objection_id", "")
-            if any(w in advisor_msg for w in ["pin", "sạc", "chi phí", "tiết kiệm", "bảo hành", "trạm", "v-green"]):
-                addressed.append(obj_id)
+        if not is_greeting and not is_ping:
+            for obj in scenario.get("objections", []):
+                obj_id = obj.get("objection_id", "")
+                if any(w in advisor_msg for w in ["pin", "sạc", "chi phí", "tiết kiệm", "bảo hành", "trạm", "v-green"]):
+                    addressed.append(obj_id)
                 
-        next_step = any(w in advisor_msg for w in ["lái thử", "hẹn", "showroom", "xem xe", "cọc", "đặt cọc", "cuối tuần", "ngày mai", "hôm nay", "thứ bảy", "chủ nhật", "gặp"])
+        closing_kws = [
+            "lái thử", "chạy thử", "trải nghiệm lái",
+            "đặt cọc", "chốt cọc", "giữ cọc", "ký hợp đồng", "làm hợp đồng",
+            "mời anh qua showroom", "mời chị qua showroom", "ghé showroom", "đến showroom",
+            "đặt lịch hẹn", "lên lịch hẹn", "xếp lịch hẹn", "giữ xe"
+        ]
+        next_step = False if (is_greeting or is_ping) else any(kw in advisor_msg for kw in closing_kws)
+        active_objection_ids = context.get("state", {}).get("active_objection_ids", [])
+        premature_closing = next_step and bool(active_objection_ids)
         
         return TurnAnalysis(
             mentioned_products=products,
             detected_intents=detected_intents,
             discovered_fact_ids=discovered_fact_ids,
             addressed_objection_ids=addressed,
-            resolved_objection_ids=addressed[:1] if addressed else [],
+            resolved_objection_ids=addressed[:1] if (addressed and len(advisor_msg.split()) >= 6) else [],
             next_step_attempted=next_step,
             factual_claims=[],
             policy_mentions=[],
             linked_benefits=[],
             off_topic=False,
             unsafe_or_abusive=False,
-            premature_closing=False,
+            premature_closing=premature_closing,
             advisor_requested_finish=False,
         )
 
     if schema_name == "CustomerModelOutput":
         from src.agents.roleplay.customer_agent import CustomerModelOutput
+
+        scenario_id = context.get("scenario_id", "")
+        persona = context.get("persona") or {}
+        p_name = persona.get("name", "")
+        addr = "chị" if any(w in p_name.lower() for w in ["chị", "thanh", "lan", "hà", "linh"]) else "anh"
+        addr_cap = addr.capitalize()
+
+        messages = context.get("messages", [])
+        replying_opening = context.get("replying_to_advisor_opening", False)
+        
+        advisor_msgs = []
+        for m in messages:
+            role = m.get("role") if isinstance(m, dict) else getattr(m, "role", "")
+            c = m.get("content") if isinstance(m, dict) else getattr(m, "content", "")
+            if role in ("advisor", "user", "sales"):
+                advisor_msgs.append(c.strip())
+                
+        is_first_customer_turn = replying_opening or len(advisor_msgs) <= 1
+        last_adv = advisor_msgs[-1] if advisor_msgs else ""
+        last_adv_lower = last_adv.lower()
+
+        # 1. Turn 1: Reply to advisor opening greeting
+        if is_first_customer_turn:
+            if scenario_id == "SCENARIO_01_VF5_TAXI":
+                reply = "Chào em, như anh nhắn trên Fanpage đấy, anh đang chạy chiếc Vios dịch vụ tính đổi sang VF 5 Plus mà sợ không ăn thua. Em tư vấn giúp anh giá lăn bánh và chi phí sử dụng hàng tháng xem thế nào nhé."
+            elif scenario_id == "SCENARIO_02_VF7_VS_CX5":
+                reply = "Chào em, chị thấy VF 7 với CX-5 cũng như nhau, CX-5 nhìn quen mắt hơn mà sao VF 7 đắt hơn khá nhiều vậy em? Em tư vấn giúp chị xem VF 7 có ưu điểm gì vượt trội hơn nhé."
+            elif scenario_id == "SCENARIO_03_VF6_APARTMENT":
+                reply = "Chào em, anh đang tìm hiểu chiếc VF 6 cho gia đình, nhưng nhà ở chung cư không có chỗ lắp sạc riêng thì sạc xe thế nào cho tiện em?"
+            elif scenario_id == "SCENARIO_04_VF6_ECO_PLUS_UPSELL":
+                reply = "Chào em, chị đang xem xét chiếc VF 6 Eco nhưng thấy bên em có cả bản Plus. Em giải thích giúp chị hai bản này khác nhau những điểm gì nhé."
+            else:
+                reply = f"Chào em, {addr} đang tìm hiểu về dòng xe này, em chia sẻ cụ thể hơn về chi phí và chính sách lăn bánh giúp {addr} nhé."
+
+            return CustomerModelOutput(
+                reply=reply,
+                raised_objection_id=None,
+                accepted_next_step=False,
+                accepted_outcome_id=None,
+            )
+
+        # 2. Check if advisor message is a short ping / empty / acknowledgement / off-topic
+        is_ping = last_adv_lower in ["alo", "a lô", "ok", "oke", "ừ", "uh", "um", "dạ", "vâng", "anh ơi", "chị ơi", "em nghe"] or len(last_adv.split()) < 3
+        if is_ping:
+            if scenario_id == "SCENARIO_01_VF5_TAXI":
+                reply = f"Dạ {addr} đang nghe đây em. Em tính giúp {addr} giá lăn bánh VF 5 Plus và chi phí tiền sạc mỗi tháng xem có tiết kiệm hơn con Vios của {addr} không nhé."
+            elif scenario_id == "SCENARIO_02_VF7_VS_CX5":
+                reply = f"{addr_cap} đang nghe đây em. Em tư vấn giúp {addr} xem chiếc VF 7 này hơn CX-5 ở những điểm gì nhé."
+            elif scenario_id == "SCENARIO_03_VF6_APARTMENT":
+                reply = f"{addr_cap} đang nghe đây em. Nhà ở chung cư không có chỗ sạc riêng thì giải pháp sạc pin thế nào em giải thích giúp {addr} nhé."
+            elif scenario_id == "SCENARIO_04_VF6_ECO_PLUS_UPSELL":
+                reply = f"{addr_cap} đang nghe đây em. Em so sánh cụ thể bản Eco với bản Plus giúp {addr} xem có đáng nâng lên không nhé."
+            else:
+                reply = f"{addr_cap} đang nghe đây em ơi. Em giải đáp câu hỏi vừa rồi giúp {addr} nhé."
+
+            return CustomerModelOutput(
+                reply=reply,
+                raised_objection_id=None,
+                accepted_next_step=False,
+                accepted_outcome_id=None,
+            )
+
+        # 3. Subsequent turns: Check objections & closing
         consider_next_step = context.get("consider_next_step", False)
         acceptable = context.get("acceptable_outcomes", [])
-        active_objs = context.get("active_objections", [])
-        focus_id = context.get("focus_objection_id")
-        
-        if consider_next_step and acceptable:
-            outcome = acceptable[0]
-            outcome_id = outcome.get("outcome_id", "test_drive")
+        resolved_ids = set(context.get("resolved_objection_ids", []))
+
+        scen_objections = {
+            "SCENARIO_01_VF5_TAXI": [
+                ("OBJ_VF5_BATTERY_VS_GAS", "Anh nghe nói sạc ngoài lượt được ưu đãi vẫn tốn tiền, rồi còn trả góp nữa. Chạy nhiều như anh thì đổi từ Vios có đáng không em?"),
+                ("OBJ_VF5_CHARGING_TIME", "Anh hay chạy liền ca trưa. Nếu phải dừng sạc lâu thì mất cuốc, có cách nào sắp lịch sạc hợp lý không em?"),
+            ],
+            "SCENARIO_02_VF7_VS_CX5": [
+                ("OBJ_VF7_PRICE_VS_CX5", "CX-5 đi đầy đường vừa lành vừa đẹp, VF 7 mới ra chưa biết thế nào mà bán đắt thế em?"),
+                ("OBJ_VF7_DEPRECIATION", "Chồng chị bảo xe điện mua thì đắt mà sau 3 năm bán lại khéo lỗ nửa giá xe, không giữ giá bằng CX-5."),
+            ],
+            "SCENARIO_03_VF6_APARTMENT": [
+                ("OBJ_VF6_APARTMENT_CHARGING", "Nhà anh ở chung cư không có chỗ lắp sạc riêng thì mua VF 6 sạc kiểu gì em ơi? Mỗi lần sạc phải ra trạm chờ lâu không em?"),
+            ],
+            "SCENARIO_04_VF6_ECO_PLUS_UPSELL": [
+                ("OBJ_VF6_PROMO_ELIGIBILITY", "Chị thấy đang có chương trình ưu đãi, không biết bản Eco hay Plus có được áp dụng đầy đủ không em?"),
+                ("OBJ_VF6_PLUS_WORTH", "Bản Plus đắt hơn bản Eco mấy chục triệu, chị chỉ đi làm hàng ngày thì nâng lên bản Plus có thực sự đáng tiền không em?"),
+            ],
+        }.get(scenario_id, [])
+
+        unresolved = [item for item in scen_objections if item[0] not in resolved_ids]
+
+        # 3A. Advisor attempts premature closing while objections remain
+        if consider_next_step and unresolved:
+            next_obj = unresolved[0]
+            reply = f"{addr_cap} vẫn còn băn khoăn về vấn đề này em ạ: {next_obj[1]} Em giải thích rõ giúp {addr} trước đã rồi mới tính chuyện lái thử được nhé."
             return CustomerModelOutput(
-                reply="Được rồi em, nghe em phân tích bài toán chi phí cũng rất hợp lý. Cuối tuần này em sắp xếp cho anh một buổi lái thử thực tế để anh xem xe nhé.",
+                reply=reply,
+                raised_objection_id=next_obj[0],
+                accepted_next_step=False,
+                accepted_outcome_id=None,
+            )
+
+        # 3B. Objections remain and advisor continues normal advice
+        if unresolved:
+            next_obj = unresolved[0]
+            return CustomerModelOutput(
+                reply=next_obj[1],
+                raised_objection_id=next_obj[0],
+                accepted_next_step=False,
+                accepted_outcome_id=None,
+            )
+
+        # 3C. All objections resolved and advisor attempts next step
+        eligible_outcomes = [
+            o for o in acceptable
+            if set(o.get("requires_resolved_objections", [])).issubset(resolved_ids)
+        ]
+        if consider_next_step and eligible_outcomes:
+            outcome = eligible_outcomes[0]
+            outcome_id = outcome.get("outcome_id", "test_drive")
+            if scenario_id == "SCENARIO_01_VF5_TAXI":
+                reply = "Được rồi em, nghe em phân tích bài toán chi phí và lịch sạc như vậy thì anh thấy cũng rất hợp lý và an tâm hơn rồi. Cuối tuần này em sắp xếp cho anh một buổi lái thử thực tế để anh xem xe nhé."
+            elif scenario_id == "SCENARIO_02_VF7_VS_CX5":
+                reply = "Được rồi em, nghe em phân tích công nghệ ADAS và khả năng vận hành của VF 7 chị thấy rất thuyết phục rồi. Em sắp xếp cho hai vợ chồng chị một buổi lái thử để trải nghiệm thực tế nhé."
+            elif scenario_id == "SCENARIO_03_VF6_APARTMENT":
+                reply = "Được rồi em, nghe em chia sẻ về mạng lưới trạm sạc V-GREEN quanh khu vực chung cư và thời gian sạc nhanh thì anh cũng yên tâm hơn rồi. Em sắp xếp cho anh một buổi lái thử thực tế nhé."
+            elif scenario_id == "SCENARIO_04_VF6_ECO_PLUS_UPSELL":
+                reply = "Được rồi em, nghe em phân tích về các tính năng an toàn và tiện nghi nâng cấp trên bản Plus thì chị thấy rất đáng để cân nhắc. Em chuẩn bị xe cho chị lái thử trải nghiệm thực tế nhé."
+            else:
+                reply = f"Được rồi em, nghe em tư vấn {addr} thấy rất hợp lý và an tâm rồi. Em sắp xếp cho {addr} một buổi lái thử thực tế để {addr} trải nghiệm xe nhé."
+
+            return CustomerModelOutput(
+                reply=reply,
                 raised_objection_id=None,
                 accepted_next_step=True,
                 accepted_outcome_id=outcome_id,
             )
-            
-        if active_objs and focus_id:
-            target_obj = next((o for o in active_objs if o.get("objection_id") == focus_id), active_objs[0])
-            obj_text = target_obj.get("objection_text", "")
-            obj_id = target_obj.get("objection_id")
-            reply = obj_text if obj_text else "Anh vẫn đang phân vân về thời gian sạc pin và chi phí sạc so với xe xăng hiện tại em ạ."
-            return CustomerModelOutput(
-                reply=reply,
-                raised_objection_id=obj_id,
-                accepted_next_step=False,
-                accepted_outcome_id=None,
-            )
-            
+
+        # 3D. Objections resolved but advisor hasn't attempted next step
         return CustomerModelOutput(
-            reply="Chào em, anh đang tìm hiểu thêm về dòng xe này, em chia sẻ cụ thể hơn về chi phí và chính sách lăn bánh giúp anh nhé.",
+            reply=f"Những thông tin em chia sẻ {addr} thấy rất rõ ràng và an tâm rồi. Bên em có lịch cho {addr} lái thử trải nghiệm xe thực tế không em?",
             raised_objection_id=None,
             accepted_next_step=False,
             accepted_outcome_id=None,
