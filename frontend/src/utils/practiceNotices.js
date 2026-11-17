@@ -33,6 +33,7 @@ export function apiErrorNotice(error = {}, termination = null) {
     return { tone: 'warning', title: 'Không dùng được giọng nói', message: 'Vui lòng nhập bằng bàn phím.', actions: actions(['type_instead', 'close']), dismissible: true };
   }
   if (code === 'provider_unavailable') return { tone: 'error', title: 'Khách hàng chưa phản hồi', message: 'Tin nhắn của bạn đã được lưu, hãy thử lại.', actions: actions(['retry_reply', 'close']), dismissible: true };
+  if (code === 'timeout') return { tone: 'error', title: 'Khách hàng phản hồi chậm', message: 'Hệ thống đang hoàn tất phản hồi, hãy thử lại.', actions: actions(['retry_reply', 'close']), dismissible: true };
   if (code === 'evaluation_failed') return { tone: 'error', title: 'Chưa thể chấm điểm', message: 'Chưa thể chấm điểm lúc này. Vui lòng thử lại.', actions: actions(['retry_finish', 'close']), dismissible: true };
   return { tone: 'error', title: 'Đã có lỗi xảy ra', message: GENERIC_PRACTICE_ERROR, actions: actions(['close']), dismissible: true };
 }

@@ -75,6 +75,21 @@ def create_auth_router(service: AuthService, settings: Settings) -> APIRouter:
         )
         return user
 
+    class SessionStatusResponse(BaseModel):
+        authenticated: bool
+        user: AuthenticatedUser | None = None
+
+    @router.get("/session", response_model=SessionStatusResponse)
+    async def session(request: Request) -> SessionStatusResponse:
+        cookie = request.cookies.get(settings.auth_cookie_name)
+        if not cookie:
+            return SessionStatusResponse(authenticated=False, user=None)
+        try:
+            user = await service.current_user(cookie)
+            return SessionStatusResponse(authenticated=True, user=user)
+        except AuthenticationRequiredError:
+            return SessionStatusResponse(authenticated=False, user=None)
+
     @router.get("/me", response_model=AuthenticatedUser)
     async def me(request: Request) -> AuthenticatedUser:
         return await current_user.authenticate(request, allow_password_change=True)

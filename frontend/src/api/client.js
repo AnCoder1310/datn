@@ -10,6 +10,12 @@ export class ApiError extends Error {
   }
 }
 
+let sessionInitPromise = null;
+
+export function setSessionInitPromise(promise) {
+  sessionInitPromise = promise;
+}
+
 let silentLoginPromise = null;
 
 async function performSilentLogin() {
@@ -36,12 +42,26 @@ async function performSilentLogin() {
 
 export async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+
+  const isPublicOrAuth =
+    url.includes('/auth/login') ||
+    url.includes('/auth/session') ||
+    url.includes('/health');
+
+  if (!isPublicOrAuth && sessionInitPromise) {
+    try {
+      await sessionInitPromise;
+    } catch {
+      // ignore
+    }
+  }
+
   const headers = {
     'Content-Type': 'application/json',
     ...(options.headers || {}),
   };
 
-  const timeoutMs = options.timeout ?? 8000;
+  const timeoutMs = options.timeout ?? 15000;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -94,7 +114,8 @@ export async function request(endpoint, options = {}) {
     throw new ApiError(
       isTimeout ? 'Kết nối tới máy chủ quá thời gian. Đang sử dụng chế độ dự phòng.' : (error.message || 'Không thể kết nối đến máy chủ backend.'),
       0,
-      error.message
+      error.message,
+      isTimeout ? 'timeout' : null
     );
   } finally {
     clearTimeout(timer);

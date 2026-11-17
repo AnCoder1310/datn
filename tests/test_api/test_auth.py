@@ -42,6 +42,9 @@ async def build_test_app(tmp_path, *, secure_cookie: bool = False) -> FastAPI:
 async def test_login_me_logout_cookie_flow(tmp_path):
     app = await build_test_app(tmp_path)
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
+        anon_session = await client.get("/api/v1/auth/session")
+        assert anon_session.status_code == 200
+        assert anon_session.json() == {"authenticated": False, "user": None}
         assert (await client.get("/api/v1/auth/me")).status_code == 401
         rejected = await client.post(
             "/api/v1/auth/login",
@@ -66,6 +69,10 @@ async def test_login_me_logout_cookie_flow(tmp_path):
         assert "httponly" in cookie
         assert "samesite=lax" in cookie
         assert "secure" not in cookie
+        auth_session = await client.get("/api/v1/auth/session")
+        assert auth_session.status_code == 200
+        assert auth_session.json()["authenticated"] is True
+        assert auth_session.json()["user"]["user_id"] == "advisor-1"
         assert (await client.get("/api/v1/auth/me")).json()["user_id"] == "advisor-1"
 
         logout = await client.post("/api/v1/auth/logout")

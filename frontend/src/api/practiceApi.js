@@ -19,6 +19,7 @@ export const practiceApi = {
   async getScenarios() {
     return request('/practice/scenarios', {
       method: 'GET',
+      timeout: 15000,
     });
   },
 
@@ -26,17 +27,19 @@ export const practiceApi = {
     return request('/practice/sessions', {
       method: 'POST',
       body: JSON.stringify({ scenario_id: scenarioId, ...(assignmentId ? { assignment_id: assignmentId } : {}) }),
+      timeout: 20000,
     });
   },
 
   async getAssignments() {
-    return request('/practice/assignments');
+    return request('/practice/assignments', { timeout: 15000 });
   },
 
   async sendMessage(sessionId, message) {
     return request(`/practice/${encodeURIComponent(sessionId)}/message`, {
       method: 'POST',
       body: JSON.stringify({ message: message.trim() }),
+      timeout: 30000,
     });
   },
 
@@ -60,37 +63,41 @@ export const practiceApi = {
   async retryCustomerReply(sessionId) {
     return request(`/practice/${encodeURIComponent(sessionId)}/retry-reply`, {
       method: 'POST',
+      timeout: 30000,
     });
   },
 
   async finishSession(sessionId) {
     return request(`/practice/${encodeURIComponent(sessionId)}/finish`, {
       method: 'POST',
+      timeout: 45000,
     });
   },
 
   async getResult(sessionId) {
     return request(`/practice/${encodeURIComponent(sessionId)}/result`, {
       method: 'GET',
+      timeout: 20000,
     });
   },
 
   async getSession(sessionId) {
     return request(`/practice/${encodeURIComponent(sessionId)}`, {
       method: 'GET',
+      timeout: 15000,
     });
   },
 
   async getHistory(scenarioId = null) {
     const query = scenarioId ? `?scenario_id=${encodeURIComponent(scenarioId)}` : '';
-    return request(`/practice/history${query}`, { method: 'GET' });
+    return request(`/practice/history${query}`, { method: 'GET', timeout: 15000 });
   },
 
   async getProgress() {
-    return request('/practice/progress', { method: 'GET' });
+    return request('/practice/progress', { method: 'GET', timeout: 15000 });
   },
 
   async getAttempt(sessionId) {
-    return request(`/practice/${encodeURIComponent(sessionId)}/attempt`, { method: 'GET' });
+    return request(`/practice/${encodeURIComponent(sessionId)}/attempt`, { method: 'GET', timeout: 15000 });
   },
 };

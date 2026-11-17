@@ -12,6 +12,7 @@ import { ProfileView } from './components/profile/ProfileView';
 import { PublicTestDrivePortal } from './components/public/PublicTestDrivePortal';
 
 import { authApi } from './api/authApi';
+import { setSessionInitPromise } from './api/client';
 import { practiceApi } from './api/practiceApi';
 import { notifyAgendaChange } from './components/copilot/agenda/agendaResource';
 
@@ -79,55 +80,47 @@ export function App() {
     let active = true;
     let retryTimer = null;
     async function restoreSession() {
-      const hasSession = (() => {
-        try { return localStorage.getItem('p043_has_session') === 'true'; } catch { return false; }
-      })();
-
-      if (hasSession) {
-        try {
-          const user = await authApi.me();
-          if (!active) return;
-          if (user && (user.role === 'advisor' || user.role === 'manager')) {
-            let effectiveUser = user;
-            try {
-              const savedProfile = localStorage.getItem('vinfast_profile_custom');
-              if (savedProfile) {
-                const p = JSON.parse(savedProfile);
-                if (p?.name?.trim()) {
-                  effectiveUser = { ...user, display_name: p.name.trim() };
-                  if (p.name.trim() !== user.display_name) {
-                    void authApi.updateProfile(p.name.trim()).catch(() => {});
-                  }
+      // 1. Kiểm tra session qua endpoint /auth/session (luôn trả về 200, không bao giờ gây 401 trên console)
+      try {
+        const sessionCheck = await authApi.getSession();
+        if (!active) return;
+        if (sessionCheck?.authenticated && sessionCheck.user) {
+          const user = sessionCheck.user;
+          let effectiveUser = user;
+          try {
+            const savedProfile = localStorage.getItem('vinfast_profile_custom');
+            if (savedProfile) {
+              const p = JSON.parse(savedProfile);
+              if (p?.name?.trim()) {
+                effectiveUser = { ...user, display_name: p.name.trim() };
+                if (p.name.trim() !== user.display_name) {
+                  void authApi.updateProfile(p.name.trim()).catch(() => {});
                 }
               }
-            } catch { /* ignore */ }
-            setCurrentUser(effectiveUser);
-            try { localStorage.setItem('p043_user', JSON.stringify(effectiveUser)); } catch (e) { /* ignore */ void e; }
-            if (user.role === 'advisor') {
-              setCurrentTab((prev) => (prev === 'manager' ? 'copilot' : prev));
-            } else if (user.role === 'manager') {
-              setCurrentTab('manager');
             }
-            setAuthStatus('authenticated');
-            setSessionConfirmed(true);
-            notifyAgendaChange();
-            setScenarioReloadToken((v) => v + 1);
-            return;
+          } catch { /* ignore */ }
+          setCurrentUser(effectiveUser);
+          try { localStorage.setItem('p043_user', JSON.stringify(effectiveUser)); } catch (e) { /* ignore */ void e; }
+          if (user.role === 'advisor') {
+            setCurrentTab((prev) => (prev === 'manager' ? 'copilot' : prev));
+          } else if (user.role === 'manager') {
+            setCurrentTab('manager');
           }
-        } catch {
-          try { localStorage.removeItem('p043_has_session'); } catch {}
-          // Session expired or invalid, fall through to auto-login
+          setAuthStatus('authenticated');
+          setSessionConfirmed(true);
+          notifyAgendaChange();
+          setScenarioReloadToken((v) => v + 1);
+          return;
         }
+      } catch {
+        // Backend đang khởi động hoặc chưa sẵn sàng
       }
 
-      // Tự động kích hoạt tài khoản Demo Advisor trên backend để phiên làm việc luôn hợp lệ (tránh gọi me() gây 401 khi chưa có cookie)
+      // 2. Chưa có cookie hợp lệ trên backend -> Đăng nhập tự động ngay mà không gọi me() gây 401
       try {
         const user = await authApi.login('advisor.demo', 'DemoAdvisor123!');
         if (!active) return;
-        try {
-          localStorage.setItem('p043_has_session', 'true');
-          localStorage.setItem('p043_user', JSON.stringify(user));
-        } catch (e) { /* ignore */ void e; }
+        try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
         setCurrentUser(user);
         setAuthStatus('authenticated');
         setSessionConfirmed(true);
@@ -140,7 +133,8 @@ export function App() {
         }
       }
     }
-    restoreSession();
+    const init = restoreSession();
+    setSessionInitPromise(init);
     return () => {
       active = false;
       if (retryTimer) clearTimeout(retryTimer);
@@ -193,7 +187,6 @@ export function App() {
     } finally {
       try {
         localStorage.removeItem('p043_user');
-        localStorage.removeItem('p043_has_session');
       } catch (e) { /* ignore */ void e; }
       setCurrentUser(null);
       setSessionConfirmed(false);

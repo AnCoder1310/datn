@@ -7,6 +7,7 @@ deliberately handled in later integration phases.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from collections.abc import Callable
@@ -488,9 +489,13 @@ def _deterministic_fallback(schema: type, context: dict[str, Any]) -> Any:
     return None
 
 
+def _roleplay_llm_factory() -> BaseChatModel:
+    return get_llm(max_retries=0)
+
+
 class _StructuredInvoker:
-    def __init__(self, model_factory: LLMFactory = get_llm) -> None:
-        self._model_factory = model_factory
+    def __init__(self, model_factory: LLMFactory = _roleplay_llm_factory) -> None:
+        self._model_factory = _roleplay_llm_factory if model_factory is get_llm else model_factory
 
     async def invoke(
         self,
@@ -503,11 +508,14 @@ class _StructuredInvoker:
         try:
             model = self._model_factory()
             structured_model = model.with_structured_output(schema)
-            raw_output = await structured_model.ainvoke(
-                [
-                    SystemMessage(content=system_prompt),
-                    HumanMessage(content=_serialize_context(context)),
-                ]
+            raw_output = await asyncio.wait_for(
+                structured_model.ainvoke(
+                    [
+                        SystemMessage(content=system_prompt),
+                        HumanMessage(content=_serialize_context(context)),
+                    ]
+                ),
+                timeout=4.0,
             )
             return schema.model_validate(raw_output)
         except Exception as exc:
