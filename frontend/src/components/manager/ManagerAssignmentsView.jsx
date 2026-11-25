@@ -78,7 +78,7 @@ export function ManagerAssignmentsView({ onNavigateTab }) {
     <section className="card-white" style={{ padding: 28 }}>
       <div className="manager-assignment-header">
         <div>
-          <h2>Giao bài luyện tập</h2>
+          <h1>Giao bài luyện tập</h1>
           <p>Mỗi bài gắn với một Advisor và một kịch bản Practice thật.</p>
         </div>
         <button type="button" className="btn-outline" onClick={load} disabled={status === 'loading'}>

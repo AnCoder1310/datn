@@ -1,18 +1,16 @@
-import { useState, useRef, useEffect } from 'react';
+import { memo, useState, useRef, useEffect } from 'react';
 import { ChevronLeft, SendIcon, MicIcon, SpeakerIcon } from '../common/Icons';
-import { Sparkles, Video, VideoOff, ShieldCheck, Clock, X, Captions, CaptionsOff, MessageCircle, Phone, Target, Award, Compass, MessageSquare } from 'lucide-react';
+import { Sparkles, Video, VideoOff, ShieldCheck, X, Captions, CaptionsOff, MessageCircle, Phone, Target, Award, Compass, MessageSquare } from 'lucide-react';
 import { getVehicleImage } from '../../data/vehicleData';
 import { FinishConfirmDialog } from './FinishConfirmDialog';
 import { practiceApi } from '../../api/practiceApi';
 import { createId } from '../../lib/id';
-import { usePushToTalk } from '../../hooks/usePushToTalk';
+import { useRealtimeRoleplay } from '../../hooks/useRealtimeRoleplay';
 import { useLocalCamera } from '../../hooks/useLocalCamera';
 import './practiceRoom.css';
 import { NoticeDialog } from '../common/NoticeDialog';
 import { apiErrorNotice, terminationNotice } from '../../utils/practiceNotices';
 import { authApi } from '../../api/authApi';
-
-const VOICE_SEND_PREFERENCE_KEY = 'practice.voice.autoSend';
 
 function readPreference(key, fallback) {
   try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
@@ -157,40 +155,51 @@ function CustomerContext({ session, scenario }) {
     </div>
   );
 }
-function Transcript({ messages, waiting, listRef, playCustomer, speakingId }) {
-  const origin = Date.parse(messages[0]?.timestamp);
+function mergeVoiceTranscript(previous, incoming = [], includePartial = false) {
+  const merged = new Map(previous.map((message) => [message.message_id, message]));
+  for (const message of incoming) {
+    if (includePartial || !message.partial) merged.set(message.message_id, message);
+  }
+  return [...merged.values()];
+}
+
+const TranscriptRow = memo(function TranscriptRow({ role, content, timestamp, origin, interrupted, partial }) {
   return (
-    <ol className="pr-transcript" role="log" aria-label="Hội thoại" ref={listRef}>
+    <li className={`pr-transcript-item ${role === 'advisor' ? 'pr-transcript-advisor' : ''}`}>
+      <div className="pr-transcript-meta">
+        <span className="pr-transcript-role-tag">{role === 'advisor' ? 'TV · Tư vấn viên' : 'KH · Khách hàng'}</span>
+        {timestamp && Number.isFinite(origin) && (
+          <time className="pr-transcript-time" dateTime={timestamp}>{clock(Math.max(0, Math.floor((Date.parse(timestamp) - origin) / 1000)))}</time>
+        )}
+        {interrupted && <span className="pr-transcript-time">Bị ngắt</span>}
+        {partial && <span className="pr-transcript-time">Đang chép</span>}
+      </div>
+      <div className="pr-transcript-bubble"><p>{interrupted ? 'Lời khách bị ngắt.' : content}</p></div>
+    </li>
+  );
+});
+
+function Transcript({ messages, waiting, listRef }) {
+  const origin = Date.parse(messages.find((message) => message.timestamp)?.timestamp);
+  const follow = useRef(true);
+  const tail = messages.at(-1)?.content;
+  useEffect(() => {
+    if (follow.current && listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight;
+  }, [listRef, tail, messages.length, waiting]);
+
+  return (
+    <ol className="pr-transcript" role="log" aria-label="Hội thoại" ref={listRef} onScroll={(event) => {
+      const log = event.currentTarget;
+      follow.current = log.scrollHeight - log.scrollTop - log.clientHeight < 64;
+    }}>
       {!messages.length && (
         <li className="pr-transcript-empty">
           <Sparkles size={16} />
-          <p>Bạn là tư vấn viên — hãy mở lời chào khách trước bằng cách bấm giữ nút nói bên dưới.</p>
+          <p>Bạn là tư vấn viên. Sau khi kết nối, hãy mở lời chào khách.</p>
         </li>
       )}
       {messages.map((message, i) => (
-        <li key={message.message_id || i} className={`pr-transcript-item ${message.role === 'advisor' ? 'pr-transcript-advisor' : ''}`}>
-          <div className="pr-transcript-meta">
-            <span className="pr-transcript-role-tag">{message.role === 'advisor' ? 'Tư vấn viên' : 'Khách hàng'}</span>
-            {message.timestamp && Number.isFinite(origin) && (
-              <span className="pr-transcript-time">
-                {clock(Math.max(0, Math.floor((Date.parse(message.timestamp) - origin) / 1000)))}
-              </span>
-            )}
-          </div>
-          <div className="pr-transcript-bubble">
-            <p>{message.content}</p>
-            {message.role === 'customer' && (
-              <button
-                className="pr-replay"
-                onClick={() => playCustomer(message)}
-                disabled={speakingId === message.message_id}
-                aria-label="Phát giọng khách"
-              >
-                <SpeakerIcon />
-              </button>
-            )}
-          </div>
-        </li>
+        <TranscriptRow key={message.message_id || i} {...message} origin={origin} />
       ))}
       {waiting && (
         <li className="pr-transcript-waiting" role="status">
@@ -225,7 +234,6 @@ export function PracticeRoom({
   const endedNoticeRef = useRef(null);
   const inputRef = useRef(null);
   const [voiceHint, setVoiceHint] = useState('');
-  const [limitToast, setLimitToast] = useState(null);
   const resendTextRef = useRef('');
   const showError = async (error) => {
     console.debug('Practice request failed', { status: error.status, code: error.code, name: error.name });
@@ -255,81 +263,31 @@ export function PracticeRoom({
     if (!session?.result) queueMicrotask(() => setNotice((current) => current || terminationNotice(terminationStatus)));
   }, [terminationStatus, session?.result]);
   const [mode, setMode] = useState(initialMode === 'voice' ? 'voice' : 'text');
-  const [autoSendPreference, setAutoSendPreference] = useState(() => {
-    try {
-      const saved = initialMode === 'voice' ? 'true' : localStorage.getItem(VOICE_SEND_PREFERENCE_KEY);
-      return saved !== 'false';
-    } catch {
-      return true;
-    }
-  });
-  const chooseAutoSend = (value) => {
-    setAutoSendPreference(value);
-    try {
-      localStorage.setItem(VOICE_SEND_PREFERENCE_KEY, String(value));
-    } catch {
-      // Storage may be unavailable; retain the preference for this room.
-    }
-  };
   const voiceGender = scenario?.voice_gender;
-  const [transcribing, setTranscribing] = useState(false);
   const [speakingId, setSpeakingId] = useState(null);
 
   const chatListRef = useRef(null);
   const transcriptRef = useRef(null);
   const audioRef = useRef(null);
   const audioUrlsRef = useRef(new Map());
-  const modeRef = useRef(mode);
   const sendingRef = useRef(false);
-  const sendHandlerRef = useRef(null);
-
-  useEffect(() => { modeRef.current = mode; }, [mode]);
-
-  const onRecorded = async (blob, durationSeconds, reason, localTranscript = '') => {
-    if (reason === 'limit') setLimitToast(Date.now());
-    if (blob.size > 4_000_000 && !localTranscript) {
-      showError({ code: 'voice_invalid_audio' });
-      return;
-    }
-    setVoiceHint('');
-    setTranscribing(true);
-    try {
-      let transcriptText = '';
+  const realtimeAudioRef = useRef(null);
+  const realtime = useRealtimeRoleplay(session.session_id, realtimeAudioRef, async (snapshot) => {
+    setMessages((previous) => mergeVoiceTranscript(previous, snapshot.messages));
+    if (Number.isInteger(snapshot.turns)) setTurnCount(snapshot.turns);
+    if (!Number.isInteger(snapshot.turns) || snapshot.turns >= (session.max_turns || 10)) {
       try {
-        const result = await practiceApi.transcribeVoice(session.session_id, blob, durationSeconds);
-        if (result?.transcript?.trim()) {
-          transcriptText = result.transcript.trim();
-        }
-      } catch (requestError) {
-        if (!localTranscript?.trim()) {
-          showError(requestError);
-          return;
-        }
-      }
-
-      if (!transcriptText && localTranscript?.trim()) {
-        transcriptText = localTranscript.trim();
-      }
-
-      if (!transcriptText) {
-        showError({ code: 'voice_invalid_audio' });
-        return;
-      }
-
-      setInputMessage(transcriptText);
-      if (autoSendPreference) {
-        await sendHandlerRef.current?.(transcriptText, true);
-      }
-    } finally {
-      setTranscribing(false);
+        const saved = await practiceApi.getSession(session.session_id);
+        setMessages((previous) => mergeVoiceTranscript(previous, saved.messages));
+        setTurnCount(saved.turn_count);
+        setTerminationStatus(saved.termination_status);
+        setStage(saved.conversation_stage);
+      } catch { /* Keep the saved turn count visible. */ }
     }
-  };
+  });
 
-  const recorder = usePushToTalk(onRecorded);
-
-  const playCustomer = async (message, automatic = false) => {
+  const playCustomer = async (message) => {
     if (!message || message.role !== 'customer') return;
-    if (automatic && modeRef.current !== 'voice') return;
     const gender = voiceGender || 'female';
     const cacheKey = `${message.message_id}:${gender}`;
     setSpeakingId(message.message_id);
@@ -357,10 +315,6 @@ export function PracticeRoom({
           }
           throw apiErr;
         }
-      }
-      if (automatic && modeRef.current !== 'voice') {
-        setSpeakingId(null);
-        return;
       }
       audioRef.current?.pause();
       const audio = new Audio(url);
@@ -393,14 +347,22 @@ export function PracticeRoom({
   const drawerTriggerRef = useRef(null);
   const voiceStartedRef = useRef(null);
   const waiting = loading || pendingReply;
-  const recording = recorder.recordingState === 'recording';
+  const recording = realtime.status === 'advisor_speaking';
   const mirrorOn = mode === 'voice' && camera.status === 'on';
   const focusMirror = mirrorOn && (phone || mirrorLayout === 'focus');
-  const thinking = waiting || transcribing;
-  const micDisabled = loading || finishing || pendingReply || transcribing || speakingId !== null || terminationStatus !== 'active';
-  const statusText = recording ? 'Đang nghe bạn' : thinking ? 'Đang suy nghĩ…' : speakingId ? 'Đang nói' : 'Sẵn sàng nghe bạn';
-  const latestCustomer = messages.findLast((message) => message.role === 'customer');
-  const latestAdvisor = messages.findLast((message) => message.role === 'advisor');
+  const thinking = realtime.status === 'thinking';
+  const callStates = {
+    idle: 'Chưa bắt đầu cuộc gọi', connecting: 'Đang kết nối…', reconnecting: 'Đang kết nối lại…',
+    listening: 'Sẵn sàng nghe bạn', advisor_speaking: 'Đang nghe bạn', thinking: 'Khách đang suy nghĩ…',
+    customer_speaking: 'Khách đang nói', interrupted: 'Đã ngắt lời khách', stopping: 'Đang lưu bản chép lời…',
+    ended: 'Cuộc gọi đã kết thúc', disconnected: 'Mất kết nối', error: 'Chưa kết nối được cuộc gọi',
+    unavailable: 'Gọi thoại chưa được cấu hình',
+  };
+  const statusText = callStates[realtime.status];
+  const callPending = ['connecting', 'reconnecting', 'stopping'].includes(realtime.status);
+  const transcriptMessages = mode === 'voice' ? mergeVoiceTranscript(messages, realtime.messages, true) : messages;
+  const latestCustomer = transcriptMessages.findLast((message) => message.role === 'customer' && !message.interrupted);
+  const latestAdvisor = transcriptMessages.findLast((message) => message.role === 'advisor');
   const maxTurns = session?.max_turns || 10;
   const { start: startCamera, stop: stopCamera } = camera;
   useEffect(() => {
@@ -418,32 +380,22 @@ export function PracticeRoom({
     if (videoRef.current) videoRef.current.srcObject = camera.stream;
   }, [camera.stream, focusMirror]);
   useEffect(() => {
-    if (mode !== 'voice') return;
+    if (!realtime.open) return;
     voiceStartedRef.current = Date.now();
     const timer = setInterval(() => setCallSeconds(Math.floor((Date.now() - voiceStartedRef.current) / 1000)), 500);
     return () => clearInterval(timer);
-  }, [mode]);
+  }, [realtime.open]);
   useEffect(() => {
     const reset = setTimeout(() => setSlow(false), 0);
     const timer = waiting ? setTimeout(() => setSlow(true), 15000) : null;
     return () => { clearTimeout(reset); clearTimeout(timer); };
   }, [waiting]);
   useEffect(() => {
-    if (!limitToast) return;
-    const timer = setTimeout(() => setLimitToast(null), 4000);
-    return () => clearTimeout(timer);
-  }, [limitToast]);
-  useEffect(() => {
     if (!drawerOpen) return;
     const previous = drawerTriggerRef.current;
     drawerRef.current?.querySelector('button')?.focus();
     return () => previous?.focus();
   }, [drawerOpen]);
-  useEffect(() => {
-    const stop = () => recorder.stop();
-    window.addEventListener('blur', stop);
-    return () => window.removeEventListener('blur', stop);
-  }, [recorder]);
   useEffect(() => {
     const input = inputRef.current;
     if (input) { input.style.height = 'auto'; input.style.height = `${Math.min(input.scrollHeight, 120)}px`; }
@@ -467,44 +419,6 @@ export function PracticeRoom({
   const roomKeyDown = (event) => {
     if (event.key === 'Escape') setDrawerOpen(false);
   };
-  // Space talks from anywhere on the page in voice mode, except while typing or when another control has focus.
-  const spaceTalksFrom = (target) => {
-    if (!(target instanceof Element)) return true;
-    if (target.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')) return false;
-    const control = target.closest('button, a[href], summary');
-    return !control || control.classList.contains('pr-mic');
-  };
-  const micRef = useRef(null);
-  // Entering voice mode hands keyboard focus to the mic, so Space talks straight away.
-  useEffect(() => {
-    if (mode === 'voice') micRef.current?.focus({ preventScroll: true });
-  }, [mode]);
-  const spaceRef = useRef({});
-  useEffect(() => {
-    spaceRef.current = {
-    down(event) {
-      if (event.key !== ' ' || mode !== 'voice' || !spaceTalksFrom(event.target)) return;
-      event.preventDefault();
-      if (!event.repeat && !micDisabled && !showFinishConfirm && !notice && !drawerOpen) recorder.start();
-    },
-    up(event) {
-      if (event.key !== ' ' || mode !== 'voice' || !spaceTalksFrom(event.target)) return;
-      event.preventDefault();
-      recorder.stop();
-    },
-    };
-  });
-  useEffect(() => {
-    const onDown = (event) => spaceRef.current.down?.(event);
-    const onUp = (event) => spaceRef.current.up?.(event);
-    document.addEventListener('keydown', onDown);
-    document.addEventListener('keyup', onUp);
-    return () => {
-      document.removeEventListener('keydown', onDown);
-      document.removeEventListener('keyup', onUp);
-    };
-  }, []);
-
   const stageLabels = {
     opening: 'Giai đoạn: Chào hỏi & Mở đầu',
     discovery: 'Giai đoạn: Khai thác nhu cầu',
@@ -515,9 +429,8 @@ export function PracticeRoom({
   };
 
   useEffect(() => {
-    for (const list of [chatListRef.current, transcriptRef.current]) {
-      if (list) list.scrollTop = list.scrollHeight;
-    }
+    const list = chatListRef.current;
+    if (list) list.scrollTop = list.scrollHeight;
   }, [messages, loading, mode, pendingReply, drawerOpen]);
 
   useEffect(() => () => {
@@ -525,22 +438,23 @@ export function PracticeRoom({
     audioUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
   }, []);
 
-  const toggleVoiceMode = () => {
-    if (recorder.recordingState !== 'idle' || transcribing) return;
-    const nextMode = modeRef.current === 'voice' ? 'text' : 'voice';
-    modeRef.current = nextMode;
-    setMode(nextMode);
-    // Starting a call always begins with auto-send on; the user can still switch it off.
-    if (nextMode === 'voice') chooseAutoSend(true);
-    if (nextMode === 'text') {
+  async function toggleVoiceMode() {
+    if (callPending || finishing) return;
+    if (mode === 'voice') {
+      try { await realtime.stop(); } catch { return; }
+      setMode('text');
+    } else {
       audioRef.current?.pause();
+      window.speechSynthesis?.cancel();
       setSpeakingId(null);
+      setCallSeconds(0);
+      setMode('voice');
     }
-  };
+  }
 
-  async function handleSendMessage(message = inputMessage, fromVoice = false) {
+  async function handleSendMessage(message = inputMessage) {
     const text = typeof message === 'string' ? message.trim() : inputMessage.trim();
-    if (!text || sendingRef.current || loading || finishing || pendingReply || (!fromVoice && transcribing) || (!fromVoice && recorder.recordingState !== 'idle') || terminationStatus !== 'active') return;
+    if (!text || sendingRef.current || loading || finishing || pendingReply || terminationStatus !== 'active') return;
     sendingRef.current = true;
 
     const advisorMsg = {
@@ -563,10 +477,6 @@ export function PracticeRoom({
       setTurnCount(updated.turn_count);
       setTerminationStatus(updated.termination_status);
       setPendingReply(updated.pending_customer_reply);
-      if (modeRef.current === 'voice') {
-        const customerReply = updated.messages.at(-1);
-        if (customerReply?.role === 'customer') playCustomer(customerReply, true);
-      }
     } catch (requestError) {
       if (requestError.code === 'message_not_sent') {
         resendTextRef.current = text;
@@ -591,10 +501,8 @@ export function PracticeRoom({
     }
   }
 
-  useEffect(() => { sendHandlerRef.current = handleSendMessage; });
-
   async function handleRetryReply() {
-    if (loading || finishing || transcribing || recorder.recordingState !== 'idle') return;
+    if (loading || finishing) return;
     setLoading(true);
     setNotice(null);
     try {
@@ -604,10 +512,6 @@ export function PracticeRoom({
       setTurnCount(updated.turn_count);
       setTerminationStatus(updated.termination_status);
       setPendingReply(updated.pending_customer_reply);
-      if (modeRef.current === 'voice') {
-        const customerReply = updated.messages.at(-1);
-        if (customerReply?.role === 'customer') playCustomer(customerReply, true);
-      }
     } catch (requestError) {
       showError(requestError);
       try {
@@ -626,14 +530,21 @@ export function PracticeRoom({
   };
 
   const handleFinishSession = async () => {
-    if (loading || finishing || pendingReply || transcribing || recorder.recordingState !== 'idle') return;
+    if (loading || finishing || pendingReply) return;
     setFinishing(true);
     setShowFinishConfirm(true);
     setNotice(null);
     try {
-      const resultView = await practiceApi.finishSession(session.session_id);
+      await realtime.stop();
+      const resultView = await practiceApi.finishSession(session.session_id, {
+        realtime: Boolean(realtime.model || messages.some((message) => message.turn_id)),
+      });
       onFinish(resultView);
     } catch (requestError) {
+      if (requestError.code === 'realtime_transcript_incomplete') {
+        setVoiceHint(requestError.message);
+        return;
+      }
       try {
         const saved = await practiceApi.getSession(session.session_id);
         setTerminationStatus(saved.termination_status);
@@ -657,12 +568,6 @@ export function PracticeRoom({
     }
   };
 
-  useEffect(() => {
-    if (!recorder.permissionError) return;
-    console.debug('Practice microphone permission unavailable', { name: recorder.permissionError.name });
-    queueMicrotask(() => setNotice(apiErrorNotice(recorder.permissionError)));
-  }, [recorder.permissionError]);
-
   const handleNoticeAction = async (id) => {
     setNotice(null);
     if (id === 'finish_and_score' || id === 'retry_finish') await handleFinishSession();
@@ -680,27 +585,48 @@ export function PracticeRoom({
 
   const context = <CustomerContext session={session} scenario={scenario} />;
   const modeControl = <div className="pr-segment pr-mode" role="group" aria-label="Cách luyện">
-    {['text', 'voice'].map((value) => <button key={value} aria-pressed={mode === value} onClick={() => { if (mode !== value) { setCallSeconds(0); toggleVoiceMode(); } }} disabled={recorder.recordingState !== 'idle' || transcribing || terminationStatus !== 'active'}>{value === 'text' ? <><MessageCircle aria-hidden="true" />Nhắn tin</> : <><Phone aria-hidden="true" />Gọi thoại</>}</button>)}
+    {['text', 'voice'].map((value) => <button key={value} aria-pressed={mode === value} onClick={() => { if (mode !== value) void toggleVoiceMode(); }} disabled={callPending || finishing || terminationStatus !== 'active'}>{value === 'text' ? <><MessageCircle aria-hidden="true" />Nhắn tin</> : <><Phone aria-hidden="true" />Gọi thoại</>}</button>)}
   </div>;
   const layoutControl = <div className="pr-segment pr-layout" role="group" aria-label="Bố cục Mirror">
     <button aria-pressed={mirrorLayout === 'split'} onClick={() => chooseLayout('split')}>Chia đôi</button>
     <button aria-pressed={mirrorLayout === 'focus'} onClick={() => chooseLayout('focus')}>Toàn màn hình</button>
   </div>;
-  const mic = <span className={`pr-mic-wrap ${recording ? 'pr-recording' : ''}`}>
-    {recording && <DotField green />}
-    <button ref={micRef} className="pr-mic" disabled={micDisabled} aria-label={autoSendPreference ? 'Bấm giữ để nói, thả để gửi' : 'Bấm giữ để nói, thả để chép vào ô nhập'} aria-pressed={recording}
-      onPointerDown={(event) => { event.preventDefault(); event.currentTarget.setPointerCapture(event.pointerId); recorder.start(); }}
-      onPointerUp={() => recorder.stop()} onPointerLeave={() => recorder.stop()} onPointerCancel={() => recorder.stop()} onLostPointerCapture={() => recorder.stop()} onBlur={() => recorder.stop()}
-      onKeyDown={(event) => { if (event.key === 'Enter' && !event.repeat && !micDisabled) { event.preventDefault(); recorder.start(); } }}
-      onKeyUp={(event) => { if (event.key === 'Enter') { event.preventDefault(); recorder.stop(); } }}><MicIcon aria-hidden="true" /></button>
-  </span>;
-  const autoSendSwitch = <button className="pr-auto-send" role="switch" aria-checked={autoSendPreference} onClick={() => chooseAutoSend(!autoSendPreference)} disabled={waiting || finishing || transcribing || recorder.recordingState !== 'idle'}><span aria-hidden="true" />Tự động gửi</button>;
-  const talkHint = <div className="pr-talk-hint"><strong>{recording ? (autoSendPreference ? 'Đang thu, thả để gửi' : 'Đang thu, thả để chép') : 'Giữ để nói'}</strong><span>Hoặc giữ phím Space.<br />{autoSendPreference ? 'Thả tay là gửi.' : 'Thả rồi kiểm tra bản chép.'}</span>{autoSendSwitch}</div>;
-  const toast = limitToast && <div className="pr-toast" role="status"><Clock size={18} />{autoSendPreference ? 'Đã tự gửi vì mỗi lượt nói tối đa 90 giây.' : 'Đã dừng ghi âm vì mỗi lượt nói tối đa 90 giây.'}</div>;
-  const transcript = <Transcript messages={messages} waiting={waiting} listRef={transcriptRef} playCustomer={playCustomer} speakingId={speakingId} />;
+  const callControls = (
+    <div className="pr-realtime-controls">
+      {!realtime.open || realtime.status === 'disconnected' ? (
+        <button type="button" className="pr-realtime-primary" disabled={waiting || finishing || terminationStatus !== 'active'} onClick={() => { setVoiceHint(''); setCallSeconds(0); void realtime.start(); }}>
+          <Phone size={18} aria-hidden="true" /> {realtime.status === 'unavailable' ? 'Kiểm tra lại cấu hình' : ['disconnected', 'error'].includes(realtime.status) ? 'Kết nối lại' : 'Bắt đầu cuộc gọi'}
+        </button>
+      ) : (
+        <>
+          <button type="button" disabled={callPending || finishing} aria-pressed={realtime.muted} onClick={realtime.toggleMicrophone}>
+            <MicIcon aria-hidden="true" /> {realtime.muted ? 'Bật mic' : 'Tắt mic'}
+          </button>
+          <button type="button" aria-pressed={!realtime.audioEnabled} onClick={realtime.toggleAudio}>
+            <SpeakerIcon aria-hidden="true" /> {realtime.audioEnabled ? 'Tắt âm thanh' : 'Bật âm thanh'}
+          </button>
+          <button type="button" disabled={finishing || !['customer_speaking', 'thinking'].includes(realtime.status)} onClick={realtime.interrupt}>Ngắt lời khách</button>
+          <button type="button" className="pr-realtime-end" disabled={realtime.status === 'stopping' || finishing} onClick={() => { void realtime.stop().catch((error) => setVoiceHint(error.message)); }}>Kết thúc cuộc gọi</button>
+        </>
+      )}
+      {realtime.devices.length > 1 && (
+        <label>Mic <select value={realtime.deviceId} disabled={callPending || finishing} onChange={(event) => realtime.chooseDevice(event.target.value)}>
+          <option value="">Mặc định</option>
+          {realtime.devices.filter((device) => device.deviceId).map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Mic ${index + 1}`}</option>)}
+        </select></label>
+      )}
+      {realtime.speakers.length > 1 && (
+        <label>Loa <select value={realtime.speakerId} disabled={callPending || finishing} onChange={(event) => realtime.chooseSpeaker(event.target.value)}>
+          <option value="">Mặc định</option>
+          {realtime.speakers.filter((device) => device.deviceId && device.deviceId !== 'default').map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Loa ${index + 1}`}</option>)}
+        </select></label>
+      )}
+    </div>
+  );
+  const transcript = <Transcript messages={transcriptMessages} waiting={mode === 'voice' ? thinking : waiting} listRef={transcriptRef} />;
   const composer = <div className="pr-composer">
-    <div className="pr-compose-row"><textarea ref={inputRef} value={inputMessage} onChange={(event) => setInputMessage(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); handleSendMessage(); } }} placeholder="Nhắn cho khách…" aria-label="Nhắn tin cho khách hàng" rows={1} disabled={finishing || transcribing || recorder.recordingState !== 'idle' || terminationStatus !== 'active'} />
-      <button className="pr-send" onClick={() => handleSendMessage()} disabled={!inputMessage.trim() || waiting || finishing || transcribing || recorder.recordingState !== 'idle' || terminationStatus !== 'active'} aria-label="Gửi tin nhắn"><SendIcon /></button></div>
+    <div className="pr-compose-row"><textarea ref={inputRef} value={inputMessage} onChange={(event) => setInputMessage(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); handleSendMessage(); } }} placeholder="Nhắn cho khách…" aria-label="Nhắn tin cho khách hàng" rows={1} disabled={finishing || terminationStatus !== 'active'} />
+      <button className="pr-send" onClick={() => handleSendMessage()} disabled={!inputMessage.trim() || waiting || finishing || terminationStatus !== 'active'} aria-label="Gửi tin nhắn"><SendIcon /></button></div>
     <p className="pr-hint">{waiting ? 'Bạn vẫn gõ trước được. Nút gửi mở lại khi khách trả lời xong.' : 'Enter để gửi, Shift + Enter để xuống dòng.'}</p>
   </div>;
   const vehicleModel = /VF[\s_-]*(Wild|[356789])(?![a-z0-9])/i.exec(`${scenario?.model_badge || ''} ${scenario?.model || ''} ${scenario?.scenario_id || ''} ${scenario?.title || ''}`)?.[1].toLowerCase();
@@ -709,14 +635,15 @@ export function PracticeRoom({
   const vehicleAlt = isApartmentScenario ? 'VinFast VF 6 màu xanh' : vehicleModel ? `VinFast VF ${vehicleModel === 'wild' ? 'Wild' : vehicleModel}` : 'Xe luyện tập';
   return (
     <section className={`pr-room ${mode === 'voice' ? 'pr-voice' : 'pr-text'} ${mirrorOn ? 'pr-mirror' : ''} ${focusMirror ? 'pr-focus' : ''}`} aria-label="Phiên luyện tập" onKeyDown={roomKeyDown}>
+      <audio ref={realtimeAudioRef} autoPlay playsInline hidden />
       <NoticeDialog notice={notice} onAction={handleNoticeAction} onClose={() => setNotice(null)} />
       <header className="pr-bar">
         <button className="pr-back" onClick={onExit} aria-label="Rời phòng"><ChevronLeft /><span>Rời phòng</span></button>
         {vehicle && <img className="pr-vehicle" src={vehicle} alt={vehicleAlt} width={200} height={106} />}
-        <div className="pr-identity"><h2>{scenario?.title}</h2><div className="pr-meta"><span className="pr-model">{scenario?.model_badge || scenario?.model}</span><span className="pr-stage-label">{stageLabels[stage] || stage}</span><span>Lượt {turnCount} / {maxTurns}</span><progress aria-label="Tiến độ lượt trao đổi" value={turnCount} max={maxTurns} />{focusMirror && <span>Cuộc gọi {clock(callSeconds)}</span>}</div></div>
+        <div className="pr-identity"><h2>{scenario?.title}</h2><div className="pr-meta"><span className="pr-model">{scenario?.model_badge || scenario?.model}</span><span className="pr-stage-label">{stageLabels[stage] || stage}</span><span>Lượt {Math.max(turnCount, realtime.turns || 0)} / {maxTurns}</span><progress aria-label="Tiến độ lượt trao đổi" value={Math.max(turnCount, realtime.turns || 0)} max={maxTurns} />{focusMirror && <span>Cuộc gọi {clock(callSeconds)}</span>}</div></div>
         {modeControl}
         {focusMirror && <><span className="pr-private"><ShieldCheck size={16} />Chỉ trên máy này</span>{layoutControl}<button className="pr-mirror-off" onClick={toggleMirror} aria-label="Tắt Mirror"><VideoOff size={18} /></button></>}
-        <button className="pr-finish" onClick={() => setShowFinishConfirm(true)} disabled={waiting || finishing || transcribing || recorder.recordingState !== 'idle'}><span className="pr-finish-full">Kết thúc & chấm điểm</span><span className="pr-finish-short">Kết thúc</span></button>
+        <button className="pr-finish" onClick={() => setShowFinishConfirm(true)} disabled={waiting || finishing || callPending}><span className="pr-finish-full">Kết thúc & chấm điểm</span><span className="pr-finish-short">Kết thúc</span></button>
         <details className="pr-phone-context"><summary>Bối cảnh khách ▾</summary>{context}</details>
       </header>
       {terminationStatus !== 'active' && <p className={`pr-termination ${terminationStatus === 'advisor_misconduct' ? 'pr-misconduct' : ''}`} role="status">{terminationStatus === 'advisor_misconduct' ? 'Phiên luyện tập đã dừng do ngôn từ không phù hợp.' : 'Cuộc trò chuyện đã kết thúc. Hãy xem đánh giá.'}</p>}
@@ -779,18 +706,17 @@ export function PracticeRoom({
               <video className="pr-video" ref={videoRef} autoPlay muted playsInline />
               {!focusMirror && <div className="pr-video-top"><span className="pr-private"><ShieldCheck size={18} />Mirror chỉ hiện trên máy này, không ghi hình</span>{layoutControl}<button onClick={toggleMirror}><VideoOff size={18} />Tắt Mirror</button></div>}
               <div className="pr-video-bottom">
-                <div className="pr-customer-card"><CustomerAvatar thinking={thinking} /><div><strong>Khách</strong><span role="status">{statusText}</span></div></div>
-                {focusMirror && captionsOn && <div className="pr-focus-caption" aria-live="polite"><p>{latestCustomer?.content || 'Phụ đề lời khách sẽ hiện ở đây khi khách nói.'}</p><small>Bạn: {recording ? <span className="pr-caret">…</span> : transcribing ? 'Đang chuyển giọng nói thành chữ…' : latestAdvisor?.content || 'giữ nút để trả lời'}</small></div>}
-                <div className="pr-call-controls"><span className="pr-focus-tools"><button className="pr-caption-toggle" onClick={toggleCaptions} aria-pressed={captionsOn}>{captionsOn ? <CaptionsOff aria-hidden="true" /> : <Captions aria-hidden="true" />}{captionsOn ? 'Ẩn phụ đề' : 'Hiện phụ đề'}</button><button className="pr-drawer-trigger" ref={drawerTriggerRef} onClick={() => setDrawerOpen(true)} aria-expanded={drawerOpen}>Hội thoại ({messages.length})</button></span>{mic}{talkHint}<button className="pr-phone-text" onClick={toggleVoiceMode} disabled={recorder.recordingState !== 'idle' || transcribing}>Nhắn tin</button></div>
+                <div className="pr-customer-card"><CustomerAvatar thinking={thinking} /><div><strong>{scenario?.customer_name || 'Khách'}</strong><span role="status">{statusText}</span></div></div>
+                {focusMirror && captionsOn && <div className="pr-focus-caption" aria-live="polite"><p>{latestCustomer?.content || 'Phụ đề lời khách sẽ hiện ở đây khi khách nói.'}</p><small>Bạn: {latestAdvisor?.content || (recording ? 'Đang nhận diện lời nói…' : 'Bạn có thể nói khi đã kết nối.')}</small></div>}
+                <div className="pr-call-controls"><span className="pr-focus-tools"><button className="pr-caption-toggle" onClick={toggleCaptions} aria-pressed={captionsOn}>{captionsOn ? <CaptionsOff aria-hidden="true" /> : <Captions aria-hidden="true" />}{captionsOn ? 'Ẩn phụ đề' : 'Hiện phụ đề'}</button><button className="pr-drawer-trigger" ref={drawerTriggerRef} onClick={() => setDrawerOpen(true)} aria-expanded={drawerOpen}>Hội thoại ({messages.length})</button></span>{callControls}<button className="pr-phone-text" onClick={toggleVoiceMode} disabled={callPending || finishing}>Nhắn tin</button></div>
               </div>
             </> : <>
-              <span className="pr-call-timer">Cuộc gọi luyện tập · {clock(callSeconds).padStart(5, '0')}</span>
+              <span className="pr-call-timer">{realtime.open ? `Cuộc gọi luyện tập · ${clock(callSeconds).padStart(5, '0')}` : 'Cuộc gọi luyện tập'}</span>
               <div className="pr-avatar-area"><DotField /><div className="pr-parallax-avatar"><CustomerAvatar thinking={thinking} large /></div></div>
-              <div className="pr-customer-name"><strong>Khách</strong><span role="status">{speakingId && <span className="pr-wave" aria-hidden="true">{[0, 1, 2, 3, 4].map((i) => <i key={i} style={{ animationDelay: `${i * .12}s` }} />)}</span>}{statusText}</span></div>
-              <p className="pr-caption" aria-live="polite">{latestCustomer?.content || 'Phụ đề lời khách sẽ hiện ở đây khi khách nói.'}</p>
-              <div className="pr-call-controls"><div className="pr-mirror-control"><button className="pr-mirror-enable" onClick={toggleMirror} disabled={camera.status === 'requesting' || terminationStatus !== 'active'}><span><strong>{camera.status === 'requesting' ? 'Đang mở camera…' : 'Bật Mirror'}</strong><small>Chỉ trên máy bạn, không ghi hình</small><em>Tập nụ cười và ánh mắt tự tin khi nói</em></span><span className="pr-camera-icon"><Video /></span></button>{['denied', 'unsupported', 'error'].includes(camera.status) && <p className="pr-camera-error" role="status">{camera.status === 'denied' ? 'Chưa có quyền dùng camera. Hãy cho phép camera trong trình duyệt.' : camera.status === 'unsupported' ? 'Trình duyệt không hỗ trợ camera.' : 'Không mở được camera. Hãy kiểm tra camera rồi thử lại.'}</p>}</div>{mic}{talkHint}</div>
+              <div className="pr-customer-name"><strong>{scenario?.customer_name || 'Khách'}</strong><span role="status">{realtime.status === 'customer_speaking' && <span className="pr-wave" aria-hidden="true">{[0, 1, 2, 3, 4].map((i) => <i key={i} style={{ animationDelay: `${i * .12}s` }} />)}</span>}{statusText}</span></div>
+              <div className="pr-caption"><p>{latestCustomer?.content || 'Phụ đề lời khách sẽ hiện ở đây khi khách nói.'}</p>{latestAdvisor && <small>Bạn · {latestAdvisor.partial ? 'Đang chép · ' : ''}{latestAdvisor.content}</small>}</div>
+              <div className="pr-call-controls"><div className="pr-mirror-control"><button className="pr-mirror-enable" onClick={toggleMirror} disabled={camera.status === 'requesting' || terminationStatus !== 'active'}><span><strong>{camera.status === 'requesting' ? 'Đang mở camera…' : 'Bật Mirror'}</strong><small>Chỉ trên máy bạn, không ghi hình</small><em>Tập nụ cười và ánh mắt tự tin khi nói</em></span><span className="pr-camera-icon"><Video /></span></button>{['denied', 'unsupported', 'error'].includes(camera.status) && <p className="pr-camera-error" role="status">{camera.status === 'denied' ? 'Chưa có quyền dùng camera. Hãy cho phép camera trong trình duyệt.' : camera.status === 'unsupported' ? 'Trình duyệt không hỗ trợ camera.' : 'Không mở được camera. Hãy kiểm tra camera rồi thử lại.'}</p>}</div>{callControls}</div>
             </>}
-            {toast}
           </div>
           {!focusMirror && (
             <aside className="pr-voice-sidebar" aria-label="Bảng thông tin cuộc gọi">
@@ -829,10 +755,9 @@ export function PracticeRoom({
                   <div className="pr-voice-transcript-wrap">
                     <div className="pr-voice-transcript-head">
                       <h3>{mirrorOn ? 'Toàn bộ hội thoại' : 'Bản ghi lời thoại'}</h3>
-                      <span className="pr-voice-live-badge">Trực tiếp</span>
+                      {realtime.open && <span className="pr-voice-live-badge">Trực tiếp</span>}
                     </div>
                     {transcript}
-                    {!autoSendPreference && composer}
                   </div>
                 )}
               </div>
@@ -840,9 +765,8 @@ export function PracticeRoom({
           )}
         </>}
       </div>
-      {(slow && waiting || pendingReply) && <div className="pr-slow" role="status"><span>{slow ? 'Khách đang cân nhắc lâu hơn thường lệ.' : 'Tin nhắn đã lưu. Khách hàng chưa phản hồi.'}</span>{pendingReply && <button onClick={handleRetryReply} disabled={loading || finishing || transcribing || recorder.recordingState !== 'idle'}>Gửi lại yêu cầu</button>}</div>}
-      {(voiceHint || recorder.recordingError) && <p className="pr-feedback" role="status">{voiceHint || recorder.recordingError}</p>}
-      {focusMirror && !autoSendPreference && inputMessage && <div className="pr-focus-draft">{composer}</div>}
+      {(slow && waiting || pendingReply) && <div className="pr-slow" role="status"><span>{slow ? 'Khách đang cân nhắc lâu hơn thường lệ.' : 'Tin nhắn đã lưu. Khách hàng chưa phản hồi.'}</span>{pendingReply && <button onClick={handleRetryReply} disabled={loading || finishing}>Gửi lại yêu cầu</button>}</div>}
+      {(realtime.error || voiceHint) && <p className="pr-feedback" role="status">{realtime.error || voiceHint}</p>}
       {drawerOpen && <div className="pr-drawer-backdrop" onClick={() => setDrawerOpen(false)}><aside className="pr-drawer" ref={drawerRef} role="dialog" aria-modal="true" aria-label="Toàn bộ hội thoại" onClick={(event) => event.stopPropagation()} onKeyDown={(event) => { if (event.key === 'Tab') { const controls = [...event.currentTarget.querySelectorAll('button:not(:disabled)')]; const first = controls[0]; const last = controls.at(-1); if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); } } }}><header><h2>Toàn bộ hội thoại</h2><button aria-label="Đóng hội thoại" onClick={() => setDrawerOpen(false)}><X /></button></header>{transcript}</aside></div>}
       <FinishConfirmDialog isOpen={showFinishConfirm} onClose={() => setShowFinishConfirm(false)} onConfirm={handleFinishSession} finishing={finishing} />
     </section>

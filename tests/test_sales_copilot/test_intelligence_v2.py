@@ -6,8 +6,10 @@ from unittest.mock import AsyncMock
 
 import pytest
 from cryptography.fernet import Fernet
+from langchain_core.messages import AIMessage
+from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, update
 
 from src.config import get_settings
 from src.integrations.customer_intelligence_store import IntelligenceStore
@@ -15,7 +17,7 @@ from src.integrations.intelligence_migration import migrate_appointment_stages
 from src.integrations.sales_copilot_repository import SQLSalesCopilotRepository
 from src.models.customer_intelligence import Event, Extraction, HistoryAnswer, Recap
 from src.models.sales_copilot import LeadStage, LeadStatus
-from src.services.customer_pii import CustomerPII, PIIUnavailableError
+from src.services.customer_pii import CustomerModelError, CustomerPII, PIIUnavailableError
 from src.services.intelligence_engine import IntelligenceEngine, stage_for
 from src.services.sales_agenda_service import SalesAgendaService
 from src.services.sales_conversation_service import SalesConversationService
@@ -155,6 +157,87 @@ async def test_incremental_keeps_confirmation_and_rejects_bad_quote(crm, monkeyp
     with pytest.raises(ValueError, match="Bằng chứng"):
         await engine.analyze(conv, "sales")
     assert store.analysis(cid)["analysis_id"] == second["analysis_id"]
+
+
+@pytest.mark.asyncio
+async def test_private_compatible_gateway_receives_schema_and_masked_messages(crm, monkeypatch):
+    model = ChatOpenAI(base_url="https://gateway.example/v1", api_key="test", model="test", temperature=0.3)
+    monkeypatch.setattr("src.services.customer_pii.get_llm", lambda **kwargs: model)
+
+    async def invoke(self, messages, config):
+        assert self.temperature is None
+        assert '"required": ["text"]' in messages[0]["content"]
+        assert "0912345678" not in messages[1]["content"]
+        assert "[SDT_1]" in messages[1]["content"]
+        assert config["callbacks"] == []
+        return AIMessage(content='```json\n{"text": "Đã phân tích"}\n```')
+
+    monkeypatch.setattr(ChatOpenAI, "ainvoke", invoke)
+    recap = await CustomerPII().ask("Tóm tắt", {"content": "SĐT 0912345678"}, Recap)
+    assert recap.text == "Đã phân tích"
+
+
+@pytest.mark.asyncio
+async def test_empty_conversation_analysis_does_not_create_a_snapshot(crm, monkeypatch):
+    repo, _, _, _ = crm
+    customer = repo.create_customer(name="Khách mới", advisor_id="sales")
+    conversation = repo.get_or_create_conversation(customer)
+    ask = AsyncMock()
+    monkeypatch.setattr(CustomerPII, "ask", ask)
+
+    engine = IntelligenceEngine(repo)
+    assert await engine.analyze(conversation, "sales") == {"status": "no_messages"}
+    assert engine.store.analysis(customer) is None
+    ask.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_extraction_failure_does_not_consume_messages(crm, monkeypatch):
+    repo, cid, conv, _ = crm
+    engine = IntelligenceEngine(repo)
+    mock_analysis(monkeypatch, Extraction())
+    first = await engine.analyze(conv, "sales")
+    repo.add_message(conv, "customer", "Tôi quan tâm VF 8.")
+    monkeypatch.setattr(CustomerPII, "ask", AsyncMock(side_effect=CustomerModelError("Lỗi nhà cung cấp")))
+    with pytest.raises(CustomerModelError):
+        await engine.analyze(conv, "sales")
+    status = engine.store.status(cid)
+    assert status["analysis_id"] == first["analysis_id"]
+    assert status["pending_message_count"] == 1
+
+
+@pytest.mark.asyncio
+async def test_snapshot_published_by_old_fallback_is_rebuilt(crm, monkeypatch):
+    repo, cid, conv, msg = crm
+    engine = IntelligenceEngine(repo)
+    service = SalesConversationService(repo)
+    mock_analysis(monkeypatch, Extraction())
+    first = await engine.analyze(conv, "sales")
+    table = engine.store.tables["analyses"]
+    with repo.engine.begin() as conn:
+        stored = conn.execute(select(table.c.payload_json).where(table.c.id == first["analysis_id"])).scalar_one()
+        legacy = json.loads(stored)
+        del legacy["extraction_version"]
+        conn.execute(update(table).where(table.c.id == first["analysis_id"]).values(payload_json=json.dumps(legacy)))
+        context = repo.recommendations
+        context_id, raw_context = conn.execute(
+            select(context.c.id, context.c.payload_json).where(
+                context.c.conversation_id == conv, context.c.type == "analysis_context"
+            )
+        ).one()
+        legacy_context = json.loads(raw_context)
+        del legacy_context["extraction_version"]
+        conn.execute(update(context).where(context.c.id == context_id).values(payload_json=json.dumps(legacy_context)))
+
+    assert engine.store.status(cid)["requires_reanalysis"]
+    assert service.get_conversation_details(conv).requires_reanalysis
+    assert service.list_advisor_conversations("sales")[0]["requires_reanalysis"]
+    mock_analysis(monkeypatch, Extraction(events=[event("evaluating", msg)]))
+    second = await engine.analyze(conv, "sales")
+    assert second["lead_status"]["stage"] == "considering"
+    assert not engine.store.status(cid)["requires_reanalysis"]
+    assert not service.get_conversation_details(conv).requires_reanalysis
+    assert not service.list_advisor_conversations("sales")[0]["requires_reanalysis"]
 
 
 @pytest.mark.asyncio
@@ -399,8 +482,6 @@ async def test_modified_old_message_requires_full_rebuild(crm, monkeypatch):
     mock_analysis(monkeypatch, Extraction(events=[event("evaluating", msg)]))
     engine = IntelligenceEngine(repo)
     first = await engine.analyze(conv, "sales")
-    from sqlalchemy import update
-
     with repo.engine.begin() as conn:
         conn.execute(update(repo.messages).where(repo.messages.c.id == msg.id).values(content="Chưa rõ nhu cầu."))
     assert engine.store.status(cid)["requires_reanalysis"]
@@ -489,7 +570,8 @@ async def test_concurrent_chat_without_new_pii_does_not_abort_publish_and_multic
     mock_analysis(monkeypatch, Extraction(events=[event("evaluating", msg)]))
     engine = IntelligenceEngine(repo)
     first = await engine.analyze(conv, "sales")
-    repo.add_message(conv, "customer", "Tôi muốn xem thêm màu trắng.")
+    recent = repo.add_message(conv, "customer", "Tôi muốn xem thêm VF 6 màu trắng.")
+    combined_calls = []
 
     async def ask_during_analysis(self, system, payload, schema):
         self.mask(json.dumps(payload, ensure_ascii=False, default=str))
@@ -502,6 +584,13 @@ async def test_concurrent_chat_without_new_pii_does_not_abort_publish_and_multic
             return Recap(text="Khách đang cân nhắc thêm màu trắng.")
         if schema is Extraction:
             return Extraction()
+        if "verified_answers" in payload:
+            combined_calls.append(payload)
+        elif all(message["id"] != msg.id for message in payload["messages"]):
+            return HistoryAnswer(
+                answer="Khách muốn xem VF 6 màu trắng.",
+                evidence=[{"message_id": recent.id, "quote": recent.content}],
+            )
         return HistoryAnswer(
             answer="Khách so sánh VF 6 và VF 7.",
             evidence=[{"message_id": msg.id, "quote": "Tôi so sánh VF 6 và VF 7."}],
@@ -513,4 +602,98 @@ async def test_concurrent_chat_without_new_pii_does_not_abort_publish_and_multic
     chat_res = await engine.chat(cid, "sales", second["analysis_id"], "Khách so sánh xe nào?")
     assert "VF 6" in chat_res["answer"]
     assert chat_res["evidence"][0]["message_id"] == msg.id
+    assert len(combined_calls[0]["verified_answers"]) == 2
 
+
+
+@pytest.mark.asyncio
+async def test_history_vehicle_question_works_without_analysis_or_pii_provider(crm, monkeypatch):
+    repo, cid, conv, _ = crm
+    other = repo.create_customer(name="Khách khác", advisor_id="sales")
+    repo.add_message(repo.get_or_create_conversation(other), "customer", "Chỉ quan tâm VF 9.")
+    source = repo.add_message(conv, "sales", "Em sẽ gửi thông tin VF-8.")
+    monkeypatch.setattr(get_settings(), "sales_pii_key", SecretStr(""))
+    model = AsyncMock()
+    monkeypatch.setattr(CustomerPII, "ask", model)
+
+    engine = IntelligenceEngine(repo)
+    result = await engine.chat(cid, "sales", None, "về xe nào")
+    assert result["analysis_id"] is None
+    assert "VF 8" in result["answer"]
+    assert "VF 9" not in result["answer"]
+    assert "0912" not in json.dumps(result)
+    assert {"message_id": source.id, "quote": "VF-8", "conversation_id": conv} in result["evidence"]
+    assert engine.store.chats(cid)[0]["answer"] == result["answer"]
+    assert engine.store.head(cid)["revision"] == 0
+    model.assert_not_awaited()
+
+    with pytest.raises(ValueError, match="Chưa thể trả lời"):
+        await engine.chat(cid, "sales", None, "Khách sinh ngày nào?")
+    with pytest.raises(LookupError):
+        await engine.chat(cid, "other", None, "về xe nào")
+    model.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_history_answers_named_vehicle_interest_from_the_customers_messages(crm, monkeypatch):
+    repo, _, _, _ = crm
+    customer_id = repo.create_customer(name="[Mẫu] Trần Thu Hà", advisor_id="sales")
+    conversation_id = repo.get_or_create_conversation(customer_id)
+    source = repo.add_message(conversation_id, "customer", "Chị muốn xem bản VF 7 Plus AWD.")
+    repo.add_message(conversation_id, "sales", "Em cũng có thể giới thiệu VF 9.")
+    mock_analysis(monkeypatch, Extraction())
+    engine = IntelligenceEngine(repo)
+    snapshot = await engine.analyze(conversation_id, "sales")
+    model = AsyncMock(return_value=HistoryAnswer(answer="", evidence=[]))
+    monkeypatch.setattr(CustomerPII, "ask", model)
+
+    result = await engine.chat(customer_id, "sales", None, "khách hàng Thu Hà đang cần tư vấn xe gì")
+    assert result["analysis_id"] == snapshot["analysis_id"]
+    assert result["answer"] == "Khách đã nhắc đến VF 7 Plus AWD."
+    assert result["evidence"] == [{"message_id": source.id, "quote": "VF 7 Plus AWD", "conversation_id": conversation_id}]
+    anonymous = await engine.chat(customer_id, "sales", None, "Khách đang cần tư vấn xe gì?")
+    assert anonymous == result
+    with pytest.raises(ValueError, match="không khớp hồ sơ"):
+        await engine.chat(customer_id, "sales", None, "Khách hàng Minh An đang quan tâm xe nào?")
+    assert len(engine.store.chats(customer_id)) == 2
+    model.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_history_automatic_scope_reuses_fresh_snapshot_and_reads_new_messages(crm, monkeypatch):
+    repo, cid, conv, msg = crm
+    mock_analysis(monkeypatch, Extraction(events=[event("evaluating", msg)]))
+    engine = IntelligenceEngine(repo)
+    first = await engine.analyze(conv, "sales")
+    model = AsyncMock(side_effect=ValueError("provider or evidence validation failure"))
+    monkeypatch.setattr(CustomerPII, "ask", model)
+
+    answer = await engine.chat(cid, "sales", None, "về xe nào")
+    assert answer["analysis_id"] == first["analysis_id"]
+    assert "VF 6" in answer["answer"]
+    model.assert_not_awaited()
+
+    recent = repo.add_message(conv, "customer", "Muốn xem thêm VF 3.")
+    answer = await engine.chat(cid, "sales", None, "về xe nào")
+    assert answer["analysis_id"] is None
+    assert {"message_id": recent.id, "quote": "VF 3", "conversation_id": conv} in answer["evidence"]
+    model.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_history_rejects_partial_results_when_one_chunk_fails(crm, monkeypatch):
+    repo, cid, conv, first = crm
+    for index in range(60):
+        repo.add_message(conv, "customer", f"Tin nhắn thêm thứ {index}")
+    engine = IntelligenceEngine(repo)
+    complete_chunk = HistoryAnswer(
+        answer="Khách nhắc VF 6 một lần.",
+        evidence=[{"message_id": first.id, "quote": "VF 6"}],
+    )
+    model = AsyncMock(side_effect=[complete_chunk, ValueError("provider error")])
+    monkeypatch.setattr(CustomerPII, "ask", model)
+
+    with pytest.raises(ValueError, match="Chưa thể trả lời"):
+        await engine.chat(cid, "sales", None, "Khách nhắc VF 6 mấy lần?")
+    assert model.await_count == 2
+    assert engine.store.chats(cid) == []

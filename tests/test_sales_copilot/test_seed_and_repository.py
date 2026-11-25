@@ -1,11 +1,13 @@
 """Unit tests for Sales Copilot docx extraction and PostgreSQL repository."""
 
+import os
+
+import pytest
+
 from src.config import get_settings
 from src.integrations.sales_copilot_repository import SQLSalesCopilotRepository
 from src.services.sales_conversation_service import SalesConversationService, extract_paragraphs_from_docx
 
-
-import os, pytest
 
 @pytest.mark.skipif(not os.path.exists('data/message_sales.docx'), reason='Fixture data/message_sales.docx not found')
 def test_docx_paragraph_extraction():

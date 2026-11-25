@@ -9,6 +9,12 @@ from uuid import uuid4
 
 from sqlalchemy import Column, DateTime, Integer, String, Table, Text, delete, insert, select, update
 
+ANALYSIS_EXTRACTION_VERSION = 1
+
+
+class AnalysisConflictError(ValueError):
+    pass
+
 
 def encoded(value):
     return json.dumps(value, ensure_ascii=False, default=str, sort_keys=True)
@@ -120,17 +126,22 @@ class IntelligenceStore:
         )
         return dict(row) if row else {"analysis_id": None, "revision": 0, "pii_mapping": None}
 
-    def all_messages(self, customer_id, conn=None):
+    def all_messages(self, customer_id, conn=None, *, limit=None):
         if conn is None:
             with self.repo.engine.connect() as connection:
-                return self.all_messages(customer_id, connection)
+                return self.all_messages(customer_id, connection, limit=limit)
         r = self.repo
-        rows = conn.execute(
+        ordering = (r.messages.c.sent_at, r.messages.c.conversation_id, r.messages.c.seq)
+        query = (
             select(r.messages)
             .join(r.conversations, r.conversations.c.id == r.messages.c.conversation_id)
             .where(r.conversations.c.customer_id == customer_id)
-            .order_by(r.messages.c.sent_at, r.messages.c.conversation_id, r.messages.c.seq)
-        ).mappings()
+        )
+        if limit is not None:
+            rows = list(conn.execute(query.order_by(*(column.desc() for column in ordering)).limit(limit)).mappings())
+            rows.reverse()
+        else:
+            rows = conn.execute(query.order_by(*ordering)).mappings()
         return [{**dict(row), "sent_at": row["sent_at"].isoformat()} for row in rows]
 
     def analysis(self, customer_id, analysis_id=None, conn=None):
@@ -208,7 +219,11 @@ class IntelligenceStore:
             "analysis_id": current["analysis_id"] if current else None,
             "published_at": current["published_at"] if current else None,
             "pending_message_count": changed,
-            "requires_reanalysis": bool(set(signatures) - identifiers) or bool(changed_old),
+            "requires_reanalysis": (
+                bool(set(signatures) - identifiers)
+                or bool(changed_old)
+                or (current is not None and current.get("extraction_version") != ANALYSIS_EXTRACTION_VERSION)
+            ),
             "intelligence": {k: v for k, v in current.items() if k not in ("messages", "message_hashes")}
             if current
             else None,
@@ -232,9 +247,16 @@ class IntelligenceStore:
 
     def save_chat(self, customer_id, advisor_id, analysis_id, query, result, pii, head, model_context=None):
         with self.repo.engine.begin() as conn:
-            if pii.has_new_tokens:
+            owner = conn.execute(
+                select(self.repo.customers.c.advisor_id).where(self.repo.customers.c.id == customer_id).with_for_update()
+            ).scalar_one_or_none()
+            if owner != advisor_id:
+                raise LookupError("Không tìm thấy khách hàng.")
+            if pii is not None and pii.has_new_tokens:
                 t = self.tables["heads"]
                 if not head["revision"]:
+                    if self.head(customer_id, conn)["revision"]:
+                        raise ValueError("Phiên đã thay đổi, vui lòng thử lại.")
                     conn.execute(insert(t).values(customer_id=customer_id, revision=1, pii_mapping=pii.encrypt()))
                 else:
                     updated = conn.execute(
@@ -489,12 +511,12 @@ class IntelligenceStore:
                 head["revision"] != capture["head"]["revision"]
                 or self.confirmations(customer_id, conn) != capture["confirmations"]
             ):
-                raise ValueError("Dữ liệu đã thay đổi. Hãy phân tích lại.")
+                raise AnalysisConflictError("Dữ liệu đã thay đổi. Hãy phân tích lại.")
             current = {m["id"]: m for m in self.all_messages(customer_id, conn)}
             if any(
                 m["id"] not in current or message_hash(m) != message_hash(current[m["id"]]) for m in capture["messages"]
             ):
-                raise ValueError("Tin nhắn đã được sửa hoặc xóa. Hãy phân tích lại.")
+                raise AnalysisConflictError("Tin nhắn đã được sửa hoặc xóa. Hãy phân tích lại.")
             conn.execute(
                 insert(t["analyses"]).values(
                     id=aid,
@@ -512,7 +534,7 @@ class IntelligenceStore:
                     .values(analysis_id=aid, revision=head["revision"] + 1, pii_mapping=encrypted_mapping)
                 )
                 if not updated.rowcount:
-                    raise ValueError("Phiên đã thay đổi. Hãy phân tích lại.")
+                    raise AnalysisConflictError("Phiên đã thay đổi. Hãy phân tích lại.")
             else:
                 conn.execute(
                     insert(t["heads"]).values(
@@ -587,6 +609,7 @@ class IntelligenceStore:
                             {
                                 "version": head["revision"] + 1,
                                 "through_seq": seq,
+                                "extraction_version": payload["extraction_version"],
                                 "stage": payload["stage"],
                                 "customer_intelligence": ci,
                             }

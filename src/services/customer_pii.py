@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import json
 import re
+from urllib.parse import urlsplit
 
 from cryptography.fernet import Fernet
+from langchain_openai import ChatOpenAI
 
 from src.config import get_settings
 from src.observability import private_customer_context
@@ -13,6 +15,10 @@ from src.services.llm import get_llm
 
 
 class PIIUnavailableError(ValueError):
+    pass
+
+
+class CustomerModelError(ValueError):
     pass
 
 
@@ -134,12 +140,38 @@ class CustomerPII:
         masked = json.dumps(self.private_payload(payload), ensure_ascii=False, default=str)
         try:
             with private_customer_context():
-                model = get_llm(temperature=0, max_tokens=6000, max_retries=0)
+                model = get_llm(max_tokens=6000, max_retries=0)
+                config = {"callbacks": [], "tags": ["customer-private"]}
+                if isinstance(model, ChatOpenAI):
+                    model = model.model_copy(update={"temperature": None})
+                    host = urlsplit(model.openai_api_base or "").hostname
+                    if host and host not in {"api.openai.com", "openrouter.ai"}:
+                        # Compatible gateways can drop response_format or reject nested schema unions.
+                        # Include the contract in the prompt and validate the returned object locally.
+                        contract = schema.model_json_schema()
+                        contract["required"] = list(schema.model_fields)
+                        system += (
+                            "\nChỉ xuất một đối tượng JSON theo schema dưới đây, không dùng Markdown.\n"
+                            + json.dumps(contract, ensure_ascii=False)
+                        )
+                        response = await model.ainvoke(
+                            [{"role": "system", "content": system}, {"role": "user", "content": masked}],
+                            config=config,
+                        )
+                        raw = response.content
+                        if isinstance(raw, list):
+                            raw = "".join(block.get("text", "") for block in raw if isinstance(block, dict))
+                        if response.response_metadata.get("finish_reason") in {"error", "length"}:
+                            raise ValueError("Incomplete customer model response")
+                        fenced = re.fullmatch(r"\s*```(?:json)?\s*\n(.*?)\n\s*```\s*", raw, flags=re.DOTALL | re.IGNORECASE)
+                        parsed = json.loads(fenced[1] if fenced else raw)
+                        if not isinstance(parsed, dict) or schema.model_fields.keys() - parsed.keys():
+                            raise ValueError("Incomplete customer model contract")
+                        return schema.model_validate(parsed)
                 result = await model.with_structured_output(schema, method="json_schema").ainvoke(
-                    [{"role": "system", "content": system}, {"role": "user", "content": masked}],
-                    config={"callbacks": [], "tags": ["customer-private"]},
+                    [{"role": "system", "content": system}, {"role": "user", "content": masked}], config=config
                 )
             return schema.model_validate(result)
         except Exception:
             # Provider/schema exceptions can contain messages or model output.
-            raise ValueError("Không thể xử lý dữ liệu khách lúc này. Bản đã lưu được giữ nguyên.") from None
+            raise CustomerModelError("Không thể xử lý dữ liệu khách lúc này. Bản đã lưu được giữ nguyên.") from None

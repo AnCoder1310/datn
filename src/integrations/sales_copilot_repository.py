@@ -32,7 +32,9 @@ from sqlalchemy import (
     func,
     insert,
     select,
+    inspect,
     update,
+    text,
 )
 from sqlalchemy.engine import Connection, Engine
 
@@ -46,6 +48,7 @@ from src.models.sales_copilot import (
     LeadStage,
     LeadStatus,
     SalesPreferences,
+    SalesNotification,
     SenderRole,
     TaskStatus,
 )
@@ -62,6 +65,7 @@ class SQLSalesCopilotRepository:
             "copilot_customers",
             self.metadata,
             Column("id", String(64), primary_key=True),
+            Column("auth_user_id", String(120), nullable=True, unique=True, index=True),
             Column("name", String(120), nullable=False),
             Column("phone", String(30), nullable=True),
             Column("email", String(120), nullable=True),
@@ -162,6 +166,59 @@ class SQLSalesCopilotRepository:
             Column("updated_at", DateTime(timezone=True), nullable=False),
         )
 
+        self.notifications = Table(
+            "copilot_notifications",
+            self.metadata,
+            Column("id", String(64), primary_key=True),
+            Column("recipient_id", String(120), nullable=False, index=True),
+            Column("notification_type", String(50), nullable=False),
+            Column("title", String(255), nullable=False),
+            Column("body", Text, nullable=False),
+            Column("payload_json", Text, nullable=False, default="{}"),
+            Column("read_at", DateTime(timezone=True), nullable=True),
+            Column("created_at", DateTime(timezone=True), nullable=False),
+            Index("ix_copilot_notifications_recipient_created", "recipient_id", "created_at"),
+        )
+
+        # Scheduling primitives are deliberately small and normalized. They
+        # allow availability to be calculated from persisted data while the
+        # existing customer and task tables remain backward compatible.
+        self.showrooms = Table(
+            "sales_showrooms", self.metadata,
+            Column("id", String(64), primary_key=True),
+            Column("name", String(160), nullable=False),
+            Column("address", String(255), nullable=False),
+            Column("city", String(100), nullable=True),
+            Column("phone", String(30), nullable=True),
+            Column("status", String(20), nullable=False, server_default="active"),
+            Column("created_at", DateTime(timezone=True), nullable=False),
+        )
+        self.advisor_showrooms = Table(
+            "sales_advisor_showrooms", self.metadata,
+            Column("advisor_id", String(120), primary_key=True),
+            Column("showroom_id", String(64), ForeignKey("sales_showrooms.id"), primary_key=True),
+            Column("is_primary", Boolean, nullable=False, server_default="0"),
+            Column("active", Boolean, nullable=False, server_default="1"),
+        )
+        self.advisor_schedules = Table(
+            "sales_advisor_schedules", self.metadata,
+            Column("id", String(64), primary_key=True),
+            Column("advisor_id", String(120), nullable=False, index=True),
+            Column("showroom_id", String(64), ForeignKey("sales_showrooms.id"), nullable=False),
+            Column("weekday", Integer, nullable=False),
+            Column("starts_at", String(5), nullable=False),
+            Column("ends_at", String(5), nullable=False),
+            Column("active", Boolean, nullable=False, server_default="1"),
+        )
+        self.advisor_leaves = Table(
+            "sales_advisor_leaves", self.metadata,
+            Column("id", String(64), primary_key=True),
+            Column("advisor_id", String(120), nullable=False, index=True),
+            Column("starts_at", DateTime(timezone=True), nullable=False),
+            Column("ends_at", DateTime(timezone=True), nullable=False),
+            Column("reason", String(255), nullable=True),
+        )
+
         self.recommendations = Table(
             "copilot_recommendations_and_drafts",
             self.metadata,
@@ -183,6 +240,10 @@ class SQLSalesCopilotRepository:
             with self._lock:
                 if not self._ready:
                     self.metadata.create_all(self.engine)
+                    columns = {item["name"] for item in inspect(self.engine).get_columns("copilot_customers")}
+                    if "auth_user_id" not in columns:
+                        with self.engine.begin() as connection:
+                            connection.execute(text("ALTER TABLE copilot_customers ADD COLUMN auth_user_id VARCHAR(120)"))
                     from src.integrations.intelligence_migration import migrate_appointment_stages
                     migrate_appointment_stages(self)
                     self._ready = True
@@ -196,17 +257,20 @@ class SQLSalesCopilotRepository:
         advisor_id: str,
         *,
         customer_id: str | None = None,
+        auth_user_id: str | None = None,
         phone: str | None = None,
         email: str | None = None,
         location: str | None = None,
+        connection: Connection | None = None,
     ) -> str:
         self.ensure_schema()
         cid = customer_id or uuid4().hex
         now = datetime.now(UTC)
-        with self.engine.begin() as conn:
+        with nullcontext(connection) if connection is not None else self.engine.begin() as conn:
             conn.execute(
                 insert(self.customers).values(
                     id=cid,
+                    auth_user_id=auth_user_id,
                     name=name,
                     phone=phone,
                     email=email,
@@ -218,6 +282,28 @@ class SQLSalesCopilotRepository:
             )
         return cid
 
+    def customer_for_auth_user(self, auth_user_id: str) -> dict[str, Any] | None:
+        self.ensure_schema()
+        with self.engine.connect() as conn:
+            row = conn.execute(select(self.customers).where(self.customers.c.auth_user_id == auth_user_id)).mappings().first()
+        return dict(row) if row else None
+
+    def transfer_customer(self, customer_id: str, from_advisor_id: str, to_advisor_id: str, *, actor_id: str,
+                          reason: str = "", connection: Connection | None = None) -> dict[str, Any]:
+        """Atomically transfer ownership and open work for a customer."""
+        self.ensure_schema()
+        with nullcontext(connection) if connection is not None else self.engine.begin() as conn:
+            customer = conn.execute(select(self.customers).where(self.customers.c.id == customer_id).with_for_update()).mappings().first()
+            if not customer or customer["advisor_id"] != from_advisor_id:
+                raise LookupError(customer_id)
+            conn.execute(update(self.customers).where(self.customers.c.id == customer_id).values(advisor_id=to_advisor_id, updated_at=datetime.now(UTC)))
+            conn.execute(update(self.tasks).where(self.tasks.c.customer_id == customer_id, self.tasks.c.status.in_(("pending", "in_progress"))).values(owner_sales_id=to_advisor_id))
+            self.create_notification(to_advisor_id, "lead_transferred", "Khách hàng được chuyển giao",
+                                     "Bạn được giao tiếp nhận một khách hàng mới.", {
+                                         "customer_id": customer_id, "from_advisor_id": from_advisor_id, "reason": reason,
+                                     }, connection=conn)
+            return {"customer_id": customer_id, "from_advisor_id": from_advisor_id, "to_advisor_id": to_advisor_id}
+
     def get_customer(self, customer_id: str) -> dict[str, Any] | None:
         self.ensure_schema()
         with self.engine.connect() as conn:
@@ -225,6 +311,84 @@ class SQLSalesCopilotRepository:
                 select(self.customers).where(self.customers.c.id == customer_id)
             ).mappings().first()
         return dict(row) if row else None
+
+    def create_notification(
+        self,
+        recipient_id: str,
+        notification_type: str,
+        title: str,
+        body: str,
+        payload: dict[str, Any] | None = None,
+        *,
+        connection: Connection | None = None,
+    ) -> SalesNotification:
+        """Persist one advisor notification in the caller's transaction."""
+        self.ensure_schema()
+        now = datetime.now(UTC)
+        notification_id = uuid4().hex
+        values = {
+            "id": notification_id,
+            "recipient_id": recipient_id,
+            "notification_type": notification_type,
+            "title": title,
+            "body": body,
+            "payload_json": json.dumps(payload or {}, ensure_ascii=False, default=str),
+            "created_at": now,
+        }
+        with nullcontext(connection) if connection is not None else self.engine.begin() as conn:
+            conn.execute(insert(self.notifications).values(**values))
+        return SalesNotification(
+            id=notification_id,
+            recipient_id=recipient_id,
+            notification_type=notification_type,
+            title=title,
+            body=body,
+            payload=payload or {},
+            created_at=now,
+        )
+
+    def get_task_by_dedupe_key(
+        self, dedupe_key: str, *, connection: Connection | None = None
+    ) -> dict[str, Any] | None:
+        """Find a previous workflow item without opening a second transaction."""
+        self.ensure_schema()
+        query = select(self.tasks).where(self.tasks.c.dedupe_key == dedupe_key).limit(1)
+        with nullcontext(connection) if connection is not None else self.engine.connect() as conn:
+            row = conn.execute(query).mappings().first()
+        return dict(row) if row else None
+
+    def list_notifications(self, recipient_id: str, *, unread_only: bool = False, limit: int = 50) -> list[SalesNotification]:
+        self.ensure_schema()
+        limit = max(1, min(limit, 100))
+        query = select(self.notifications).where(self.notifications.c.recipient_id == recipient_id)
+        if unread_only:
+            query = query.where(self.notifications.c.read_at.is_(None))
+        query = query.order_by(self.notifications.c.created_at.desc(), self.notifications.c.id.desc()).limit(limit)
+        with self.engine.connect() as conn:
+            rows = conn.execute(query).mappings().all()
+        return [
+            SalesNotification(
+                id=row["id"],
+                recipient_id=row["recipient_id"],
+                notification_type=row["notification_type"],
+                title=row["title"],
+                body=row["body"],
+                payload=json.loads(row["payload_json"] or "{}"),
+                read_at=row["read_at"],
+                created_at=row["created_at"],
+            )
+            for row in rows
+        ]
+
+    def mark_notification_read(self, notification_id: str, recipient_id: str) -> bool:
+        self.ensure_schema()
+        with self.engine.begin() as conn:
+            result = conn.execute(
+                update(self.notifications)
+                .where(self.notifications.c.id == notification_id, self.notifications.c.recipient_id == recipient_id)
+                .values(read_at=datetime.now(UTC))
+            )
+        return result.rowcount > 0
 
     def list_customers_for_advisor(self, advisor_id: str) -> list[CustomerResponse]:
         self.ensure_schema()
@@ -280,9 +444,9 @@ class SQLSalesCopilotRepository:
     # -------------------------------------------------------------
     # Conversation & Message Operations
     # -------------------------------------------------------------
-    def get_or_create_conversation(self, customer_id: str) -> str:
+    def get_or_create_conversation(self, customer_id: str, *, connection: Connection | None = None) -> str:
         self.ensure_schema()
-        with self.engine.begin() as conn:
+        with nullcontext(connection) if connection is not None else self.engine.begin() as conn:
             existing = conn.execute(
                 select(self.conversations.c.id).where(self.conversations.c.customer_id == customer_id)
             ).scalar()
@@ -309,13 +473,15 @@ class SQLSalesCopilotRepository:
         content: str,
         sent_at: datetime | None = None,
         message_id: str | None = None,
+        *,
+        connection: Connection | None = None,
     ) -> ChatMessageResponse:
         self.ensure_schema()
         now = sent_at or datetime.now(UTC)
         mid = message_id or uuid4().hex
         role_str = sender_role.value if isinstance(sender_role, SenderRole) else str(sender_role)
 
-        with self.engine.begin() as conn:
+        with nullcontext(connection) if connection is not None else self.engine.begin() as conn:
             # find max seq
             last_seq = conn.execute(
                 select(self.messages.c.seq)
@@ -463,20 +629,35 @@ class SQLSalesCopilotRepository:
             "lead": self._lead_data(lead) if lead["customer_id"] is not None else {},
             "override": json.loads(row["stage_override"] or "{}"),
             "profile_overrides": json.loads(row["profile_overrides"] or "{}"),
+            "analysis_context": json.loads(row["analysis_context"] or "{}"),
             "message_total": row["message_total"],
             "last_message_seq": row["last_message_seq"] or 0,
         }
 
-    def owned_conversation(self, conversation_id: str, owner_id: str):
+    def owned_conversation(self, conversation_id: str, owner_id: str, *, connection: Connection | None = None):
         self.ensure_schema()
-        from sqlalchemy import or_
-        with self.engine.connect() as connection:
-            row = connection.execute(
+        with nullcontext(connection) if connection is not None else self.engine.connect() as conn:
+            row = conn.execute(
                 select(self.conversations.c.customer_id).join(
                     self.customers, self.customers.c.id == self.conversations.c.customer_id,
                 ).where(
                     self.conversations.c.id == conversation_id,
-                    or_(self.customers.c.advisor_id == owner_id, self.customers.c.advisor_id == "advisor-demo"),
+                    self.customers.c.advisor_id == owner_id,
+                )
+            ).mappings().first()
+        if row is None:
+            raise LookupError(conversation_id)
+        return dict(row)
+
+    def customer_owned_conversation(self, conversation_id: str, auth_user_id: str, *, connection: Connection | None = None):
+        self.ensure_schema()
+        with nullcontext(connection) if connection is not None else self.engine.connect() as conn:
+            row = conn.execute(
+                select(self.conversations.c.customer_id).join(
+                    self.customers, self.customers.c.id == self.conversations.c.customer_id,
+                ).where(
+                    self.conversations.c.id == conversation_id,
+                    self.customers.c.auth_user_id == auth_user_id,
                 )
             ).mappings().first()
         if row is None:
@@ -484,10 +665,13 @@ class SQLSalesCopilotRepository:
         return dict(row)
 
     def list_messages(self, conversation_id: str, *, limit: int | None = None, before_seq: int | None = None,
-                      source_message_id: str | None = None, connection: Connection | None = None) -> list[ChatMessageResponse]:
+                      source_message_id: str | None = None, connection: Connection | None = None,
+                      sender_roles: tuple[SenderRole, ...] | None = None) -> list[ChatMessageResponse]:
         self.ensure_schema()
         with nullcontext(connection) if connection is not None else self.engine.connect() as conn:
             query = select(self.messages).where(self.messages.c.conversation_id == conversation_id)
+            if sender_roles is not None:
+                query = query.where(self.messages.c.sender_role.in_(sender_roles))
             if before_seq is not None:
                 query = query.where(self.messages.c.seq < before_seq)
             if source_message_id:
@@ -524,12 +708,14 @@ class SQLSalesCopilotRepository:
         customer_id: str,
         facts: list[CustomerFact],
         snapshot: CustomerProfileSnapshot,
+        *,
+        connection: Connection | None = None,
     ) -> None:
         self.ensure_schema()
         now = datetime.now(UTC)
         if facts and not snapshot.facts:
             snapshot = snapshot.model_copy(update={"facts": list(facts)})
-        with self.engine.begin() as conn:
+        with nullcontext(connection) if connection is not None else self.engine.begin() as conn:
             conn.execute(delete(self.snapshots).where(self.snapshots.c.customer_id == customer_id))
             conn.execute(
                 insert(self.snapshots).values(
@@ -636,10 +822,10 @@ class SQLSalesCopilotRepository:
     # -------------------------------------------------------------
     # Smart Follow-up Tasks (F05)
     # -------------------------------------------------------------
-    def save_tasks(self, tasks: list[FollowupTask]) -> None:
+    def save_tasks(self, tasks: list[FollowupTask], *, connection: Connection | None = None) -> None:
         self.ensure_schema()
         now = datetime.now(UTC)
-        with self.engine.begin() as conn:
+        with nullcontext(connection) if connection is not None else self.engine.begin() as conn:
             # Serialize dedupe checks across concurrent analysis requests on PostgreSQL.
             for conversation_id in sorted({task.conversation_id for task in tasks if task.conversation_id}):
                 conn.execute(select(self.conversations.c.id).where(
@@ -872,3 +1058,40 @@ class SQLSalesCopilotRepository:
             if row:
                 return json.loads(row["payload_json"])
         return None
+
+    # -------------------------------------------------------------
+    # Showroom and availability primitives
+    # -------------------------------------------------------------
+    def list_active_showrooms(self) -> list[dict[str, Any]]:
+        self.ensure_schema()
+        with self.engine.connect() as conn:
+            return [dict(row) for row in conn.execute(select(self.showrooms).where(self.showrooms.c.status == "active").order_by(self.showrooms.c.name)).mappings()]
+
+    def advisor_is_member(self, advisor_id: str, showroom_id: str) -> bool:
+        self.ensure_schema()
+        with self.engine.connect() as conn:
+            return conn.execute(select(self.advisor_showrooms.c.advisor_id).where(
+                self.advisor_showrooms.c.advisor_id == advisor_id,
+                self.advisor_showrooms.c.showroom_id == showroom_id,
+                self.advisor_showrooms.c.active.is_(True),
+            )).first() is not None
+
+    def advisor_has_leave(self, advisor_id: str, starts_at: datetime, ends_at: datetime) -> bool:
+        self.ensure_schema()
+        with self.engine.connect() as conn:
+            return conn.execute(select(self.advisor_leaves.c.id).where(
+                self.advisor_leaves.c.advisor_id == advisor_id,
+                self.advisor_leaves.c.starts_at < ends_at,
+                self.advisor_leaves.c.ends_at > starts_at,
+            )).first() is not None
+
+    def advisor_has_conflict(self, advisor_id: str, starts_at: datetime, ends_at: datetime) -> bool:
+        self.ensure_schema()
+        with self.engine.connect() as conn:
+            return conn.execute(select(self.tasks.c.id).where(
+                self.tasks.c.owner_sales_id == advisor_id,
+                self.tasks.c.item_type == "appointment",
+                self.tasks.c.status.not_in(("cancelled", "completed")),
+                self.tasks.c.starts_at < ends_at,
+                self.tasks.c.ends_at > starts_at,
+            )).first() is not None

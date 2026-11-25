@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Literal, TypedDict
 
@@ -14,7 +15,14 @@ from .contracts import CheckpointContract, ScenarioContract
 from .customer_agent import CustomerAgent
 from .guardrails import check_advisor_message
 from .scenario_loader import ScenarioNotFoundError, ScenarioRepository
-from .state import ConversationStage, EvaluationStatus, RoleplayMessage, RoleplayState, TerminationStatus
+from .state import (
+    AdvisorFactualClaim,
+    ConversationStage,
+    EvaluationStatus,
+    RoleplayMessage,
+    RoleplayState,
+    TerminationStatus,
+)
 from .state_reducer import OFF_TOPIC_REASON, apply_turn_analysis
 from .turn_analyzer import TurnAnalysis, TurnAnalyzer
 
@@ -236,6 +244,7 @@ class RoleplayGraph:
     ) -> None:
         self._repository = repository
         self._customer_agent = customer_agent
+        self._analyzer = analyzer
         self._checkpoint = checkpoint
         self._turn_graph = build_roleplay_turn_graph(
             analyzer,
@@ -279,6 +288,8 @@ class RoleplayGraph:
         state = self._validate_checkpoint(checkpoint_data, session_id)
         if state.termination_status is not TerminationStatus.ACTIVE:
             raise RoleplaySessionConflictError("cannot continue a finished practice session", code="session_finished")
+        if state.realtime_call_id:
+            raise RoleplaySessionConflictError("realtime call is active", code="session_busy")
         if state.pending_customer_reply:
             raise RoleplaySessionConflictError(
                 "customer reply is pending; retry it before sending another message", code="session_busy"
@@ -317,8 +328,83 @@ class RoleplayGraph:
             raise RoleplaySessionNotFoundError(f"unknown session_id: {session_id}")
         return self._validate_checkpoint(checkpoint_data, session_id)
 
+    async def record_realtime(
+        self, session_id: str, *, call_id: str, begin: bool = False, close: bool = False,
+        incomplete: bool = False, model: str | None = None, messages: tuple[RoleplayMessage, ...] = (),
+        pending_audio: bool | None = None, replace_orphan: bool = False,
+    ) -> RoleplayState:
+        state = await self.get_session_state(session_id)
+        if begin:
+            if state.termination_status is not TerminationStatus.ACTIVE or state.turn_count >= state.max_turns:
+                raise RoleplaySessionConflictError("training session is finished", code="session_finished")
+            if state.pending_customer_reply or (state.realtime_call_id and not replace_orphan):
+                raise RoleplaySessionConflictError("training session is busy", code="session_busy")
+            if state.realtime_call_id:
+                state.realtime_transcript_incomplete |= state.realtime_pending_audio
+                state.realtime_pending_audio = False
+            state.realtime_call_id = call_id
+        elif state.realtime_call_id != call_id:
+            raise RoleplaySessionConflictError("realtime call is no longer active", code="session_busy")
+        known = {message.message_id for message in state.messages}
+        for message in messages:
+            if message.message_id in known:
+                continue
+            known.add(message.message_id)
+            state.messages.append(message)
+            state.turn_count += int(message.role == "advisor")
+        if model and (not state.realtime_models or state.realtime_models[-1] != model):
+            state.realtime_models.append(model)
+        state.realtime_transcript_incomplete |= incomplete
+        if pending_audio is not None:
+            state.realtime_pending_audio = pending_audio
+        if close:
+            state.realtime_call_id = None
+            state.realtime_pending_audio = False
+            if state.turn_count >= state.max_turns:
+                state.termination_status = TerminationStatus.MAX_TURNS
+                state.termination_reason = "Reached the scenario turn limit."
+                state.conversation_stage = ConversationStage.FINISHED
+        await _save_state(self._checkpoint, state)
+        return state
+
+    async def prepare_realtime_evaluation(self, session_id: str) -> RoleplayState:
+        state = await self.get_session_state(session_id)
+        if state.realtime_analysis_complete or not state.realtime_models:
+            return state
+        if state.termination_status is TerminationStatus.ACTIVE:
+            raise RoleplaySessionConflictError("realtime session must be frozen before evaluation", code="session_busy")
+        scenario = self._repository.get(state.scenario_id)
+        advisor_turns = []
+        for index, message in enumerate(state.messages):
+            if message.role != "advisor" or not message.turn_id:
+                continue
+            verdict = check_advisor_message(message.content)
+            if verdict.level == "end_session":
+                state.termination_status = TerminationStatus.ADVISOR_MISCONDUCT
+                state.misconduct_reason = verdict.category or "code_abuse"
+                state.termination_reason = "Advisor misconduct."
+                break
+            advisor_turns.append((index, message))
+
+        async def claims_for(index, message):
+            prior = state.model_copy(update={"messages": state.messages[:index]})
+            analysis = await self._analyzer.analyze(message.content, scenario, prior)
+            return [AdvisorFactualClaim(message_id=message.message_id, text=claim.text, category=claim.category)
+                    for claim in analysis.factual_claims]
+
+        for start in range(0, len(advisor_turns), 4):
+            for claims in await asyncio.gather(*(claims_for(*turn) for turn in advisor_turns[start:start + 4])):
+                state.factual_claims.extend(claims)
+        state.realtime_analysis_complete = True
+        await _save_state(self._checkpoint, state)
+        return state
+
     async def finish_session(self, session_id: str) -> RoleplayState:
         state = await self.get_session_state(session_id)
+        if state.realtime_call_id or state.realtime_transcript_incomplete:
+            raise RoleplaySessionConflictError("realtime transcript is incomplete", code="session_busy")
+        if state.realtime_models and not any(message.role == "advisor" for message in state.messages):
+            raise RoleplaySessionConflictError("no finalized advisor speech", code="validation_error")
         if state.pending_customer_reply:
             raise RoleplaySessionConflictError(
                 "customer reply is pending; retry it before finishing", code="session_busy"
@@ -344,8 +430,7 @@ class RoleplayGraph:
                     "practice session already has an evaluation", code="validation_error"
                 )
             return state
-        state.evaluation_result = result
-        state.evaluation_status = EvaluationStatus.COMPLETE
+        state = state.with_evaluation_result(result, EvaluationStatus.COMPLETE)
         await _save_state(self._checkpoint, state)
         return state
 

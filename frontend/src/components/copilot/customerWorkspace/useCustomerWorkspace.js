@@ -1,4 +1,3 @@
-import dashboardFallback from '../../../data/dashboardFallback.json';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { salesCopilotApi } from '../../../api/salesCopilotApi';
 import { mergeMessages, toWorkspaceCustomer } from './workspaceData';
@@ -26,11 +25,12 @@ export function useCustomerWorkspace(currentUser, active = true) {
   const [sendingIds, setSendingIds] = useState({});
   const [taskBusy, setTaskBusy] = useState({});
   const [analysisIds, setAnalysisIds] = useState({});
+  const [analysisErrors, setAnalysisErrors] = useState({});
   const [draftBusyIds, setDraftBusyIds] = useState({});
+  const [draftErrors, setDraftErrors] = useState({});
   const [stageBusyIds, setStageBusyIds] = useState({});
   const [pageBusy, setPageBusy] = useState({});
-  const [analysisChanges, setAnalysisChanges] = useState({});
-  const lookup = useSalesLookup(currentUser?.user_id);
+  const lookup = useSalesLookup(currentUser?.user_id, selectedId);
   const [preferences, setPreferences] = useState(null);
   const [preferenceBusy, setPreferenceBusy] = useState(false);
   const requests = useRef(new Map());
@@ -48,24 +48,8 @@ export function useCustomerWorkspace(currentUser, active = true) {
       setSelectedId((previous) => previous && data.some((item) => item.conversation_id === previous) ? previous : data[0]?.conversation_id || null);
       setListStatus('ready');
     }).catch((error) => {
-      if (dashboardFallback?.customers?.length) {
-        const fallbackItems = dashboardFallback.customers.map((c) => ({
-          conversation_id: c.conversation_id,
-          customer_name: c.customer_name,
-          customer_id: c.customer_id,
-          interested_models: c.models || [],
-          lead_stage: c.stage || 'discovery',
-          last_message: c.last_message,
-          waiting_since: c.waiting_since,
-          score: c.score,
-        }));
-        setItems(fallbackItems);
-        setSelectedId((previous) => previous && fallbackItems.some((item) => item.conversation_id === previous) ? previous : fallbackItems[0]?.conversation_id || null);
-        setListStatus('ready');
-      } else {
-        setListStatus('error');
-        setListError(error.message);
-      }
+      setListStatus('error');
+      setListError(error.message);
     }).finally(() => requests.current.delete('list'));
     requests.current.set('list', request);
     return request;
@@ -73,72 +57,40 @@ export function useCustomerWorkspace(currentUser, active = true) {
 
   const loadDetails = useCallback((id, force = false) => {
     if (!id) return Promise.resolve();
-    if (!force && requests.current.has(`detail:${id}`)) return requests.current.get(`detail:${id}`);
+    const key = `detail:${id}`;
+    if (!force && requests.current.has(key)) return requests.current.get(key);
     if (!force && detailCache.current[id] && Date.now() - detailFetchedAt.current[id] < 30000) return Promise.resolve(detailCache.current[id]);
     setPending((previous) => ({ ...previous, [id]: true }));
     setDetailErrors((previous) => ({ ...previous, [id]: '' }));
     const request = salesCopilotApi.getConversationDetails(id).then((data) => {
+      if (requests.current.get(key) !== request) return data;
       detailCache.current[id] = data;
       detailFetchedAt.current[id] = Date.now();
       setDetails((previous) => ({ ...previous, [id]: data }));
       return data;
     }).catch((error) => {
-      const found = (dashboardFallback?.customers || []).find((c) => c.conversation_id === id);
-      if (found) {
-        const fallbackDetail = {
-          conversation_id: id,
-          customer_name: found.customer_name,
-          lead_status: { stage: found.stage },
-          profile: {
-            customer_name: found.customer_name,
-            interested_models: found.models,
-            budget_vnd: found.budget_vnd,
-            purchase_timeline: found.purchase_timeline || 'Trong 1–2 tháng tới',
-            payment_method: found.payment_method || 'Trả góp linh hoạt',
-            charging_condition: 'Sạc tại nhà và trạm sạc V-GREEN toàn quốc',
-            demographics: { location: found.location || 'Hà Nội' },
-          },
-          memory: {
-            issues: (found.issues || []).map((i) => ({ text: i, type: 'issue' })),
-            buying_signals: (found.buying_signals || []).map((b) => ({ text: b })),
-            timeline: [],
-          },
-          messages: [
-            {
-              id: id + "-msg-1",
-              seq: 1,
-              sender_role: 'customer',
-              content: found.last_message || 'Xin chào, tôi cần tư vấn về các dòng xe ô tô điện VinFast.',
-              sent_at: found.waiting_since || new Date().toISOString(),
-            },
-            {
-              id: id + "-msg-2",
-              seq: 2,
-              sender_role: 'sales',
-              content: 'Chào Anh/Chị! Em Duy từ VinFast rất sẵn lòng hỗ trợ Anh/Chị trải nghiệm và báo giá lăn bánh tốt nhất hôm nay.',
-              sent_at: new Date().toISOString(),
-            },
-          ],
-          tasks: (dashboardFallback?.work_items?.items || []).filter((w) => w.conversation_id === id),
-        };
-        detailCache.current[id] = fallbackDetail;
-        detailFetchedAt.current[id] = Date.now();
-        setDetails((previous) => ({ ...previous, [id]: fallbackDetail }));
-      } else {
+      if (requests.current.get(key) === request) {
         setDetailErrors((previous) => ({ ...previous, [id]: error.message }));
       }
     }).finally(() => {
-      setPending((previous) => ({ ...previous, [id]: false }));
-      requests.current.delete(`detail:${id}`);
+      if (requests.current.get(key) === request) {
+        setPending((previous) => ({ ...previous, [id]: false }));
+        requests.current.delete(key);
+      }
     });
-    requests.current.set(`detail:${id}`, request);
+    requests.current.set(key, request);
     return request;
   }, []);
 
   useEffect(() => { if (active) void loadList(); }, [active, loadList]);
   useEffect(() => { if (active) void loadDetails(selectedId); }, [active, selectedId, loadDetails]);
   useEffect(() => {
-    const changed = () => { detailFetchedAt.current = {}; if (active && selectedId) void loadDetails(selectedId, true); };
+    const changed = () => {
+      detailFetchedAt.current = {};
+      if (active && selectedId && !requests.current.has(`analysis:${selectedId}`)) {
+        void loadDetails(selectedId, true);
+      }
+    };
     window.addEventListener(CHANGE_EVENT, changed);
     return () => window.removeEventListener(CHANGE_EVENT, changed);
   }, [active, selectedId, loadDetails]);
@@ -154,7 +106,11 @@ export function useCustomerWorkspace(currentUser, active = true) {
     if (requests.current.has(`draft:${id}`)) return requests.current.get(`draft:${id}`);
     const request = salesCopilotApi.getSavedDraft(id).then((data) => {
       draftCache.current.add(id);
-      setSavedDrafts((previous) => ({ ...previous, [id]: data }));
+      setSavedDrafts((previous) => {
+        const existing = previous[id];
+        return existing?.generated_at && (!data?.generated_at || existing.generated_at > data.generated_at)
+          ? previous : { ...previous, [id]: data };
+      });
     }).catch(() => {}).finally(() => requests.current.delete(`draft:${id}`));
     requests.current.set(`draft:${id}`, request);
     return request;
@@ -244,62 +200,72 @@ export function useCustomerWorkspace(currentUser, active = true) {
     if (!id || mutations.current.has(`generate:${id}`)) return;
     mutations.current.add(`generate:${id}`);
     setDraftBusyIds((previous) => ({ ...previous, [id]: true }));
+    setDraftErrors((previous) => ({ ...previous, [id]: '' }));
     try { const data = await salesCopilotApi.generateDraft(id, true); setSavedDrafts((previous) => ({ ...previous, [id]: data })); }
+    catch (error) { setDraftErrors((previous) => ({ ...previous, [id]: error.message || 'Chưa tạo được gợi ý trả lời.' })); }
     finally { mutations.current.delete(`generate:${id}`); setDraftBusyIds((previous) => ({ ...previous, [id]: false })); }
   }
 
   const [batchProgress, setBatchProgress] = useState(null);
   const batchCancelRef = useRef(false);
 
-  async function analyze(id) {
-    if (mutations.current.has(`analysis:${id}`)) return;
-    mutations.current.add(`analysis:${id}`);
+  function analyze(id) {
+    const key = `analysis:${id}`;
+    if (requests.current.has(key)) return requests.current.get(key);
     setAnalysisIds((previous) => ({ ...previous, [id]: true }));
-    try {
-      const before = detailCache.current[id];
-      const result = await salesCopilotApi.analyzeConversation(id);
+    setAnalysisErrors((previous) => ({ ...previous, [id]: '' }));
+    const request = salesCopilotApi.analyzeConversation(id).then(async (result) => {
+      if (result.status === 'no_messages') return result.status;
       const after = await loadDetails(id, true);
-      if (!after) throw new Error('Phân tích xong nhưng chưa tải được dữ liệu mới. Hãy làm mới tin nhắn.');
+      if (!after) throw new Error('Đã lưu phân tích. Hãy làm mới hội thoại để tải hồ sơ mới.');
+      const throughSeq = after.memory?.analyzed_through_seq;
       setItems((previous) => previous.map((item) => item.conversation_id === id ? {
         ...item,
-        interested_models: after.profile?.interested_models || item.interested_models,
-        budget_vnd: after.profile?.budget_vnd ?? item.budget_vnd,
-        budget_notes: after.profile?.budget_notes ?? item.budget_notes,
-        lead_stage: after.lead_status?.stage ?? item.lead_stage,
-        analysis_version: after.analysis_version || item.analysis_version || 1,
-        last_analyzed_at: after.last_analyzed_at || new Date().toISOString(),
-        pending_analysis_count: 0,
+        interested_models: after.profile?.interested_models || [],
+        budget_vnd: after.profile?.budget_vnd,
+        budget_notes: after.profile?.budget_notes,
+        lead_stage: after.lead_status?.stage,
+        analysis_version: after.analysis_version,
+        last_analyzed_at: after.last_analyzed_at,
+        requires_reanalysis: after.requires_reanalysis,
+        message_total: after.message_total,
+        last_message_seq: after.last_message_seq,
+        pending_analysis_count: Number.isInteger(throughSeq)
+          ? Math.max(0, after.last_message_seq - throughSeq) : item.pending_analysis_count,
       } : item));
-      const changes = [];
-      for (const [field, label] of [['interested_models', 'Xe quan tâm'], ['budget_vnd', 'Ngân sách'], ['payment_method', 'Hình thức mua'], ['usage_purpose', 'Nhu cầu'], ['charging_condition', 'Điều kiện sạc'], ['down_payment_vnd', 'Trả trước'], ['purchase_timeline', 'Thời điểm mua']]) {
-        if (JSON.stringify(before?.profile?.[field]) !== JSON.stringify(after.profile?.[field])) changes.push(`${label}: ${String(before?.profile?.[field] ?? 'Chưa rõ')} → ${String(after.profile?.[field] ?? 'Chưa rõ')}`);
-      }
-      if (before?.lead_status?.stage !== after.lead_status?.stage) changes.push('Giai đoạn AI đề xuất đã thay đổi.');
-      if (after.lead_status?.stage_source === 'sales') changes.push('Giữ giai đoạn sales đã chọn.');
-      const created = after.tasks.filter((task) => !before?.tasks?.some((old) => old.id === task.id)).length;
-      changes.push(`${created} đề xuất công việc mới cần duyệt.`, result.status === 'no_messages' ? 'Chưa có tin nhắn để phân tích.' : 'Đã cập nhật tóm tắt; dữ kiện sales xác nhận được giữ nguyên.');
-      setAnalysisChanges((previous) => ({ ...previous, [id]: changes }));
-      return after;
-    }
-    finally { mutations.current.delete(`analysis:${id}`); setAnalysisIds((previous) => ({ ...previous, [id]: false })); }
+      return result.status;
+    }).catch((error) => {
+      setAnalysisErrors((previous) => ({ ...previous, [id]: error.message || 'Chưa phân tích được hội thoại.' }));
+      throw error;
+    }).finally(() => {
+      requests.current.delete(key);
+      setAnalysisIds((previous) => ({ ...previous, [id]: false }));
+    });
+    requests.current.set(key, request);
+    return request;
   }
 
   async function analyzeBatch(ids) {
     const queue = [...new Set(ids)].filter(Boolean);
-    if (!queue.length || batchProgress?.running) return { completed: 0, failed: 0, cancelled: false };
+    if (!queue.length || requests.current.has('analysis:batch')) return;
+    // Reserve the batch before launching workers so a double click cannot launch a second queue.
+    requests.current.set('analysis:batch', true);
     batchCancelRef.current = false;
     const nameMap = Object.fromEntries(items.map((item) => [item.conversation_id, item.customer_name]));
     let completed = 0;
-    let failed = 0;
+    let skipped = 0;
+    const failures = [];
     let cursor = 0;
-    const activeNames = new Set();
+    const activeNames = new Map();
     const syncProgress = (running = true) => {
       setBatchProgress({
         running,
         total: queue.length,
         completed,
-        failed,
-        currentLabel: [...activeNames].join(', '),
+        skipped,
+        failures: [...failures],
+        cancelled: batchCancelRef.current,
+        currentLabel: [...activeNames.values()].join(', '),
       });
     };
     syncProgress(true);
@@ -308,27 +274,27 @@ export function useCustomerWorkspace(currentUser, active = true) {
       while (!batchCancelRef.current && cursor < queue.length) {
         const id = queue[cursor++];
         const name = nameMap[id] || 'Khách hàng';
-        activeNames.add(name);
+        activeNames.set(id, name);
         syncProgress(true);
         try {
-          await analyze(id);
-          completed += 1;
-        } catch {
-          failed += 1;
+          if (await analyze(id) === 'no_messages') skipped += 1;
+          else completed += 1;
+        } catch (error) {
+          failures.push({ id, name, message: error.message });
         } finally {
-          activeNames.delete(name);
+          activeNames.delete(id);
           syncProgress(true);
         }
       }
     });
     await Promise.all(workers);
-    const cancelled = batchCancelRef.current;
-    setBatchProgress(null);
-    return { completed, failed, cancelled };
+    requests.current.delete('analysis:batch');
+    syncProgress(false);
   }
 
   function cancelBatchAnalysis() {
     batchCancelRef.current = true;
+    setBatchProgress((previous) => previous && { ...previous, cancelled: true });
   }
 
   async function updateStage(id, stage, reason) {
@@ -346,8 +312,9 @@ export function useCustomerWorkspace(currentUser, active = true) {
   return { customers, selectedId, selectCustomer: setSelectedId, listStatus, listError, loadList, loadDetails,
     refresh: (id) => Promise.all([loadDetails(id, true), ...(replySuggestionsAvailable ? [loadSavedDraft(id, true)] : [])]),
     detailError: detailErrors[selectedId], loadingDetail: Boolean(pending[selectedId]), sending: Boolean(sendingIds[selectedId]),
-    taskBusy, createTask, toggleTask, editTask, confirmFact, sendMessage, loadMessages, ensureSource, loadingOlder: Boolean(pageBusy[selectedId]), analysisChanges: analysisChanges[selectedId], draftEnabled: Boolean(preferences?.draft_enabled), preferenceBusy: preferenceBusy || !preferences,
-    toggleDraft, generateDraft, draftBusy: Boolean(draftBusyIds[selectedId]), analyze, analyzing: Boolean(analysisIds[selectedId]),
+    taskBusy, createTask, toggleTask, editTask, confirmFact, sendMessage, loadMessages, ensureSource, loadingOlder: Boolean(pageBusy[selectedId]), draftEnabled: Boolean(preferences?.draft_enabled), preferenceBusy: preferenceBusy || !preferences,
+    toggleDraft, generateDraft, draftBusy: Boolean(draftBusyIds[selectedId]), draftError: draftErrors[selectedId],
+    analyze, analyzing: Boolean(analysisIds[selectedId]), analysisError: analysisErrors[selectedId],
     analysisIds, batchProgress, analyzeBatch, cancelBatchAnalysis,
     updateStage, stageBusy: Boolean(stageBusyIds[selectedId]), searchKnowledge: lookup.ask, knowledge: lookup.state,
     loadKnowledge: lookup.load, setKnowledgeQuery: lookup.setQuery };

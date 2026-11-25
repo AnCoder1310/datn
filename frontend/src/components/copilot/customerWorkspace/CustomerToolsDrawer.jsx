@@ -14,33 +14,6 @@ export function Activities({ customer, onSourceClick }) {
 }
 
 export function MessageTaskSuggestionsPanel({ customer, suggestionState, onDismiss, onSaveBatch }) {
-  const [items, setItems] = useState([]);
-  const [expandedIdx, setExpandedIdx] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [conflicts, setConflicts] = useState([]);
-
-  useEffect(() => {
-    const raw = suggestionState?.tasks || [];
-    setItems(raw.map((t, idx) => {
-      const fallback = defaultTaskWindow(t.item_type || 'task', idx * 30);
-      return {
-        selected: true,
-        title: t.title || '',
-        item_type: t.item_type || 'task',
-        priority: t.priority || 'medium',
-        start: localInput(t.starts_at) || fallback.start,
-        end: localInput(t.ends_at) || fallback.end,
-        location: t.location || (t.item_type === 'appointment' ? 'Showroom VinFast' : ''),
-        description: t.description || '',
-        source_message_ids: t.source_message_ids || (suggestionState?.message?.id ? [suggestionState.message.id] : []),
-      };
-    }));
-    setExpandedIdx(raw.length === 1 ? 0 : null);
-    setError('');
-    setConflicts([]);
-  }, [suggestionState]);
-
   if (!suggestionState) return null;
 
   if (suggestionState.loading) {
@@ -62,6 +35,32 @@ export function MessageTaskSuggestionsPanel({ customer, suggestionState, onDismi
       <p className="sw-error-banner" role="alert">{suggestionState.error}</p>
     </section>;
   }
+
+  return <SuggestedTaskEditor key={suggestionState.message?.id} customer={customer}
+    suggestionState={suggestionState} onDismiss={onDismiss} onSaveBatch={onSaveBatch} />;
+}
+
+function SuggestedTaskEditor({ customer, suggestionState, onDismiss, onSaveBatch }) {
+  const raw = suggestionState.tasks || [];
+  const [items, setItems] = useState(() => raw.map((task, index) => {
+    const kind = task.item_type || 'task';
+    const fallback = defaultTaskWindow(kind, index * 30);
+    return {
+      selected: true,
+      title: task.title || '',
+      item_type: kind,
+      priority: task.priority || 'medium',
+      start: localInput(task.starts_at) || fallback.start,
+      end: localInput(task.ends_at) || fallback.end,
+      location: task.location || (kind === 'appointment' ? 'Showroom VinFast' : ''),
+      description: task.description || '',
+      source_message_ids: task.source_message_ids || (suggestionState.message?.id ? [suggestionState.message.id] : []),
+    };
+  }));
+  const [expandedIdx, setExpandedIdx] = useState(raw.length === 1 ? 0 : null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [conflicts, setConflicts] = useState([]);
 
   const selectedItems = items.filter((item) => item.selected);
 
@@ -151,7 +150,6 @@ export function MessageTaskSuggestionsPanel({ customer, suggestionState, onDismi
   return <section className="sw-ai-task-suggestions" aria-label="Gợi ý công việc từ tin nhắn">
     <div className="sw-ai-task-head">
       <strong><Sparkles size={13} /> AI gợi ý {items.length} việc từ tin nhắn</strong>
-      <button type="button" className="sw-text-button" disabled={saving} onClick={onDismiss}>Bỏ qua</button>
     </div>
     {suggestionState.message?.content && <blockquote className="sw-ai-task-quote">“{suggestionState.message.content}”</blockquote>}
     <div className="sw-ai-task-list">
@@ -159,12 +157,11 @@ export function MessageTaskSuggestionsPanel({ customer, suggestionState, onDismi
         const isExpanded = expandedIdx === idx;
         return <article key={idx} className={`sw-ai-task-item ${item.selected ? 'is-selected' : ''}`}>
           <div className="sw-ai-task-item-top">
-            <label className="sw-task-check">
+            <label className="sw-ai-task-selection">
               <input type="checkbox" checked={item.selected} disabled={saving} onChange={(e) => updateItem(idx, { selected: e.target.checked })} />
-              <span>{item.selected && <Check size={12} />}</span>
               <strong>{item.title || 'Chưa có tiêu đề'}</strong>
             </label>
-            <button type="button" className="sw-text-button" onClick={() => setExpandedIdx(isExpanded ? null : idx)}>{isExpanded ? 'Thu gọn' : 'Sửa giờ / chi tiết'}</button>
+            <button type="button" className="sw-secondary-button sw-ai-task-toggle" aria-expanded={isExpanded} onClick={() => setExpandedIdx(isExpanded ? null : idx)}>{isExpanded ? 'Thu gọn' : 'Sửa giờ / chi tiết'}</button>
           </div>
           <div className="sw-task-meta">
             <span><Clock3 size={12} />{item.start && item.end ? `${formatDateTime(toUTC(item.start))} – ${formatDateTime(toUTC(item.end))}` : 'Chưa xếp giờ cụ thể'}</span>
@@ -174,7 +171,7 @@ export function MessageTaskSuggestionsPanel({ customer, suggestionState, onDismi
           {item.location && !isExpanded && <p className="sw-ai-task-sub"><MapPin size={11} /> {item.location}</p>}
           {item.description && !isExpanded && <p className="sw-task-description">{item.description}</p>}
           {isExpanded && (
-            <div className="sw-ai-task-edit-fields">
+            <fieldset className="sw-ai-task-edit-fields" disabled={saving} aria-label="Chi tiết công việc">
               <label>Tiêu đề *<input type="text" maxLength={200} value={item.title} onChange={(e) => updateItem(idx, { title: e.target.value })} /></label>
               <div className="sw-ai-task-row-2">
                 <label>Loại mục<select value={item.item_type} onChange={(e) => updateItem(idx, { item_type: e.target.value })}><option value="task">Công việc</option><option value="appointment">Lịch hẹn</option></select></label>
@@ -186,7 +183,7 @@ export function MessageTaskSuggestionsPanel({ customer, suggestionState, onDismi
               </div>
               <label>Địa điểm{item.item_type === 'appointment' ? ' *' : ''}<input type="text" maxLength={1000} value={item.location} onChange={(e) => updateItem(idx, { location: e.target.value })} /></label>
               <label>Ghi chú<textarea rows={2} maxLength={4000} value={item.description} onChange={(e) => updateItem(idx, { description: e.target.value })} /></label>
-            </div>
+            </fieldset>
           )}
         </article>;
       })}
@@ -202,7 +199,7 @@ export function MessageTaskSuggestionsPanel({ customer, suggestionState, onDismi
           ))}
         </ul>
         <p>Bạn vẫn muốn thêm vào cùng khung giờ chứ?</p>
-        <div className="sw-inline-actions">
+        <div className="sw-ai-task-actions">
           <button type="button" className="sw-secondary-button" disabled={saving} onClick={() => setConflicts([])}>Đổi giờ khác</button>
           <button type="button" className="sw-primary-button" disabled={saving} onClick={() => void handleSaveAll(true)}>{saving ? 'Đang lưu…' : 'Vẫn thêm vào lịch'}</button>
         </div>
@@ -210,8 +207,8 @@ export function MessageTaskSuggestionsPanel({ customer, suggestionState, onDismi
     )}
     {error && <p className="sw-error-banner" role="alert">{error}</p>}
     {!conflicts.length && (
-      <div className="sw-inline-actions">
-        <button type="button" className="sw-text-button" disabled={saving} onClick={onDismiss}>Hủy</button>
+      <div className="sw-ai-task-actions">
+        <button type="button" className="sw-secondary-button" disabled={saving} onClick={onDismiss}>Hủy</button>
         <button type="button" className="sw-primary-button" disabled={saving || !selectedItems.length} onClick={() => void handleSaveAll(false)}>
           {saving ? 'Đang kiểm tra lịch…' : `Lưu ${selectedItems.length} việc đã chọn`}
         </button>

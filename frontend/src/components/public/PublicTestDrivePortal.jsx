@@ -1,10 +1,8 @@
 import './publicPortal.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ArrowLeft,
   BatteryCharging,
-  Calendar,
-  Car,
   CheckCircle2,
   Clock,
   Compass,
@@ -19,16 +17,6 @@ import {
 import { salesCopilotApi } from '../../api/salesCopilotApi';
 import { VINFAST_SHOWCASE_MODELS } from '../../data/vehicleShowcaseData';
 
-const SHOWROOMS = [
-  'VinFast Ocean Park — Gia Lâm, Hà Nội',
-  'VinFast Smart City — Nam Từ Liêm, Hà Nội',
-  'VinFast Phạm Hùng — Cầu Giấy, Hà Nội',
-  'VinFast Landmark 81 — Bình Thạnh, TP. HCM',
-  'VinFast Thảo Điền — TP. Thủ Đức, TP. HCM',
-  'VinFast Ngô Quyền — Sơn Trà, Đà Nẵng',
-  'VinFast Lê Thánh Tông — Ngô Quyền, Hải Phòng',
-];
-
 const TIME_SLOTS = [
   'Hôm nay — Chiều 14:30',
   'Ngày mai — Sáng 09:30',
@@ -39,18 +27,37 @@ const TIME_SLOTS = [
 ];
 
 export function PublicTestDrivePortal({ onBack, onOpenLeadInCrm }) {
+  const [showrooms, setShowrooms] = useState([]);
+  const [showroomsLoading, setShowroomsLoading] = useState(true);
   const [selectedModel, setSelectedModel] = useState('VF 7');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
-  const [showroom, setShowroom] = useState(SHOWROOMS[0]);
+  const [showroom, setShowroom] = useState('');
   const [timeSlot, setTimeSlot] = useState(TIME_SLOTS[1]);
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successResult, setSuccessResult] = useState(null);
+  const [openingLead, setOpeningLead] = useState(false);
 
   const activeVehicle =
     VINFAST_SHOWCASE_MODELS.find((m) => m.key === selectedModel) || VINFAST_SHOWCASE_MODELS[3];
+
+  useEffect(() => {
+    let cancelled = false;
+    salesCopilotApi.getPublicShowrooms()
+      .then((items) => {
+        if (cancelled) return;
+        const values = (Array.isArray(items) ? items : []).map((item) => item.name || item.address).filter(Boolean);
+        setShowrooms(values);
+        setShowroom((current) => current || values[0] || '');
+      })
+      .catch(() => {
+        if (!cancelled) setShowrooms([]);
+      })
+      .finally(() => { if (!cancelled) setShowroomsLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -58,12 +65,17 @@ export function PublicTestDrivePortal({ onBack, onOpenLeadInCrm }) {
       setError('Vui lòng nhập họ tên và số điện thoại liên hệ.');
       return;
     }
+    const normalizedPhone = phone.replace(/\s+/g, '');
+    if (!/^0\d{9,10}$/.test(normalizedPhone)) {
+      setError('Số điện thoại chưa đúng định dạng. Vui lòng kiểm tra lại.');
+      return;
+    }
     setSubmitting(true);
     setError('');
     try {
       const res = await salesCopilotApi.submitPublicTestDrive({
         name: fullName.trim(),
-        phone: phone.trim(),
+        phone: normalizedPhone,
         model: selectedModel,
         location: showroom,
         preferred_date: timeSlot,
@@ -107,8 +119,7 @@ export function PublicTestDrivePortal({ onBack, onOpenLeadInCrm }) {
             </div>
             <h2>Đăng ký lái thử thành công!</h2>
             <p className="vf-success-desc">
-              Hệ thống đã tự động chuyển thông tin của quý khách tới{' '}
-              <strong>Tư vấn viên Phạm Đình Duy (Showroom VinFast)</strong>.
+              Hệ thống đã ghi nhận nhu cầu và chuyển tới tư vấn viên phù hợp tại showroom bạn chọn.
             </p>
 
             <div className="vf-success-summary-box">
@@ -128,6 +139,12 @@ export function PublicTestDrivePortal({ onBack, onOpenLeadInCrm }) {
                 <span>Thời gian hẹn:</span>
                 <strong>{timeSlot}</strong>
               </div>
+              {(successResult?.advisor_name || successResult?.assigned_advisor_name) && (
+                <div className="vf-summary-row">
+                  <span>Tư vấn viên phụ trách:</span>
+                  <strong>{successResult.advisor_name || successResult.assigned_advisor_name}</strong>
+                </div>
+              )}
               {notes && (
                 <div className="vf-summary-row">
                   <span>Nhu cầu tư vấn:</span>
@@ -136,20 +153,32 @@ export function PublicTestDrivePortal({ onBack, onOpenLeadInCrm }) {
               )}
             </div>
 
+            {error && <p className="vf-portal-error-banner" role="alert">{error}</p>}
             <div className="vf-success-actions">
               <button
                 type="button"
                 className="vf-btn-view-crm"
-                onClick={() => {
-                  if (onOpenLeadInCrm) {
-                    onOpenLeadInCrm(successResult.conversation_id);
-                  } else {
+                disabled={openingLead}
+                onClick={async () => {
+                  if (!onOpenLeadInCrm) {
                     onBack();
+                    return;
+                  }
+                  setOpeningLead(true);
+                  setError('');
+                  try {
+                    await onOpenLeadInCrm(successResult.conversation_id);
+                  } catch (failure) {
+                    setError(failure.status === 404
+                      ? 'Đăng ký đã được lưu. Hội thoại được giao cho tư vấn viên phụ trách.'
+                      : failure.message || 'Chưa mở được hội thoại.');
+                  } finally {
+                    setOpeningLead(false);
                   }
                 }}
               >
                 <Compass size={16} />
-                <span>Mở Lead này ngay trên màn hình CRM của Sales →</span>
+                <span>{openingLead ? 'Đang mở hội thoại…' : 'Mở hội thoại trong CRM'}</span>
               </button>
 
               <button
@@ -275,12 +304,14 @@ export function PublicTestDrivePortal({ onBack, onOpenLeadInCrm }) {
                       value={showroom}
                       onChange={(e) => setShowroom(e.target.value)}
                     >
-                      {SHOWROOMS.map((s, idx) => (
+                      {showrooms.map((s, idx) => (
                         <option key={idx} value={s}>
                           {s}
                         </option>
                       ))}
                     </select>
+                    {showroomsLoading && <small className="vf-field-hint">Đang tải showroom khả dụng…</small>}
+                    {!showroomsLoading && !showrooms.length && <small className="vf-field-hint">Hiện chưa có showroom đang hoạt động.</small>}
                   </div>
 
                   <div className="vf-form-group">

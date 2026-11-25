@@ -72,7 +72,7 @@ function Prices({ vehicle }) {
 }
 function UpdateCard({ doc, onOpen }) {
   const { year, month, day } = dateParts(doc.effective_date);
-  return <button type="button" className="kb-update" onClick={(event) => onOpen(doc, event.currentTarget)}>
+  return <button type="button" className="kb-update" disabled={!doc.file_url} onClick={(event) => onOpen(doc, event.currentTarget)}>
     <span className="kb-date-tile">{month ? <><strong>{day || '01'}</strong><small>{month}</small></> : <strong>{year}</strong>}</span>
     <span className="kb-update-copy"><strong>{doc.title}</strong><span>{doc.summary}</span></span>
   </button>;
@@ -110,22 +110,9 @@ function FaqCard({ faq }) {
 function PdfDrawer({ doc, onClose }) {
   const panelRef = useRef(null);
   const closeRef = useRef(null);
-  const [headerBottom, setHeaderBottom] = useState(72);
+  const [isFull, setIsFull] = useState(false);
   const titleId = useId();
   useEffect(() => {
-    const header = document.querySelector('.top-header');
-    const update = () => setHeaderBottom(Math.max(0, header?.getBoundingClientRect().bottom ?? 0));
-    update();
-    const observer = new ResizeObserver(update);
-    if (header) observer.observe(header);
-    window.addEventListener('resize', update);
-    window.addEventListener('scroll', update, true);
-    return () => { observer.disconnect(); window.removeEventListener('resize', update); window.removeEventListener('scroll', update, true); };
-  }, []);
-  const [fullUrl, setFullUrl] = useState(null);
-  const isFull = Boolean(doc) && fullUrl === doc.file_url;
-  useEffect(() => {
-    if (!doc) return;
     closeRef.current?.focus();
     const handleKey = (event) => {
       if (event.key === 'Escape') { event.preventDefault(); onClose(); }
@@ -139,12 +126,24 @@ function PdfDrawer({ doc, onClose }) {
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [doc, onClose]);
-  return <div className={`kb-drawer-layer${doc ? ' kb-drawer-layer--open' : ''}`} style={{ '--kb-header-bottom': `${headerBottom}px` }} inert={!doc}>
+  }, [onClose]);
+  return <div className={`kb-drawer-layer${isFull ? ' kb-drawer-layer--full' : ''}`}>
     <div className="kb-drawer-shade" onClick={onClose} aria-hidden="true" />
-    <section ref={panelRef} className={`kb-drawer${isFull ? ' kb-drawer--full' : ''}`} role="dialog" aria-modal="true" aria-labelledby={titleId} aria-hidden={!doc}>
-      <header className="kb-drawer-head"><div><h2 id={titleId}>{doc?.title}</h2><p className="kb-muted">Hiệu lực: {doc?.effective_date}</p></div><div className="kb-drawer-tools"><a className="kb-drawer-link" href={doc?.file_url} target="_blank" rel="noopener noreferrer">Mở tab mới</a><button type="button" className="kb-icon-button" aria-label={isFull ? 'Thu nhỏ' : 'Toàn màn hình'} aria-pressed={isFull} title={isFull ? 'Thu nhỏ' : 'Toàn màn hình'} onClick={() => setFullUrl(isFull ? null : doc?.file_url)}>{isFull ? <Minimize2 size={18} aria-hidden="true" /> : <Maximize2 size={18} aria-hidden="true" />}</button><button ref={closeRef} type="button" className="kb-icon-button" aria-label="Đóng" onClick={onClose}><X size={20} aria-hidden="true" /></button></div></header>
-      {doc && <iframe className="kb-pdf-frame" src={doc.file_url} title={`PDF: ${doc.title}`} />}
+    <section ref={panelRef} className="kb-drawer" role="dialog" aria-modal="true" aria-labelledby={titleId}>
+      <header className="kb-drawer-head">
+        <div>
+          <h2 id={titleId}>{doc.title}</h2>
+          {doc.effective_date && <p className="kb-muted">Hiệu lực {formatDate(doc.effective_date)}</p>}
+        </div>
+        <div className="kb-drawer-tools">
+          <a className="kb-drawer-link" href={doc.file_url} target="_blank" rel="noopener noreferrer">Mở tab mới</a>
+          <button type="button" className="kb-icon-button" aria-label={isFull ? 'Thu nhỏ' : 'Toàn màn hình'} aria-pressed={isFull} onClick={() => setIsFull(!isFull)}>
+            {isFull ? <Minimize2 size={18} aria-hidden="true" /> : <Maximize2 size={18} aria-hidden="true" />}
+          </button>
+          <button ref={closeRef} type="button" className="kb-icon-button" aria-label="Đóng" onClick={onClose}><X size={20} aria-hidden="true" /></button>
+        </div>
+      </header>
+      <iframe className="kb-pdf-frame" src={doc.file_url} title={`PDF: ${doc.title}`} />
     </section>
   </div>;
 }
@@ -211,15 +210,15 @@ export function KnowledgeView({ sourceDocumentId, sourceReference }) {
     </header>
     {sourceLoading && <p className="kb-notice" role="status">Đang mở tài liệu gốc…</p>}
     {sourceError && <div className="kb-notice" role="alert"><span>{sourceError}</span><button type="button" className="kb-icon-button" aria-label="Đóng thông báo" onClick={() => setSourceError('')}><X size={18} /></button></div>}
+    <nav className="kb-tabs" aria-label="Danh mục kiến thức">{TABS.map((item) => <button type="button" key={item.id} className="kb-tab" aria-pressed={tab === item.id} onClick={() => setTab(item.id)}><item.icon size={20} aria-hidden="true" />{item.title}<span className="kb-tab-count">{item.data.length}</span></button>)}</nav>
     <section className="kb-fresh" aria-labelledby="kb-fresh-title">
       <h2 id="kb-fresh-title" className="kb-label">Mới cập nhật</h2>
       <div className="kb-fresh-row">{UPDATES.slice(0, 3).map((doc) => <UpdateCard key={doc.id} doc={doc} onOpen={openPdf} />)}</div>
     </section>
-    <nav className="kb-tabs" aria-label="Danh mục kiến thức">{TABS.map((item) => <button type="button" key={item.id} className="kb-tab" aria-pressed={tab === item.id} onClick={() => setTab(item.id)}><item.icon size={20} aria-hidden="true" />{item.title}<span className="kb-tab-count">{item.data.length}</span></button>)}</nav>
     {tab === 'faq' && <div className="kb-filters" role="group" aria-label="Lọc theo dòng xe">{FAQ_MODELS.map((model) => <button type="button" className="kb-filter" key={model} aria-pressed={faqModel === model} onClick={() => setFaqModel(model)}>{model}</button>)}</div>}
     {filtered && <p className="kb-muted" role="status">{items.length} kết quả</p>}
     {items.length ? <div className={`kb-grid${tab === 'vehicles' ? ' kb-grid--vehicles' : ''}`}>{items.map(renderItem)}</div> : <p className="kb-empty">{filtered ? 'Không tìm thấy kết quả. Hãy thử từ khóa hoặc bộ lọc khác.' : `Chưa có ${activeTab.unit} trong mục này.`}</p>}
-    <PdfDrawer doc={viewingPdf} onClose={closePdf} />
+    {viewingPdf?.file_url && <PdfDrawer doc={viewingPdf} onClose={closePdf} />}
     <Modal isOpen={Boolean(selectedVehicle)} onClose={() => setSelectedVehicle(null)} title={selectedVehicle?.name || ''} maxWidth={900}>
       {selectedVehicle && <div className="kb-modal-content"><VehicleImage vehicle={selectedVehicle} /><div><h3>{selectedVehicle.name}</h3><p className="kb-muted">{selectedVehicle.segment}</p>{selectedVehicle.tagline && <p>{selectedVehicle.tagline}</p>}</div><Prices vehicle={selectedVehicle} />
         <section><h4>Thông số vận hành & pin</h4><Specs vehicle={selectedVehicle} fields={DRIVE_SPECS} /></section><section><h4>Kích thước & khung gầm</h4><Specs vehicle={selectedVehicle} fields={DIMENSION_SPECS} /></section>

@@ -10,7 +10,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, R
 
 from src.agents.copilot.graph import copilot_agent  # noqa: F401 - compatibility for existing integrations
 from src.integrations.copilot_sessions import CopilotSessionNotFoundError
-from src.models.auth import AuthenticatedUser, UserRole
+from src.models.auth import UserRole
 from src.models.copilot import CopilotQueryRequest, CopilotQueryResponse, SalesKnowledgeQueryRequest
 from src.observability import span
 from src.services.copilot_query import (  # noqa: F401 - public compatibility
@@ -24,26 +24,9 @@ router = APIRouter(prefix="/copilot", tags=["Copilot"])
 
 async def current_copilot_user(request: Request):
     with span("authentication"):
-        try:
-            identity = await request.app.state.current_user(request)
-        except HTTPException as exc:
-            if exc.status_code in (401, 403):
-                return AuthenticatedUser(
-                    user_id="advisor-demo",
-                    username="advisor.demo",
-                    display_name="Phạm Đình Duy",
-                    role=UserRole.ADVISOR,
-                    must_change_password=False,
-                )
-            raise
+        identity = await request.app.state.current_user(request)
         if identity.role != UserRole.ADVISOR:
-            return AuthenticatedUser(
-                user_id="advisor-demo",
-                username="advisor.demo",
-                display_name=f"{identity.display_name} (Chế độ xem)",
-                role=UserRole.ADVISOR,
-                must_change_password=False,
-            )
+            raise HTTPException(status_code=403, detail="Chỉ tư vấn viên được sử dụng Copilot.")
         return identity
 
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import re
 from collections import Counter
+from contextlib import nullcontext
 from datetime import UTC, date, datetime, time, timedelta
 from uuid import uuid4
 from zoneinfo import ZoneInfo
@@ -67,7 +68,7 @@ class SalesAgendaService:
             self.repo.customers, self.repo.customers.c.id == self.tasks.c.customer_id,
         ).outerjoin(details, details.c.task_id == self.tasks.c.id).where(self._scope(advisor_id))
 
-    def create(self, advisor_id, values, *, conversation_id=None):
+    def create(self, advisor_id, values, *, conversation_id=None, connection=None):
         values = dict(values)
         values.setdefault("description", "")
         appointment = values.get("item_type") == "appointment"
@@ -79,7 +80,7 @@ class SalesAgendaService:
             values[key] = values[key].astimezone(UTC) if values.get(key) else None
         customer_id = values.pop("customer_id", None)
         if conversation_id:
-            conversation = self.repo.owned_conversation(conversation_id, advisor_id)
+            conversation = self.repo.owned_conversation(conversation_id, advisor_id, connection=connection)
             customer_id = conversation["customer_id"]
         elif customer_id:
             customer = self.repo.get_customer(customer_id)
@@ -92,13 +93,13 @@ class SalesAgendaService:
                             customer_id=customer_id, conversation_id=conversation_id,
                             task_type=task_type, source_message_ids=source_ids,
                             created_at=datetime.now(UTC), **values)
-        self.repo.save_tasks([task])
-        with self.repo.engine.begin() as conn:
+        with nullcontext(connection) if connection is not None else self.repo.engine.begin() as conn:
+            self.repo.save_tasks([task], connection=conn)
             conn.execute(insert(self.repo.intelligence_tables["activity_details"]).values(task_id=task.id, location=location))
-        return self.get(advisor_id, task.id)
+            return self.get(advisor_id, task.id, connection=conn)
 
-    def get(self, advisor_id, task_id):
-        with self.repo.engine.connect() as conn:
+    def get(self, advisor_id, task_id, *, connection=None):
+        with nullcontext(connection) if connection is not None else self.repo.engine.connect() as conn:
             row = conn.execute(self._task_query(advisor_id).where(self.tasks.c.id == task_id)).mappings().first()
         if not row:
             raise LookupError(task_id)
@@ -175,9 +176,6 @@ class SalesAgendaService:
             else_=3,
         )
         with self.repo.engine.connect() as conn:
-            c_count = conn.execute(select(func.count()).where(self.repo.customers.c.advisor_id == advisor_id)).scalar()
-            if c_count == 0 and advisor_id != "advisor-demo":
-                advisor_id = "advisor-demo"
             rows = conn.execute(self._task_query(advisor_id).where(
                 t.starts_at < end, t.ends_at > start, t.status.in_((*ACTIVE, "completed")),
             ).order_by(t.starts_at, t.id)).mappings()
@@ -269,9 +267,6 @@ class SalesAgendaService:
                    "review": t.status == "needs_review", "completed": t.status == "completed"}
         selected = filters[work_filter]
         with self.repo.engine.connect() as conn:
-            c_count = conn.execute(select(func.count()).where(self.repo.customers.c.advisor_id == advisor_id)).scalar()
-            if c_count == 0 and advisor_id != "advisor-demo":
-                advisor_id = "advisor-demo"
             base = self._task_query(advisor_id)
             customers = self._customers(conn, advisor_id)
             counts = conn.execute(select(

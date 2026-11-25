@@ -121,7 +121,7 @@ test('analysis and draft freshness use message sequence even if a message arrive
       { id: 'm2', seq: 2, sent_at: '2026-10-16T08:00:01Z' },
     ],
     memory: { updated_at: '2026-10-16T08:00:05Z', analyzed_through_seq: 1 },
-  }, { text: 'Bản nháp', based_on_message_seq: 1, generated_at: '2026-10-16T08:00:05Z' });
+  }, { reply_version: 2, text: 'Bản nháp', based_on_message_seq: 1, generated_at: '2026-10-16T08:00:05Z' });
   assert.equal(customer.pendingAnalysis, 1);
   assert.equal(customer.draftStale, true);
   assert.equal(customer.draftContextKnown, true);
@@ -152,4 +152,20 @@ test('inserting a reply keeps the sales draft and task attention excludes comple
     { status: 'cancelled', ends_at: '2026-10-15T08:00:00Z' },
     { status: 'pending', ends_at: '' },
   ], timestamp('2026-10-16T08:00:00Z')), { pending: 2, overdue: 1 });
+});
+
+
+test('reply suggestions require a customer turn and ignore old template drafts', () => {
+  const customerMessage = { id: 'c1', seq: 1, sender_role: 'customer', content: 'VF 7 Plus còn màu trắng không em?' };
+  const salesMessage = { id: 's2', seq: 2, sender_role: 'sales', content: 'Dạ em sẽ kiểm tra màu trắng.' };
+  const systemMessage = { id: 'm3', seq: 3, sender_role: 'system', content: 'Đã cập nhật thông tin hồ sơ.' };
+  const legacyDraft = { text: 'Nháp theo mẫu cũ', based_on_message_seq: 3 };
+  const currentDraft = { text: 'Em kiểm tra màu trắng cho bản VF 7 Plus rồi báo lại ạ.', reply_version: 2, based_on_message_seq: 3 };
+  const waiting = { messages: [customerMessage, systemMessage] };
+  assert.equal(toWorkspaceCustomer(item, waiting, legacyDraft).draftStale, true);
+  assert.equal(toWorkspaceCustomer(item, waiting, currentDraft).canSuggestReply, true);
+  assert.equal(toWorkspaceCustomer(item, waiting, currentDraft).draftStale, false);
+  const answered = { ...waiting, last_human_sender_role: 'customer', messages: [customerMessage, salesMessage, systemMessage] };
+  assert.equal(toWorkspaceCustomer(item, answered, currentDraft).canSuggestReply, false);
+  assert.equal(toWorkspaceCustomer(item, answered, currentDraft).draftStale, true);
 });

@@ -5,11 +5,11 @@ const ACCESS_ERRORS = new Set([401, 403, 404]);
 function historyError(error) {
   if (error.status === 401) return 'Phiên đăng nhập đã hết hạn. Đăng nhập lại để tra cứu.';
   if (error.status === 403) return 'Tài khoản này không có quyền sử dụng Copilot.';
-  if (error.status === 404) return 'Dịch vụ Copilot chưa khả dụng. Hãy tải lại hoặc liên hệ quản trị viên.';
+  if (error.status === 404) return 'Hội thoại không còn khả dụng hoặc chưa được gán cho bạn.';
   return error.message || 'Chưa tải được lịch sử tra cứu.';
 }
 
-/** Private state per sales account, shared across CRM customers. */
+/** Private state per conversation, within a single sales account. */
 export function createSalesLookupStore(api) {
   let entries = {};
   const listeners = new Set();
@@ -36,7 +36,7 @@ export function createSalesLookupStore(api) {
     const request = { controller: new AbortController() };
     const loadingField = beforeSeq ? 'loadingOlder' : 'loading';
     update(key, { [loadingField]: true });
-    request.promise = Promise.resolve().then(() => api.getLookupHistory(beforeSeq, { signal: request.controller.signal })).then((page) => {
+    request.promise = Promise.resolve().then(() => api.getLookupHistory(key, beforeSeq, { signal: request.controller.signal })).then((page) => {
       if (request.controller.signal.aborted || (get(key).turnVersion || 0) !== turnVersion) return page;
       update(key, (entry) => ({
         messages: mergeLookupMessages(entry.messages, page.messages), nextBeforeSeq: page.next_before_seq,
@@ -66,7 +66,7 @@ export function createSalesLookupStore(api) {
     controllers.set(key, controller);
     update(key, { busy: true, turnVersion: (entry.turnVersion || 0) + 1, error: '', syncError: '', errorRequestId: '', pendingQuery: query, progress: 'Đang phân tích câu hỏi…' });
     try {
-      const result = await api.copilotChatStream(query, {
+      const result = await api.copilotChatStream(key, query, {
         signal: controller.signal, onStatus: (status) => update(key, { progress: status.text || '' }),
       });
       if (result.reason_code === 'input_blocked') {

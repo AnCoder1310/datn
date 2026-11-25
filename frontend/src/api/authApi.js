@@ -8,8 +8,8 @@ export const authApi = {
     });
   },
 
-  getSession() {
-    return request('/auth/session');
+  getSession(options) {
+    return request('/auth/session', options);
   },
 
   me() {

@@ -163,6 +163,10 @@ class PracticeService:
                 result = await self._graph.retry_customer_reply(session_id)
                 return PracticeSessionView.model_validate(result)
 
+    async def record_realtime(self, session_id: str, **changes) -> RoleplayState:
+        async with self._lock_for(session_id):
+            return await self._graph.record_realtime(session_id, **changes)
+
     async def finish_session(
         self,
         session_id: str,
@@ -186,6 +190,11 @@ class PracticeService:
                 with self._trace("practice.evaluate", session_id=session_id, scenario_id=state.scenario_id):
                     if self._evaluator is None or self._knowledge_evidence is None:
                         raise PracticeEvaluationUnavailableError("evaluation dependencies are not configured")
+                    if state.realtime_models:
+                        stage = "realtime_transcript_analysis"
+                        state = await self._graph.prepare_realtime_evaluation(session_id)
+                        spoken = [message for message in state.messages if not message.interrupted]
+                        state = state.model_copy(update={"messages": spoken})
                     scenario = self._scenarios.get(state.scenario_id)
                     stage = "retrieval"
                     evidence = await self._knowledge_evidence.for_session(scenario, state)

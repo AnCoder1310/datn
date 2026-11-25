@@ -34,10 +34,6 @@ export function useAgendaResource(owner, key, fetcher, active = true) {
     } catch (error) {
       if (generation.current === requestGeneration) {
         setState((previous) => ({ ...previous, loading: false, error: error.message || 'Chưa tải được dữ liệu.' }));
-        // Tự động thử lại khi backend sẵn sàng
-        setTimeout(() => {
-          if (generation.current === requestGeneration) void load(true);
-        }, 2500);
       }
     }
   }, [cacheKey]);

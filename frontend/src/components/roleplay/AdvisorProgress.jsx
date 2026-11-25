@@ -151,7 +151,7 @@ function SkillRadar({ criteria }) {
   return (
     <>
       <div className="ap-radar-frame">
-        <svg viewBox="0 0 360 260" className="ap-radar" role="img" aria-label={summary}>
+        <svg viewBox="-24 0 408 260" className="ap-radar" role="img" aria-label={summary}>
           {[1, 2, 3].map((level) => (
             <polygon key={level} points={pointList(skills.map((_, index) => radarPoint(index, level)))} className="ap-radar-grid" />
           ))}

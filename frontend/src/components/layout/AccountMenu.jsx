@@ -6,6 +6,8 @@ import "./accountMenu.css";
 // Shared by top bars: the avatar opens a small account card with multi-role switcher
 export function AccountMenu({ name, username, roleLabel, onLogout, onOpenProfile }) {
   const [open, setOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState('');
   const rootRef = useRef(null);
   const triggerRef = useRef(null);
   const cardId = useId();
@@ -36,6 +38,7 @@ export function AccountMenu({ name, username, roleLabel, onLogout, onOpenProfile
         ref={triggerRef}
         type="button"
         className={`account-menu-trigger ${open ? "is-open" : ""}`}
+        aria-label={`Tài khoản ${displayName}`}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={open ? cardId : undefined}
@@ -77,9 +80,19 @@ export function AccountMenu({ name, username, roleLabel, onLogout, onOpenProfile
             </button>
           )}
 
-          <button type="button" className="account-menu-logout" onClick={onLogout}>
+          {logoutError && <p className="account-menu-error" role="alert">{logoutError}</p>}
+          <button type="button" className="account-menu-logout" disabled={loggingOut} onClick={async () => {
+            setLoggingOut(true);
+            setLogoutError('');
+            try {
+              await onLogout();
+            } catch (error) {
+              setLogoutError(error.message || 'Chưa thể đăng xuất. Vui lòng thử lại.');
+              setLoggingOut(false);
+            }
+          }}>
             <LogoutIcon aria-hidden="true" />
-            Đăng xuất
+            {loggingOut ? 'Đang đăng xuất…' : 'Đăng xuất'}
           </button>
         </div>
       )}

@@ -35,6 +35,7 @@ PracticeErrorCode = Literal[
     "voice_failed",
     "validation_error",
     "rate_limited",
+    "realtime_transcript_incomplete",
 ]
 
 ERRORS: dict[PracticeErrorCode, tuple[int, str]] = {
@@ -53,6 +54,7 @@ ERRORS: dict[PracticeErrorCode, tuple[int, str]] = {
     "voice_invalid_audio": (422, "Bản ghi không hợp lệ hoặc quá lớn. Vui lòng ghi lại."),
     "voice_too_long": (422, f"Bản ghi dài hơn {MAX_AUDIO_SECONDS} giây. Vui lòng ghi ngắn hơn."),
     "voice_failed": (502, "Không chuyển được giọng nói thành chữ. Vui lòng thử lại."),
+    "realtime_transcript_incomplete": (409, "Bản chép lời chưa hoàn tất. Hệ thống chưa thể chấm điểm phiên này."),
     "validation_error": (422, "Nội dung gửi lên chưa hợp lệ."),
     "rate_limited": (429, "Bạn đã đạt giới hạn sử dụng. Vui lòng thử lại sau."),
 }
@@ -80,6 +82,8 @@ async def practice_exception_handler(request: Request, exc: PracticeAPIError) ->
 def session_conflict(exc: Exception) -> PracticeAPIError:
     """Graph/reducer errors distinguish terminal state from an outstanding reply."""
     if isinstance(exc, RoleplaySessionConflictError):
+        if str(exc) == "realtime transcript is incomplete":
+            return PracticeAPIError("realtime_transcript_incomplete")
         return PracticeAPIError(exc.code, status_code=409)
     return PracticeAPIError("validation_error", status_code=409)
 

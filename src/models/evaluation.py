@@ -1,11 +1,6 @@
 """Strict contracts for provisional role-play evaluation and manager review."""
 
-try:
-    from enum import StrEnum
-except ImportError:
-    from enum import Enum
-    class StrEnum(str, Enum):
-        pass
+from enum import StrEnum
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -132,13 +127,20 @@ class SessionEvaluationResult(BaseModel):
 
     @model_validator(mode="after")
     def validate_criteria_and_aggregate(self) -> "SessionEvaluationResult":
-        criteria = [item.criterion for item in self.evaluations]
+        # `model_construct` is used by conflict-path tests and legacy checkpoint
+        # inspection. Incomplete instances are not accepted from normal input,
+        # but must remain inspectable until the owning operation reports its
+        # domain conflict.
+        evaluations = getattr(self, "evaluations", None)
+        if evaluations is None:
+            return self
+        criteria = [item.criterion for item in evaluations]
         if len(criteria) != len(set(criteria)):
             raise ValueError("criterion evaluations must be unique")
 
         assessed_scores = [
             item.score
-            for item in self.evaluations
+            for item in evaluations
             if item.status is CriterionStatus.ASSESSED and item.score is not None
         ]
         if self.assessed_criteria_count != len(assessed_scores):

@@ -1,6 +1,9 @@
 import { request } from "./client";
 
 export const managerApi = {
+  getShowrooms() {
+    return request('/sales-copilot/manager/showrooms');
+  },
   createAdvisor({ username, displayName, password }) {
     return request('/auth/advisors', {
       method: 'POST',

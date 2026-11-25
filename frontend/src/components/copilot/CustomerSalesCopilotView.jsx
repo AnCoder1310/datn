@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { UsersRound, Info, ArrowLeft, X, MessageSquare, Compass, CalendarCheck } from 'lucide-react';
+import { UsersRound, Info, X, MessageSquare, Compass } from 'lucide-react';
 import { createId } from '../../lib/id';
 import { CustomerList } from './customerWorkspace/CustomerList';
 import { ConversationWorkspace } from './customerWorkspace/ConversationWorkspace';
@@ -19,11 +19,12 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState('all');
   const storage = useWorkspaceStorage(currentUser?.user_id);
-  const { drafts, starred } = storage;
+  const { drafts, customerDrafts = {}, starred } = storage;
   const [highlight, setHighlight] = useState(null);
   const [creatingTask, setCreatingTask] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [mobileView, setMobileView] = useState('queue'); // 'queue' | 'conversation' | 'intelligence'
+  const [railTab, setRailTab] = useState('intelligence');
   const [draftOpen, setDraftOpen] = useState(false);
   const [toast, setToast] = useState('');
   const [sourceSnapshot, setSourceSnapshot] = useState(null);
@@ -51,9 +52,11 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
     setQuery('');
     setFilter('all');
     setCreatingTask(false);
+    setEditingTask(null);
     setSuggestionState(null);
     setDraftOpen(false);
     setMobileView('conversation');
+    setRailTab('intelligence');
     setHighlight(
       navigationIntent.taskId
         ? { taskId: navigationIntent.taskId, nonce: navigationIntent.nonce }
@@ -76,25 +79,28 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
   }, [toast]);
 
   function selectCustomer(id) {
+    if (id !== selectedId) setRailTab('intelligence');
     setSourceSnapshot(null);
     setSuggestionState(null);
     workspace.selectCustomer(id);
     setHighlight(null);
     setDraftOpen(false);
     setCreatingTask(false);
+    setEditingTask(null);
     setMobileView('conversation');
   }
 
   function openDraft() {
+    if (!customer?.canSuggestReply) return;
     setDraftOpen(true);
     setMobileView('conversation');
     if (selectedId && (!customer?.draft || customer?.draftStale) && !workspace.draftBusy) {
-      void runAction(() => workspace.generateDraft(selectedId));
+      void workspace.generateDraft(selectedId);
     }
   }
 
   async function insertDraft(mode) {
-    if (!customer?.draft || customer.draftStale) return;
+    if (!customer?.canSuggestReply || !customer.draft || customer.draftStale) return;
     if (mode === 'copy') {
       try {
         await navigator.clipboard.writeText(customer.draft);
@@ -117,13 +123,15 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
 
   async function sendMessage(role = 'sales') {
     const id = selectedId;
-    const content = (drafts[id] || '').trim();
+    const simulated = role === 'customer';
+    const content = ((simulated ? customerDrafts[id] : drafts[id]) || '').trim();
     if (!content || workspace.sending || !customer?.loaded) return;
     try {
       const message = await workspace.sendMessage(id, content, role);
       if (message) {
-        storage.update('drafts', id, (prev) => (prev?.trim() === content ? '' : prev));
+        storage.update(simulated ? 'customerDrafts' : 'drafts', id, (prev) => (prev?.trim() === content ? '' : prev));
         if (selectedRef.current === id) {
+          setDraftOpen(false);
           setHighlight(null);
           setToast(role === 'customer' ? 'Đã gửi tin nhắn giả lập từ khách hàng.' : 'Đã gửi tin nhắn tư vấn.');
         }
@@ -183,19 +191,18 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
     if (!id || !message?.id) return;
     setDraftOpen(false);
     setCreatingTask(false);
-    setSuggestionState({ loading: true, message, tasks: [], error: '' });
+    const pending = { loading: true, message, tasks: [], error: '' };
+    setSuggestionState(pending);
     try {
       const result = await salesCopilotApi.suggestTasksFromMessage(id, message.id);
       if (selectedRef.current !== id) return;
-      setSuggestionState({ loading: false, message, tasks: result.tasks || [], error: '' });
+      setSuggestionState((current) => current === pending ? { ...pending, loading: false, tasks: result.tasks || [] } : current);
     } catch (error) {
       if (selectedRef.current !== id) return;
-      setSuggestionState({
-        loading: false,
-        message,
-        tasks: [],
+      setSuggestionState((current) => current === pending ? {
+        ...pending, loading: false,
         error: error.message || 'Chưa bóc tách được công việc từ tin nhắn này.',
-      });
+      } : current);
     }
   }
 
@@ -215,33 +222,23 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
     if (!raw) return;
     const models = (customer?.models || []).filter(Boolean);
     const mentionsModel = models.some((m) => raw.toLowerCase().includes(m.toLowerCase()));
-    const queryText =
-      models.length && !mentionsModel
-        ? `${raw} (Xe khách đang quan tâm: ${models.join(', ')})`
-        : raw;
+    const modelContext = models.length && !mentionsModel
+      ? ` (Xe khách đang quan tâm: ${models.join(', ')})`
+      : '';
+    const queryText = (raw + modelContext).slice(0, 4000);
+    setRailTab('copilot');
     setMobileView('intelligence');
-    if (!workspace.knowledge?.busy) {
+    workspace.setKnowledgeQuery(queryText);
+    if (!workspace.knowledge?.busy && !workspace.knowledge?.needsSync && !workspace.knowledge?.accessDenied && queryText.length >= 2) {
       void workspace.searchKnowledge(queryText);
-    } else {
-      workspace.setKnowledgeQuery(queryText);
     }
   }
 
   async function saveStage(stage, reason = '') {
     const id = selectedId;
-    await workspace.saveStage(id, stage, reason);
+    await workspace.updateStage(id, stage, reason);
     if (selectedRef.current === id) {
       setToast('Đã cập nhật giai đoạn bán hàng.');
-    }
-  }
-
-  async function runBatchAnalysis(ids) {
-    setToast(`Bắt đầu phân tích ${ids.length} khách hàng…`);
-    try {
-      const result = await workspace.runBatchAnalysis(ids);
-      setToast(`Đã phân tích xong: ${result.completed} thành công, ${result.failed} lỗi.`);
-    } catch (error) {
-      setToast(error.message || 'Lỗi khi phân tích hàng loạt.');
     }
   }
 
@@ -264,7 +261,7 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
             onRetry={workspace.loadList}
             analysisIds={workspace.analysisIds}
             batchProgress={workspace.batchProgress}
-            onAnalyzeBatch={runBatchAnalysis}
+            onAnalyzeBatch={workspace.analyzeBatch}
             onCancelBatch={workspace.cancelBatchAnalysis}
           />
         </div>
@@ -279,7 +276,8 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
               onCreateTask={openTasksDialog}
               highlight={highlight}
               composerValue={drafts[selectedId] || ''}
-              onComposerChange={(value) => storage.update('drafts', selectedId, value)}
+              customerComposerValue={customerDrafts[selectedId] || ''}
+              onComposerChange={(value, role) => storage.update(role === 'customer' ? 'customerDrafts' : 'drafts', selectedId, value)}
               onSend={(role) => sendMessage(role)}
               sending={workspace.sending}
               loading={workspace.loadingDetail || !customer.loaded}
@@ -303,8 +301,9 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
               draftEnabled={draftEnabled}
               onToggleDraft={() => runAction(workspace.toggleDraft)}
               preferenceBusy={workspace.preferenceBusy}
-              onGenerateDraft={() => runAction(() => workspace.generateDraft(selectedId))}
+              onGenerateDraft={() => workspace.generateDraft(selectedId)}
               draftBusy={workspace.draftBusy}
+              draftError={workspace.draftError}
               onInsertDraft={insertDraft}
             />
           ) : (
@@ -338,16 +337,13 @@ export function CustomerSalesCopilotView({ currentUser, active = true, navigatio
                   )
                 )
               }
-              onCreateTask={openTasksDialog}
               onEditTask={(task) => setEditingTask(task)}
               taskBusy={workspace.taskBusy}
-              onAnalyze={() =>
-                runAction(async () => {
-                  await workspace.analyze(selectedId);
-                  setToast('Đã phân tích xong cuộc hội thoại.');
-                })
-              }
+              onAnalyze={() => workspace.analyze(selectedId).catch(() => {})}
               analyzing={workspace.analyzing}
+              analysisError={workspace.analysisError}
+              activeTab={railTab}
+              onTabChange={setRailTab}
               knowledge={workspace.knowledge}
               onLoadHistory={workspace.loadKnowledge}
               onQueryChange={workspace.setKnowledgeQuery}

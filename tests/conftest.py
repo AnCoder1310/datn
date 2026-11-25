@@ -1,11 +1,12 @@
 import os
-for _k in ['MODEL_NAME', 'OPENROUTER_MODEL_NAME', 'PRACTICE_JUDGE_MODEL', 'EMBEDDING_PROVIDER', 'OPENROUTER_BASE_URL', 'LANGCHAIN_PROJECT']:
-    os.environ.pop(_k, None)
 from unittest.mock import AsyncMock
 
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
+
+for _k in ['MODEL_NAME', 'OPENROUTER_MODEL_NAME', 'PRACTICE_JUDGE_MODEL', 'EMBEDDING_PROVIDER', 'OPENROUTER_BASE_URL', 'LANGCHAIN_PROJECT']:
+    os.environ.pop(_k, None)
 
 previous_embedding_provider = os.environ.get("EMBEDDING_PROVIDER")
 os.environ["EMBEDDING_PROVIDER"] = "hash"

@@ -196,3 +196,28 @@ def test_copilot_contextual_chat_endpoint(tmp_path, monkeypatch, request):
     assert data["citations"][0]["title"] == "Thông số kỹ thuật VF 3"
 
 
+
+
+def test_history_chat_without_analysis_persists_answer_and_resolves_live_source(client):
+    prefix = "/api/v1/sales-copilot"
+    repo = client.app.state.sales_copilot_repository
+    customer = repo.create_customer(name="Customer", advisor_id="endpoint-test")
+    conversation = repo.get_or_create_conversation(customer)
+    message = repo.add_message(conversation, "customer", "Chị muốn lái thử VF 7.")
+    other = repo.create_customer(name="Other", advisor_id="other-advisor")
+
+    endpoint = f"{prefix}/customers/{customer}/history-chat"
+    response = client.post(endpoint, json={"query": "về xe nào"})
+    assert response.status_code == 200
+    answer = response.json()
+    assert answer["analysis_id"] is None
+    source = answer["evidence"][0]
+    assert source == {"message_id": message.id, "quote": "VF 7", "conversation_id": conversation}
+    history = client.get(f"{prefix}/customers/{customer}/intelligence").json()["chat"]
+    assert history[0]["answer"] == answer["answer"]
+    page = client.get(
+        f"{prefix}/conversations/{conversation}/messages", params={"source_message_id": message.id}
+    ).json()
+    assert page["messages"][-1]["content"] == "Chị muốn lái thử VF 7."
+    assert client.post(endpoint, json={"query": "về xe nào", "analysis_id": "invalid"}).status_code == 404
+    assert client.post(f"{prefix}/customers/{other}/history-chat", json={"query": "về xe nào"}).status_code == 404

@@ -10,9 +10,21 @@ function HistoricalSource({ customerId, analysisId, evidence }) {
   const [error, setError] = useState('');
   return <details><summary>Tin nguồn</summary><blockquote>{evidence.quote}</blockquote>
     <button type="button" className="sw-text-button" onClick={async () => {
-      try { setMessage(await salesCopilotApi.getAnalyzedSource(customerId, analysisId, evidence.message_id)); }
-      catch (failure) { setError(failure.message); }
-    }}>Xem bản tin gốc trong phiên</button>
+      setError('');
+      try {
+        if (analysisId) {
+          setMessage(await salesCopilotApi.getAnalyzedSource(customerId, analysisId, evidence.message_id));
+        } else {
+          const page = await salesCopilotApi.getMessagePage(evidence.conversation_id, { sourceMessageId: evidence.message_id });
+          const original = page.messages.find((item) => item.id === evidence.message_id);
+          if (!original?.content.includes(evidence.quote)) throw new Error('Tin nguồn đã thay đổi hoặc bị xóa.');
+          setMessage(original);
+        }
+      } catch (failure) {
+        setError(failure.message);
+        setMessage(null);
+      }
+    }}>Xem tin nhắn gốc</button>
     {message && <p>{message.sender_role === 'customer' ? 'Khách' : 'Sales'} · {displayDateTime(message.sent_at)}: {message.content}</p>}
     {error && <p role="alert">{error}</p>}
   </details>;
@@ -23,10 +35,11 @@ export function CustomerHistory({ customer }) {
   const [query, setQuery] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [loadError, setLoadError] = useState('');
   const [editing, setEditing] = useState(null);
   useEffect(() => {
     let stopped = false;
-    const load = () => salesCopilotApi.getIntelligence(customer.customerId).then((data) => { if (!stopped) { setState(data); setError(''); } }).catch((failure) => { if (!stopped) setError(failure.message); });
+    const load = () => salesCopilotApi.getIntelligence(customer.customerId).then((data) => { if (!stopped) { setState(data); setLoadError(''); } }).catch((failure) => { if (!stopped) setLoadError(failure.message); });
     const onVisibility = () => { if (typeof document !== 'undefined' && document.visibilityState === 'visible') void load(); };
     void load();
     window.addEventListener(CHANGE_EVENT, load);
@@ -54,10 +67,10 @@ export function CustomerHistory({ customer }) {
 
   async function submitQuestion(event) {
     event?.preventDefault();
-    if (busy || !state?.analysis_id || !query.trim()) return;
+    if (busy || !query.trim()) return;
     setBusy(true); setError('');
     try {
-      await salesCopilotApi.historyChat(customer.customerId, state.analysis_id, query.trim());
+      await salesCopilotApi.historyChat(customer.customerId, query.trim());
       setQuery('');
       await refresh();
     } catch (failure) {
@@ -68,8 +81,7 @@ export function CustomerHistory({ customer }) {
   }
 
   return <div className="sw-ci-bottom-stack" aria-label="Đề xuất và hỏi đáp lịch sử">
-    {state?.requires_reanalysis && <p className="sw-freshness">Tin cũ đã thay đổi. Cần phân tích lại; hỏi đáp hiện dùng bản lưu trước đây.</p>}
-    {error && <p className="sw-error-banner" role="alert">{error}</p>}
+    {(error || loadError) && <p className="sw-error-banner" role="alert">{error || loadError}</p>}
 
     {!!proposals.length && <section className="sw-ci-section sw-ci-proposals">
       <h3>Đề xuất công việc cần duyệt <span>({proposals.length})</span></h3>
@@ -92,9 +104,9 @@ export function CustomerHistory({ customer }) {
 
     <section className="sw-ci-section sw-ci-history-chat">
       <h3>Hỏi AI về lịch sử hội thoại này{(state?.chat || []).length > 0 ? <span>({state.chat.length})</span> : null}</h3>
-      {!state?.analysis_id && <p className="sw-secondary">Cần phân tích hội thoại trước để bật hỏi đáp theo bằng chứng.</p>}
+      {state && (!state.analysis_id || state.pending_message_count > 0 || state.requires_reanalysis) && <p className="sw-secondary">Câu trả lời dựa trên tin nhắn gần đây.</p>}
       <div aria-live="polite">{(state?.chat || []).map((turn, index) => <article className="sw-ci-chat-turn" key={index}>
-        <small>Phiên {turn.analysis_id.slice(0, 8)} · {displayDateTime(turn.created_at)}{turn.analysis_id !== state.analysis_id && ' · Phiên trước'}</small>
+        <small>{turn.analysis_id ? `Phiên ${turn.analysis_id.slice(0, 8)}` : 'Tin nhắn gần đây'} · {displayDateTime(turn.created_at)}{turn.analysis_id && turn.analysis_id !== state.analysis_id && ' · Phiên trước'}</small>
         <p><strong>{turn.query}</strong></p>
         <p>{turn.answer}</p>
         {turn.evidence?.map((e, i) => <HistoricalSource key={i} customerId={customer.customerId} analysisId={turn.analysis_id} evidence={e} />)}
@@ -107,7 +119,7 @@ export function CustomerHistory({ customer }) {
             rows={1}
             maxLength={4000}
             value={query}
-            disabled={!state?.analysis_id || busy}
+            disabled={busy}
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
@@ -121,7 +133,7 @@ export function CustomerHistory({ customer }) {
               className="sw-primary-button sw-send-button"
               type="submit"
               aria-label={busy ? 'Đang gửi câu hỏi' : 'Gửi câu hỏi'}
-              disabled={!state?.analysis_id || !query.trim() || busy}
+              disabled={!query.trim() || busy}
             >
               <Send size={15} />
             </button>

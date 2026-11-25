@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-const DEMO_ACCOUNTS = [
+const DEMO_ACCOUNTS = import.meta.env.DEV ? [
   { role: 'advisor', label: 'Tư vấn viên', username: 'advisor.demo', password: 'DemoAdvisor123!' },
   { role: 'manager', label: 'Quản lý', username: 'manager.demo', password: 'DemoManager123!' },
-];
+] : [];
 
 function Icon({ name, size = 16, strokeWidth = 1.8 }) {
   const paths = {
@@ -75,8 +75,8 @@ function Icon({ name, size = 16, strokeWidth = 1.8 }) {
 }
 
 export function LoginView({ onLogin }) {
-  const [username, setUsername] = useState('advisor.demo');
-  const [password, setPassword] = useState('DemoAdvisor123!');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -167,6 +167,7 @@ export function LoginView({ onLogin }) {
           {error && <div className="login-error" role="alert">{error}</div>}
 
           {/* QUICK 1-CLICK DEMO CARDS */}
+          {DEMO_ACCOUNTS.length > 0 && <>
           <div className="login-demo">
             <div className="login-demo-header">
               <h3>Dùng thử nhanh</h3>
@@ -197,6 +198,7 @@ export function LoginView({ onLogin }) {
           </div>
 
           <div className="login-divider" aria-hidden="true"><span>Hoặc đăng nhập mật khẩu</span></div>
+          </>}
 
           <form onSubmit={submit} className="login-form">
             <label>
@@ -207,7 +209,7 @@ export function LoginView({ onLogin }) {
                   autoComplete="username"
                   value={username}
                   onChange={(event) => setUsername(event.target.value)}
-                  placeholder="advisor.demo"
+                  placeholder="Tên đăng nhập"
                   disabled={isLoading}
                 />
               </span>

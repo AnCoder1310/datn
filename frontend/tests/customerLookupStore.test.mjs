@@ -2,13 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { setImmediate } from 'node:timers/promises';
 import { createSalesLookupStore } from '../src/components/copilot/customerWorkspace/customerLookupStore.js';
-import { salesKnowledgeApi } from '../src/api/salesKnowledgeApi.js';
+import { salesCopilotApi } from '../src/api/salesCopilotApi.js';
 import { lookupResultMessages } from '../src/components/copilot/customerWorkspace/lookupHistory.js';
 
 const empty = { session_id: null, messages: [], next_before_seq: null };
 const result = { request_id: 'request-first', session_id: 'session-first', status: 'answered', answer: 'Giá xe đã xác minh [C1].', citations: [{ citation_id: 'C1', chunk_id: 'vf5_4' }] };
 const saved = { ...empty, session_id: result.session_id, messages: lookupResultMessages('VF 5?', result) };
-const key = 'sales-a';
+const key = 'conversation-a';
 function deferred() {
   let resolve, reject;
   const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
@@ -19,7 +19,7 @@ test('empty history allows the first question and keeps sources from the persist
   let posts = 0;
   const store = createSalesLookupStore({
     async getLookupHistory() { return posts ? saved : empty; },
-    async copilotChatStream(query) { posts++; assert.equal(query, 'VF 5?'); return result; },
+    async copilotChatStream(id, query) { posts++; assert.equal(id, key); assert.equal(query, 'VF 5?'); return result; },
   });
   await store.load(key);
   assert.deepEqual(store.getSnapshot()[key].messages, []);
@@ -38,7 +38,7 @@ test('a slow initial read does not block submission and cannot erase the new ses
   const initial = deferred(), refresh = deferred();
   let reads = 0, posts = 0, initialSignal;
   const store = createSalesLookupStore({
-    getLookupHistory(before, { signal }) { reads++; if (reads === 1) initialSignal = signal; return reads === 1 ? initial.promise : refresh.promise; },
+    getLookupHistory(id, before, { signal }) { assert.equal(id, key); reads++; if (reads === 1) initialSignal = signal; return reads === 1 ? initial.promise : refresh.promise; },
     async copilotChatStream() { posts++; return result; },
   });
   const loading = store.load(key);
@@ -71,7 +71,7 @@ test('an initial history service failure offers retry without preventing a quest
   await setImmediate();
 });
 
-for (const [status, message] of [[401, /Đăng nhập lại/], [403, /không có quyền/], [404, /chưa khả dụng/]]) {
+for (const [status, message] of [[401, /Đăng nhập lại/], [403, /không có quyền/], [404, /Hội thoại không còn khả dụng/]]) {
   test(`history ${status} explains the access problem and never bypasses it`, async () => {
     let allowed = false, posts = 0;
     const store = createSalesLookupStore({
@@ -93,7 +93,7 @@ test('a disconnected submission stays locked until a fresh latest page confirms 
   const initial = deferred();
   let reads = 0, posts = 0, restore = false;
   const store = createSalesLookupStore({
-    async getLookupHistory(before) {
+    async getLookupHistory(_, before) {
       reads++;
       if (reads === 1) return initial.promise;
       if (before) return { ...empty, messages: [{ id: 'old', seq: 1, role: 'user', content: 'Câu cũ' }] };
@@ -121,25 +121,32 @@ test('a disconnected submission stays locked until a fresh latest page confirms 
   assert.equal(posts, 1); // Reconciliation never resends a question.
 });
 
-test('customer switches keep the same in-flight turn and newer query; other accounts stay isolated', async () => {
+test('customers have separate saved history, drafts and in-flight requests', async () => {
   const first = deferred();
-  let posts = 0;
+  const posts = [];
+  const second = { ...result, request_id: 'request-second', session_id: 'session-second', answer: 'Thông tin VF 3.' };
+  const otherKey = 'conversation-b';
   const store = createSalesLookupStore({
-    async getLookupHistory() { return empty; },
-    async copilotChatStream() { posts++; return first.promise; },
+    async getLookupHistory(id) { return id === key ? saved : empty; },
+    async copilotChatStream(id, query) { posts.push([id, query]); return id === key ? first.promise : second; },
   });
   store.setQuery(key, 'VF 5?');
   const ask = store.ask(key, 'VF 5?');
   assert.equal(await store.ask(key, 'VF 6?'), false);
   store.setQuery(key, 'VF 6?');
-  store.setQuery('sales-b', 'VF 3?');
+  await store.load(otherKey);
+  assert.deepEqual(store.getSnapshot()[otherKey].messages, []);
+  store.setQuery(otherKey, 'VF 3?');
+  assert.equal(await store.ask(otherKey, 'VF 3?'), true);
+  assert.equal(store.getSnapshot()[key].busy, true);
   first.resolve(result);
   await ask;
   await setImmediate();
-  assert.equal(posts, 1);
+  assert.deepEqual(posts, [[key, 'VF 5?'], [otherKey, 'VF 3?']]);
   assert.equal(store.getSnapshot()[key].messages.length, 2);
   assert.equal(store.getSnapshot()[key].query, 'VF 6?');
-  assert.equal(store.getSnapshot()['sales-b'].messages, undefined);
+  assert.equal(store.getSnapshot()[otherKey].messages.at(-1).content, second.answer);
+  assert.equal(store.getSnapshot()[otherKey].query, '');
 });
 
 test('history HTTP timeout is bounded, reports the cause and never posts a query', async (t) => {
@@ -149,10 +156,10 @@ test('history HTTP timeout is bounded, reports the cause and never posts a query
   });
   t.mock.method(globalThis, 'fetch', async (url, options) => {
     assert.equal(options.method, undefined);
-    assert.match(url, /copilot\/knowledge$/);
+    assert.match(url, /sales-copilot\/conversations\/conversation-a\/copilot-chat\?before_seq=15$/);
     options.signal.throwIfAborted();
   });
-  await assert.rejects(salesKnowledgeApi.getLookupHistory(), /Tải lịch sử quá lâu/);
+  await assert.rejects(salesCopilotApi.getLookupHistory(key, 15), /Tải lịch sử quá lâu/);
 });
 
 test('reopening a drawer uses fresh private history; expiration and forced sync fetch again', async (t) => {
@@ -167,6 +174,6 @@ test('reopening a drawer uses fresh private history; expiration and forced sync 
   assert.equal(reads, 2);
   await store.load(key, null, true);
   assert.equal(reads, 3);
-  await store.load('sales-b');
-  assert.equal(reads, 4, 'Another owner must never reuse the first owner’s cached history');
+  await store.load('conversation-b');
+  assert.equal(reads, 4, 'Another conversation must never reuse the first conversation’s cached history');
 });

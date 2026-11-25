@@ -6,6 +6,7 @@ The checker node owns its explicit, bounded review-contract retry.
 import asyncio
 import json
 import time
+from urllib.parse import urlsplit
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -155,16 +156,25 @@ async def _invoke_json(state, system, payload, schema, *, node="generate_answer"
                     if host in base:
                         provider = actual
                 name = getattr(model, "model_name", settings.model_name)
+                system_content = system
                 if isinstance(model, BaseChatModel):
                     if not isinstance(model, ChatOpenAI) or provider not in {"openrouter", "openai"}:
                         raise ValueError("configured provider does not support the strict output adapter")
                     model = _bind_schema(model, schema, provider, wire)
+                    if provider == "openrouter" and urlsplit(base).hostname != "openrouter.ai":
+                        # Compatible gateways may accept response_format without forwarding it.
+                        # Give the model the same contract in its instructions and validate it locally.
+                        system_content += (
+                            "\nChỉ xuất một JSON object theo JSON Schema dưới đây. "
+                            "Dùng đúng tên trường và giá trị enum, không thêm trường, không dùng Markdown.\n"
+                            + json.dumps(wire, ensure_ascii=False, separators=(",", ":"))
+                        )
                     model = model.with_config(metadata={"ls_provider": provider, "ls_model_name": name, "node": node})
                 with span("llm.provider", node=node, attempt=attempt, provider=provider, model=name):
                     response = await asyncio.wait_for(
                         model.ainvoke(
                             [
-                                SystemMessage(content=system),
+                                SystemMessage(content=system_content),
                                 HumanMessage(content=json.dumps(payload, ensure_ascii=False, default=str)),
                             ]
                         ),

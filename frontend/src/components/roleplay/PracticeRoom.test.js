@@ -37,6 +37,7 @@ function room() {
     setStage() {}, setTurnCount() {}, setPendingReply() {}, setLoading() {}, setFinishing() {}, setShowFinishConfirm() {},
     onFinish() {}, onSavedAttempt: async () => { state.opened = true; },
     showError: async (error) => { state.notice = apiErrorNotice(error); },
+    realtime: { stop: async () => {} }, setVoiceHint() {},
     practiceApi: {},
   };
   return { state, scope };
@@ -99,21 +100,16 @@ for (const name of ['NotAllowedError', 'AbortError', 'Error']) {
     assert.equal(scope.modeRef.current, 'text');
   });
 }
-test('empty transcript keeps draft and reports inline slip without dialog', async () => {
+test('finish does not score a call with an incomplete transcript', async () => {
   const { state, scope } = room();
   let hint = '';
-  Object.assign(scope, {
-    setTranscribing() {}, setVoiceHint: (value) => { hint = value; }, autoSendPreference: true,
-    showError: async (error) => {
-      state.notice = apiErrorNotice(error);
-      if (!state.notice) hint = 'Không nghe rõ';
-    },
-  });
-  scope.practiceApi.transcribeVoice = async () => ({ transcript: '  ' });
-  await handler('onRecorded', scope)({ size: 200 }, 1);
+  scope.setVoiceHint = (value) => { hint = value; };
+  scope.realtime.stop = async () => { throw { code: 'realtime_transcript_incomplete', message: 'Bản chép chưa hoàn tất.' }; };
+  scope.practiceApi.finishSession = () => assert.fail('an incomplete call must never be scored');
+  await handler('handleFinishSession', scope)();
   assert.equal(state.draft, 'Xin chào');
   assert.equal(state.notice, null);
-  assert.ok(hint);
+  assert.equal(hint, 'Bản chép chưa hoàn tất.');
 });
 
 const viewSource = process.env.REGRESSION_VIEW_BASELINE
@@ -183,9 +179,109 @@ test('retry evaluation keeps progress dialog visible until request settles', asy
   assert.equal(state.notice, null);
   assert.equal(dialogOpen, true);
   assert.equal(finishing, true);
+  await Promise.resolve();
   rejectRequest({ code: 'evaluation_failed' });
   await pending;
   assert.equal(dialogOpen, false);
   assert.equal(finishing, false);
   assert.equal(state.notice.actions[0].id, 'retry_finish');
 });
+
+const realtimeHook = readFileSync(new URL('../../hooks/useRealtimeRoleplay.js', import.meta.url), 'utf8');
+
+test('realtime WebRTC setup, partial captions and shutdown share one training session', async () => {
+  const initial = { status: 'idle', messages: [] };
+  let state = initial;
+  let peer, stopped = 0;
+  const track = { enabled: true, stop() { this.stopped = true; } };
+  const stream = { getAudioTracks: () => [track], getTracks: () => [track] };
+  const events = { close() { this.closed = true; } };
+  const audio = { async play() {}, pause() { this.paused = true; } };
+  const callRef = { current: null };
+  const scope = {
+    initial, state, callRef, mounted: { current: true }, sessionId: 'training-1',
+    muted: false, audioEnabled: true, audioRef: { current: audio }, deviceId: 'headset',
+    ended: new Set(['ended', 'disconnected']),
+    globalThis: { RTCPeerConnection: class {}, EventSource: class {} },
+    microphoneConstraints: (id) => ({ audio: { deviceId: id } }),
+    navigator: { mediaDevices: {
+      async getUserMedia(options) { assert.equal(options.audio.deviceId, 'headset'); return stream; },
+      async enumerateDevices() { return []; },
+    } },
+    RTCPeerConnection: class {
+      constructor() { peer = this; }
+      addTrack(input) { assert.equal(input, track); }
+      async createOffer() { return { sdp: 'offer' }; }
+      async setLocalDescription(offer) { this.localDescription = offer; }
+      async setRemoteDescription(answer) {
+        assert.deepEqual(answer, { type: 'answer', sdp: 'answer' });
+        this.connectionState = 'connected';
+        this.onconnectionstatechange();
+      }
+      close() { this.closed = true; }
+    },
+    setState(update) { state = typeof update === 'function' ? update(state) : update; },
+    setDevices() {}, setAudioEnabled() {}, setTimeout: () => 1, clearTimeout() {},
+    practiceApi: {
+      async realtimeAvailability(id) { assert.equal(id, 'training-1'); return { available: true }; },
+      async startRealtime(id, offer) {
+        assert.equal(id, 'training-1'); assert.equal(offer, 'offer'); assert.equal(track.enabled, false);
+        return { call_id: 'call-1', sdp: 'answer', model: 'gpt-realtime-2.1' };
+      },
+      realtimeEvents: () => events,
+      async stopRealtime(id, call) {
+        assert.equal(id, 'training-1'); assert.equal(call, 'call-1');
+        assert.equal(track.enabled, false); assert.equal(audio.paused, true);
+        stopped++;
+        return { messages: [{ message_id: 'm1', content: 'Anh cần xem VF 5.', partial: false }] };
+      },
+    },
+  };
+  scope.close = (call, snapshot) => {
+    handler('closeRealtimeMedia', scope, realtimeHook)(call, audio);
+    callRef.current = null;
+    state = { ...state, ...snapshot };
+  };
+  scope.stop = handler('stop', scope, realtimeHook);
+  await handler('start', scope, realtimeHook)();
+  assert.equal(track.enabled, true);
+  const incoming = {};
+  peer.ontrack({ streams: [incoming] });
+  assert.equal(audio.srcObject, incoming);
+  events.onmessage({ data: JSON.stringify({ status: 'customer_speaking', messages: [{ message_id: 'm1', partial: true }] }) });
+  assert.equal(state.messages[0].partial, true);
+  assert.equal(state.status, 'customer_speaking');
+  await scope.stop();
+  assert.equal(state.messages[0].partial, false);
+  assert.equal(stopped, 1);
+  assert.equal(track.stopped && events.closed && peer.closed, true);
+  assert.equal(audio.srcObject, null);
+});
+
+for (const available of [true, false]) {
+  test(`${available ? 'mic permission denial' : 'missing OpenAI settings'} opens no realtime session`, async () => {
+    const callRef = { current: null };
+    let micRequests = 0;
+    const scope = {
+      initial: {}, state: { status: 'idle' }, callRef, muted: false, audioEnabled: true, mounted: { current: true },
+      sessionId: 'training-1', deviceId: '', globalThis: { RTCPeerConnection: class {}, EventSource: class {} },
+      navigator: { mediaDevices: {
+        async getUserMedia() { micRequests++; throw new DOMException('', 'NotAllowedError'); },
+      } },
+      microphoneConstraints: () => ({ audio: true }),
+      microphoneError: handler('microphoneError', {}, realtimeHook),
+      setState() {},
+      close: (call, snapshot) => {
+        assert.equal(call.id, undefined);
+        assert.equal(snapshot.status, available ? 'error' : 'unavailable');
+        assert.match(snapshot.error, available ? /chưa cấp quyền dùng mic/ : /OPENAI_API_KEY/);
+      },
+      practiceApi: {
+        async realtimeAvailability() { return { available, message: 'Máy chủ chưa cấu hình OPENAI_API_KEY.' }; },
+        startRealtime() { assert.fail('the browser must not start a provider session'); },
+      },
+    };
+    await handler('start', scope, realtimeHook)();
+    assert.equal(micRequests, Number(available));
+  });
+}

@@ -4,7 +4,8 @@ from collections.abc import Awaitable, Callable
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Path, Query, Request, Response, status
-from pydantic import BaseModel
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.agents.roleplay.contracts import ScenarioContract
 from src.agents.roleplay.graph import (
@@ -38,6 +39,7 @@ from src.services.practice_records import (
     TodoNotFoundError,
     UpdateTodoInput,
 )
+from src.services.realtime_roleplay import RealtimeError, RealtimeRoleplayService
 from src.services.recorded_practice import RecordedAttemptDetail, RecordedPracticeService
 from src.services.scenario_generator import GenerateScenarioRequest
 from src.services.voice import (
@@ -57,10 +59,19 @@ class CustomerSpeechRequest(BaseModel):
     gender: Literal["female", "male"] = "female"
 
 
+class RealtimeOffer(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    sdp: str = Field(min_length=20, max_length=48_000, pattern=r"^v=0[\r\n]")
+
+
+RealtimeCallId = Annotated[str, Path(pattern=r"^[a-f0-9]{32}$")]
+
+
 def create_recorded_practice_routers(
     service: RecordedPracticeService,
     get_identity: IdentityDependency,
     voice_service: VoiceService | None = None,
+    realtime: RealtimeRoleplayService | None = None,
 ) -> tuple[APIRouter, APIRouter]:
     """Construct a replacement Practice router and manager router.
 
@@ -173,6 +184,55 @@ def create_recorded_practice_routers(
                 raise PracticeAPIError("voice_not_configured") from exc
             except VoiceProviderError as exc:
                 raise PracticeAPIError("voice_failed") from exc
+
+    if realtime is not None:
+        def owned_call(session_id, call_id, identity):
+            require_role(identity, "advisor")
+            try:
+                return realtime.current(session_id, identity.user_id, call_id)
+            except LookupError as exc:
+                raise PracticeAPIError("session_not_found") from exc
+
+        @practice.get("/{session_id}/realtime")
+        async def realtime_availability(session_id: SessionId, identity: actor, response: Response):
+            require_role(identity, "advisor")
+            response.headers["Cache-Control"] = "no-store"
+            try:
+                return await realtime.availability(session_id, identity.user_id)
+            except (AttemptNotFoundError, RoleplaySessionNotFoundError) as exc:
+                raise PracticeAPIError("session_not_found") from exc
+
+        @practice.post("/{session_id}/realtime")
+        async def start_realtime(session_id: SessionId, payload: RealtimeOffer, identity: actor, response: Response):
+            require_role(identity, "advisor")
+            response.headers["Cache-Control"] = "no-store"
+            try:
+                return await realtime.start(session_id, identity.user_id, payload.sdp)
+            except (AttemptNotFoundError, RoleplaySessionNotFoundError) as exc:
+                raise PracticeAPIError("session_not_found") from exc
+            except RoleplaySessionConflictError as exc:
+                raise session_conflict(exc) from exc
+            except RealtimeError as exc:
+                raise PracticeAPIError(exc.code, detail=str(exc)) from exc
+
+        @practice.get("/{session_id}/realtime/{call_id}/events")
+        async def realtime_events(session_id: SessionId, call_id: RealtimeCallId, identity: actor):
+            call = owned_call(session_id, call_id, identity)
+            return StreamingResponse(realtime.events(call), media_type="text/event-stream", headers={
+                "Cache-Control": "no-cache, no-store, no-transform", "X-Accel-Buffering": "no",
+            })
+
+        @practice.post("/{session_id}/realtime/{call_id}/interrupt", status_code=204)
+        async def interrupt_realtime(session_id: SessionId, call_id: RealtimeCallId, identity: actor):
+            call = owned_call(session_id, call_id, identity)
+            try:
+                await realtime.interrupt(call)
+            except Exception as exc:
+                raise PracticeAPIError("voice_failed", detail="Chưa ngắt được lời khách. Hãy thử kết nối lại.") from exc
+
+        @practice.post("/{session_id}/realtime/{call_id}/stop")
+        async def stop_realtime(session_id: SessionId, call_id: RealtimeCallId, identity: actor):
+            return await realtime.stop(owned_call(session_id, call_id, identity))
 
     @practice.post("/{session_id}/finish", response_model=PracticeResultView)
     async def finish_session(session_id: SessionId, identity: actor) -> PracticeResultView:

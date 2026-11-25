@@ -11,6 +11,11 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 from uuid import uuid4
 
+from src.integrations.customer_intelligence_store import (
+    ANALYSIS_EXTRACTION_VERSION,
+    IntelligenceStore,
+    active_milestones,
+)
 from src.integrations.sales_copilot_repository import SQLSalesCopilotRepository
 from src.models.sales_copilot import (
     ChatMessageResponse,
@@ -21,6 +26,13 @@ from src.models.sales_copilot import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _has_legacy_analysis(analysis_version: int, context: dict[str, Any]) -> bool:
+    return analysis_version > 0 and (
+        context.get("version") != analysis_version
+        or context.get("extraction_version") != ANALYSIS_EXTRACTION_VERSION
+    )
 
 
 def extract_paragraphs_from_docx(docx_path: str) -> list[str]:
@@ -175,8 +187,14 @@ class SalesConversationService:
             customer_id = row["customer_id"]
             customer = metadata["customer"]
             messages = self.repository.list_messages(conversation_id, limit=message_limit, connection=conn)
+            human_roles = (SenderRole.CUSTOMER, SenderRole.SALES)
+            latest_human = next((message for message in reversed(messages) if message.sender_role in human_roles), None)
+            if latest_human is None and messages and messages[0].seq > 1:
+                previous = self.repository.list_messages(
+                    conversation_id, limit=1, before_seq=messages[0].seq, connection=conn, sender_roles=human_roles,
+                )
+                latest_human = previous[0] if previous else None
             tasks = self.repository.list_tasks_for_customer(customer_id, connection=conn)
-            from src.integrations.customer_intelligence_store import IntelligenceStore, active_milestones
             milestones = active_milestones(IntelligenceStore(self.repository).milestone_history(customer_id, conn))
             if metadata["memory"].get("stage"):
                 metadata["memory"]["timeline"] = [{"id": m["id"], "title": m["action"], "description": m["action"],
@@ -213,9 +231,11 @@ class SalesConversationService:
             customer_location=customer.get("location") if customer else None,
             last_analyzed_at=row["last_analyzed_at"],
             analysis_version=row["analysis_version"],
+            requires_reanalysis=_has_legacy_analysis(row["analysis_version"], metadata["analysis_context"]),
             messages=messages,
             message_total=metadata["message_total"],
             last_message_seq=metadata["last_message_seq"],
+            last_human_sender_role=latest_human.sender_role if latest_human else None,
             next_before_seq=messages[0].seq if message_limit and messages and messages[0].seq > 1 else None,
             profile=profile,
             memory=metadata["memory"],
@@ -308,11 +328,6 @@ class SalesConversationService:
             customers = conn.execute(
                 select(repo.customers).where(repo.customers.c.advisor_id == advisor_id)
             ).mappings().all()
-            if not customers and advisor_id != "advisor-demo":
-                advisor_id = "advisor-demo"
-                customers = conn.execute(
-                    select(repo.customers).where(repo.customers.c.advisor_id == "advisor-demo")
-                ).mappings().all()
             if not customers:
                 return []
             ids = [customer["id"] for customer in customers]
@@ -440,6 +455,7 @@ class SalesConversationService:
                 "location": customer["location"],
                 "lead_stage": (override.get("stage") or score.get("stage", "new")) if (override.get("stage") or score.get("stage", "new")) in LeadStage._value2member_map_ else None,
                 "analysis_version": analysis_version,
+                "requires_reanalysis": _has_legacy_analysis(analysis_version, ctx),
                 "last_analyzed_at": last_analyzed_at.isoformat() if last_analyzed_at else None,
                 "message_total": msg_total,
                 "last_message_seq": last_seq,

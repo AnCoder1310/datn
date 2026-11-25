@@ -1,22 +1,21 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
-import { salesKnowledgeApi } from '../../../api/salesKnowledgeApi';
+import { salesCopilotApi } from '../../../api/salesCopilotApi';
 import { createSalesLookupStore } from './customerLookupStore';
 
-/** Customer switches do not affect the sales account's knowledge session. */
-export function useSalesLookup(ownerId) {
+/** Keep a separate lookup session and draft for each conversation within the account. */
+export function useSalesLookup(ownerId, conversationId) {
   // Recreate the store on account changes, so old requests and drafts cannot cross accounts.
-  const [scoped, setScoped] = useState(() => ({ ownerId, store: createSalesLookupStore(salesKnowledgeApi) }));
+  const [scoped, setScoped] = useState(() => ({ ownerId, store: createSalesLookupStore(salesCopilotApi) }));
   if (scoped.ownerId !== ownerId) {
-    setScoped({ ownerId, store: createSalesLookupStore(salesKnowledgeApi) });
+    setScoped({ ownerId, store: createSalesLookupStore(salesCopilotApi) });
   }
   const { store } = scoped;
   const entries = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
-  const key = ownerId || '';
   useEffect(() => () => store.abort(), [store]);
   return {
-    state: entries[key] || {},
-    load: (beforeSeq, force) => store.load(key, beforeSeq, force),
-    ask: (query) => store.ask(key, query),
-    setQuery: (query) => store.setQuery(key, query),
+    state: entries[conversationId] || {},
+    load: (beforeSeq, force) => conversationId ? store.load(conversationId, beforeSeq, force) : Promise.resolve(),
+    ask: (query) => conversationId ? store.ask(conversationId, query) : Promise.resolve(false),
+    setQuery: (query) => { if (conversationId) store.setQuery(conversationId, query); },
   };
 }

@@ -1,12 +1,7 @@
 """Authentication contracts shared by API, service, and persistence layers."""
 
 from datetime import datetime
-try:
-    from enum import StrEnum
-except ImportError:
-    from enum import Enum
-    class StrEnum(str, Enum):
-        pass
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 
@@ -14,6 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 class UserRole(StrEnum):
     ADVISOR = "advisor"
     MANAGER = "manager"
+    CUSTOMER = "customer"
 
 
 class AccountAlreadyExistsError(ValueError):
@@ -69,6 +65,21 @@ class CreateAdvisorRequest(BaseModel):
         if not normalized:
             raise ValueError("username must not be blank")
         return normalized
+
+
+class CreateCustomerRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    username: str = Field(min_length=3, max_length=120)
+    display_name: str = Field(min_length=1, max_length=200)
+    password: str = Field(min_length=12, max_length=1024)
+
+    @field_validator("username")
+    @classmethod
+    def normalize_username(cls, value: str) -> str:
+        value = value.strip().casefold()
+        if not value:
+            raise ValueError("username must not be blank")
+        return value
 
     @field_validator("display_name")
     @classmethod

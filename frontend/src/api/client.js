@@ -10,51 +10,8 @@ export class ApiError extends Error {
   }
 }
 
-let sessionInitPromise = null;
-
-export function setSessionInitPromise(promise) {
-  sessionInitPromise = promise;
-}
-
-let silentLoginPromise = null;
-
-async function performSilentLogin() {
-  if (!silentLoginPromise) {
-    silentLoginPromise = fetch(`${API_BASE}/auth/login`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: 'advisor.demo',
-        password: 'DemoAdvisor123!',
-      }),
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error('Auto-login failed');
-        return await res.json();
-      })
-      .finally(() => {
-        silentLoginPromise = null;
-      });
-  }
-  return silentLoginPromise;
-}
-
 export async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
-
-  const isPublicOrAuth =
-    url.includes('/auth/login') ||
-    url.includes('/auth/session') ||
-    url.includes('/health');
-
-  if (!isPublicOrAuth && sessionInitPromise) {
-    try {
-      await sessionInitPromise;
-    } catch {
-      // ignore
-    }
-  }
 
   const headers = {
     'Content-Type': 'application/json',
@@ -63,12 +20,12 @@ export async function request(endpoint, options = {}) {
 
   const timeoutMs = options.timeout ?? 15000;
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const timer = timeoutMs > 0 ? setTimeout(() => controller.abort(), timeoutMs) : null;
 
-  // If caller provided a signal, link them together
-  if (options.signal) {
-    options.signal.addEventListener('abort', () => controller.abort());
-  }
+  const callerSignal = options.signal;
+  const abortRequest = () => controller.abort();
+  if (callerSignal?.aborted) abortRequest();
+  else callerSignal?.addEventListener('abort', abortRequest, { once: true });
 
   try {
     const response = await fetch(url, {
@@ -78,27 +35,19 @@ export async function request(endpoint, options = {}) {
       signal: controller.signal,
     });
 
-    if ((response.status === 401 || response.status === 403) && !url.includes('/auth/') && !options._retried) {
-      clearTimeout(timer);
-      try {
-        await performSilentLogin();
-        return await request(endpoint, { ...options, _retried: true });
-      } catch {
-        // Fall through to error reporting
-      }
-    }
-
     if (!response.ok) {
-      let errorDetail = '';
-      let errorCode = null;
+      const body = await response.text();
+      let detail = body || response.statusText;
+      let code = null;
       try {
-        const errorData = await response.json();
-        errorCode = errorData.code || null;
-        errorDetail = errorData.detail || errorData.message || response.statusText;
+        const payload = JSON.parse(body);
+        detail = payload?.detail || payload?.message || response.statusText;
+        code = payload?.code || null;
       } catch {
-        errorDetail = await response.text().catch(() => response.statusText);
+        // Some proxies return plain-text errors.
       }
-      throw new ApiError(errorDetail || `Request failed with status ${response.status}`, response.status, errorDetail, errorCode);
+      const message = typeof detail === 'string' ? detail : 'Dữ liệu gửi lên chưa hợp lệ.';
+      throw new ApiError(message || `Yêu cầu thất bại (${response.status}).`, response.status, detail, code);
     }
 
     if (response.status === 204) {
@@ -110,14 +59,16 @@ export async function request(endpoint, options = {}) {
     if (error instanceof ApiError) {
       throw error;
     }
-    const isTimeout = error.name === 'AbortError' || error.message?.includes('aborted');
+    if (callerSignal?.aborted) throw error;
+    const isTimeout = controller.signal.aborted;
     throw new ApiError(
-      isTimeout ? 'Kết nối tới máy chủ quá thời gian. Đang sử dụng chế độ dự phòng.' : (error.message || 'Không thể kết nối đến máy chủ backend.'),
+      isTimeout ? 'Kết nối tới máy chủ quá thời gian. Vui lòng thử lại.' : (error.message || 'Không thể kết nối đến máy chủ backend.'),
       0,
       error.message,
       isTimeout ? 'timeout' : null
     );
   } finally {
-    clearTimeout(timer);
+    callerSignal?.removeEventListener('abort', abortRequest);
+    if (timer !== null) clearTimeout(timer);
   }
 }

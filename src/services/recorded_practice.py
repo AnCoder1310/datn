@@ -196,6 +196,16 @@ class RecordedPracticeService:
         await self._records.owned_attempt(session_id, advisor_id)
         return await self._practice.get_session(session_id)
 
+    async def open_realtime(self, session_id: str, advisor_id: str, call_id: str):
+        attempt = await self._records.owned_attempt(session_id, advisor_id)
+        scenario = self._practice.get_scenario(attempt.scenario_id)
+        # The realtime broker owns the active-call registry in the deployed single worker.
+        state = await self._practice.record_realtime(session_id, call_id=call_id, begin=True, replace_orphan=True)
+        return state, scenario
+
+    async def record_realtime(self, session_id: str, **changes):
+        return await self._practice.record_realtime(session_id, **changes)
+
     async def advisor_result(self, session_id: str, advisor_id: str) -> PracticeResultView:
         await self._records.owned_attempt(session_id, advisor_id)
         return await self._practice.get_result(session_id)

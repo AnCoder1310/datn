@@ -352,11 +352,12 @@
 
 @media (max-width: 1024px) {
   .manager-accounts-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
 .manager-accounts-card {
+  min-width: 0;
   background: #FFFFFF;
   border: 1px solid var(--color-border);
   border-radius: 16px;
@@ -366,6 +367,7 @@
 
 .manager-accounts-card-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
   margin-bottom: 18px;

@@ -16,9 +16,34 @@ async function voiceRequest(path, options = {}, responseType = 'json') {
 }
 
 export const practiceApi = {
-  async getScenarios() {
+  realtimeAvailability(sessionId) {
+    return request(`/practice/${encodeURIComponent(sessionId)}/realtime`, { method: 'GET' });
+  },
+
+  startRealtime(sessionId, sdp) {
+    return request(`/practice/${encodeURIComponent(sessionId)}/realtime`, {
+      method: 'POST', body: JSON.stringify({ sdp }), timeout: 55000,
+    });
+  },
+
+  realtimeEvents(sessionId, callId) {
+    return new EventSource(`/api/v1/practice/${encodeURIComponent(sessionId)}/realtime/${encodeURIComponent(callId)}/events`);
+  },
+
+  stopRealtime(sessionId, callId) {
+    return request(`/practice/${encodeURIComponent(sessionId)}/realtime/${encodeURIComponent(callId)}/stop`, {
+      method: 'POST', timeout: 22000, keepalive: true,
+    });
+  },
+
+  interruptRealtime(sessionId, callId) {
+    return request(`/practice/${encodeURIComponent(sessionId)}/realtime/${encodeURIComponent(callId)}/interrupt`, { method: 'POST' });
+  },
+
+  async getScenarios({ signal } = {}) {
     return request('/practice/scenarios', {
       method: 'GET',
+      signal,
       timeout: 15000,
     });
   },
@@ -67,10 +92,10 @@ export const practiceApi = {
     });
   },
 
-  async finishSession(sessionId) {
+  async finishSession(sessionId, { realtime = false } = {}) {
     return request(`/practice/${encodeURIComponent(sessionId)}/finish`, {
       method: 'POST',
-      timeout: 45000,
+      timeout: realtime ? 180000 : 45000,
     });
   },
 

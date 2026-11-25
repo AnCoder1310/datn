@@ -26,7 +26,9 @@ from src.roleplay_tracing import get_roleplay_tracing
 from src.services.audit_service import SalesAuditService
 from src.services.deal_diagnostic import DealDiagnosticService
 from src.services.recorded_practice import RecordedPracticeService
+from src.services.realtime_roleplay import RealtimeRoleplayService
 from src.services.sales_conversation_service import SalesConversationService
+from src.services.advisor_qualification import advisor_can_receive_lead, evaluate_qualification
 from src.services.sales_copilot_analyzer import SalesCopilotAnalyzer
 from src.services.sales_copilot_assistant import SalesCopilotAssistant
 from src.services.scenario_generator import ScenarioGeneratorService
@@ -73,6 +75,7 @@ async def lifespan(app: FastAPI):
     try:
         yield
     finally:
+        await realtime_roleplay.shutdown()
         await asyncio.to_thread(app.state.copilot_telemetry.close)
         await asyncio.to_thread(get_roleplay_tracing().close)
         logger.info("Application shutdown")
@@ -103,6 +106,9 @@ app.include_router(router, prefix="/api/v1")
 auth_service = build_auth_service(settings)
 current_user = CurrentUserDependency(auth_service, settings.auth_cookie_name)
 app.state.current_user = current_user
+app.state.auth_service = auth_service
+app.state.public_lead_advisor_id = settings.public_lead_advisor_id
+app.state.advisor_qualification_checker = None
 app.state.copilot_readiness = check_copilot_index
 app.state.copilot_admission = CopilotAdmission(settings)
 app.state.copilot_sessions = SQLCopilotSessionsRepository(
@@ -116,18 +122,30 @@ audit_service = SalesAuditService(audit_repo)
 scenario_generator = ScenarioGeneratorService(settings)
 deal_diagnostic = DealDiagnosticService(settings)
 
+practice_records = SQLPracticeRecordsRepository(settings.database_url)
 recorded_practice = RecordedPracticeService(
     build_practice_service(retrieval_service=LazyKnowledgeRetriever()),
-    SQLPracticeRecordsRepository(settings.database_url),
+    practice_records,
     auth_service,
     audit_service=audit_service,
     scenario_generator=scenario_generator,
     deal_diagnostic=deal_diagnostic,
 )
+async def _advisor_qualified(advisor_id: str):
+    evaluation = await practice_records.latest_approved_evaluation(advisor_id)
+    return advisor_can_receive_lead(evaluation)
+
+app.state.advisor_qualification_checker = _advisor_qualified
+async def _advisor_qualification_details(advisor_id: str):
+    evaluation = await practice_records.latest_approved_evaluation(advisor_id)
+    return evaluate_qualification(evaluation).__dict__
+
+app.state.advisor_qualification_details = _advisor_qualification_details
 app.state.audit_repository = audit_repo
 app.state.audit_service = audit_service
 voice_service = VoiceService(recorded_practice, SQLVoiceUsageRepository(settings.database_url), settings)
-practice_router, manager_router = create_recorded_practice_routers(recorded_practice, current_user, voice_service)
+realtime_roleplay = RealtimeRoleplayService(recorded_practice, settings)
+practice_router, manager_router = create_recorded_practice_routers(recorded_practice, current_user, voice_service, realtime_roleplay)
 
 # Sales Copilot Initialization
 sales_copilot_repo = SQLSalesCopilotRepository(settings.database_url)

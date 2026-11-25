@@ -1,5 +1,5 @@
 import { BellIcon } from '../common/Icons';
-import { BotMessageSquare, GraduationCap, LibraryBig, UserCheck, Car } from 'lucide-react';
+import { BotMessageSquare, GraduationCap, LibraryBig, UserCheck, Car, House } from 'lucide-react';
 import { AccountMenu } from './AccountMenu';
 
 export function Header({
@@ -10,8 +10,10 @@ export function Header({
   onOpenNotifications,
   advisorProfile,
   onLogout,
+  homeActive = false,
 }) {
   const tabs = [
+    { id: 'home', label: 'Trang chủ', icon: <House size={17} strokeWidth={2} aria-hidden="true" /> },
     { id: 'copilot', label: 'Trợ lý Co-pilot', icon: <BotMessageSquare size={17} strokeWidth={2} aria-hidden="true" /> },
     { id: 'roleplay', label: 'Phòng luyện tập', icon: <GraduationCap size={17} strokeWidth={2} aria-hidden="true" /> },
     { id: 'knowledge', label: 'Kho kiến thức', icon: <LibraryBig size={17} strokeWidth={2} aria-hidden="true" /> },
@@ -22,7 +24,7 @@ export function Header({
     <header className="top-header">
       <div className="top-header-inner">
         {/* BRAND LOGO & SYSTEM TITLE */}
-        <button className="brand-section" type="button" onClick={() => onTabChange('copilot')}>
+        <button className="brand-section" type="button" onClick={() => onTabChange('home')}>
           <span className="header-brand-logo">
             <img src="/vinfast-official-logo.png?v=silver" alt="VinFast" />
           </span>
@@ -35,9 +37,10 @@ export function Header({
         {/* NAVIGATION PILL TABS (DESKTOP) */}
         <nav className="nav-tabs-pill desktop-nav-pill" aria-label="Main Navigation">
           {tabs.map((tab) => {
-            const isActive = currentTab === tab.id;
+            const isActive = tab.id === 'home' ? homeActive : currentTab === tab.id && !homeActive;
             return (
               <button
+                type="button"
                 key={tab.id}
                 className={`nav-tab-item ${isActive ? 'active' : ''}`}
                 onClick={() => onTabChange(tab.id)}
@@ -88,9 +91,10 @@ export function Header({
       {/* MOBILE NAV PILLS BAR */}
       <nav className="mobile-nav-pills" aria-label="Mobile Navigation">
         {tabs.map((tab) => {
-          const isActive = currentTab === tab.id;
+          const isActive = tab.id === 'home' ? homeActive : currentTab === tab.id && !homeActive;
           return (
             <button
+              type="button"
               key={tab.id}
               className={`mobile-nav-pill-item ${isActive ? 'active' : ''}`}
               onClick={() => onTabChange(tab.id)}

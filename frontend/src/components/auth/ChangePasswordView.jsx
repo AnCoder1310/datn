@@ -43,12 +43,21 @@ export function ChangePasswordView({ username, onChangePassword, onLogout }) {
             <input type="password" autoComplete="new-password" value={confirmation}
               onChange={(event) => setConfirmation(event.target.value)} minLength={12} required />
           </label>
-          <button type="submit" disabled={status === 'saving'}>
+          <button type="submit" disabled={status !== 'idle'}>
             {status === 'saving' ? 'Đang lưu…' : 'Đổi mật khẩu'}
           </button>
         </form>
         <p>Sau khi đổi, hãy đăng nhập lại bằng mật khẩu mới.</p>
-        <button className="password-change-logout" type="button" onClick={onLogout}>Đăng xuất</button>
+        <button className="password-change-logout" type="button" disabled={status !== 'idle'} onClick={async () => {
+          setStatus('logging-out');
+          setError('');
+          try {
+            await onLogout();
+          } catch (logoutError) {
+            setStatus('idle');
+            setError(logoutError.message || 'Chưa thể đăng xuất. Vui lòng thử lại.');
+          }
+        }}>{status === 'logging-out' ? 'Đang đăng xuất…' : 'Đăng xuất'}</button>
       </section>
     </main>
   );

@@ -98,6 +98,30 @@ async def test_native_schema_is_bound_on_real_langchain_client(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_compatible_gateway_receives_the_same_schema_instructions(monkeypatch):
+    model = ChatOpenAI(api_key="test", base_url="https://gateway.example.test/v1")
+    settings = model_io.get_settings().model_copy(update={"llm_provider": "openrouter"})
+    seen = []
+
+    async def invoke(self, messages, config=None, **kwargs):
+        seen.append((messages[0].content, kwargs["response_format"]["json_schema"]["schema"]))
+        return SimpleNamespace(content=json.dumps(intake()))
+
+    monkeypatch.setattr(ChatOpenAI, "ainvoke", invoke)
+    monkeypatch.setattr(model_io, "get_llm", lambda **kwargs: model)
+    monkeypatch.setattr(model_io, "get_settings", lambda: settings)
+
+    result, _ = await model_io._invoke_json(
+        draft_state(), "system", {"max_requirements": 2}, IntakeDecision, node="analyze_and_route",
+    )
+    assert isinstance(result, IntakeDecision)
+    prompt, wire = seen[0]
+    assert json.loads(prompt.splitlines()[-1]) == wire
+    assert wire["properties"]["requirements"]["maxItems"] == 2
+    assert wire["additionalProperties"] is False
+
+
+@pytest.mark.asyncio
 async def test_unsupported_native_provider_fails_without_calling_model(monkeypatch):
     model = ChatOpenAI(api_key="test", base_url="https://api.deepseek.com/v1")
 

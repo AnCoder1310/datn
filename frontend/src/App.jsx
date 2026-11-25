@@ -1,4 +1,3 @@
-import scenariosFallback from './data/scenariosFallback.json';
 import { useState, useEffect } from 'react';
 import { Header } from './components/layout/Header';
 import { NotificationDrawer } from './components/layout/NotificationDrawer';
@@ -12,17 +11,9 @@ import { ProfileView } from './components/profile/ProfileView';
 import { PublicTestDrivePortal } from './components/public/PublicTestDrivePortal';
 
 import { authApi } from './api/authApi';
-import { setSessionInitPromise } from './api/client';
 import { practiceApi } from './api/practiceApi';
+import { salesCopilotApi } from './api/salesCopilotApi';
 import { notifyAgendaChange } from './components/copilot/agenda/agendaResource';
-
-const DEMO_FALLBACK_USER = {
-  user_id: 'advisor-demo',
-  username: 'advisor.demo',
-  display_name: 'Phạm Đình Duy',
-  role: 'advisor',
-  must_change_password: false,
-};
 
 function formatScenarios(list) {
   return (list || []).map((scenario) => {
@@ -37,35 +28,15 @@ function formatScenarios(list) {
 }
 
 export function App() {
-  // Khởi tạo ngay lập tức với tài khoản Demo Advisor để giao diện & dữ liệu hiển thị tức thì 0ms
-  const [currentUser, setCurrentUser] = useState(() => {
-    let base = DEMO_FALLBACK_USER;
-    try {
-      const cached = localStorage.getItem('p043_user');
-      if (cached) {
-        const u = JSON.parse(cached);
-        if (u && (u.role === 'advisor' || u.role === 'manager')) {
-          base = u;
-        } else {
-          localStorage.removeItem('p043_user');
-        }
-      }
-    } catch (e) { /* ignore */ void e; }
-    try {
-      const custom = localStorage.getItem('vinfast_profile_custom');
-      if (custom) {
-        const p = JSON.parse(custom);
-        if (p?.name?.trim()) {
-          base = { ...base, display_name: p.name.trim() };
-        }
-      }
-    } catch (e) { /* ignore */ void e; }
-    return base;
-  });
-  const [authStatus, setAuthStatus] = useState('authenticated');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authStatus, setAuthStatus] = useState('checking');
+  const [sessionError, setSessionError] = useState('');
+  const [sessionRetry, setSessionRetry] = useState(0);
   const [currentTab, setCurrentTab] = useState('copilot');
-  const [scenarios, setScenarios] = useState(() => formatScenarios(scenariosFallback));
-  const [scenarioStatus, setScenarioStatus] = useState('ready');
+  const [copilotStartPage, setCopilotStartPage] = useState('home');
+  const [copilotNavigation, setCopilotNavigation] = useState(0);
+  const [scenarios, setScenarios] = useState([]);
+  const [scenarioStatus, setScenarioStatus] = useState('loading');
   const [scenarioReloadToken, setScenarioReloadToken] = useState(0);
   const [sourceDocumentId, setSourceDocumentId] = useState(null);
   const [sourceReference, setSourceReference] = useState(null);
@@ -73,103 +44,55 @@ export function App() {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [copilotQuery, setCopilotQuery] = useState('');
   const [copilotOpened, setCopilotOpened] = useState(true);
-  const [sessionConfirmed, setSessionConfirmed] = useState(false);
-
-  // Đồng bộ phiên thực tế với backend trong nền & tự động kết nối lại khi backend sẵn sàng
+  const [crmTarget, setCrmTarget] = useState(null);
   useEffect(() => {
-    let active = true;
-    let retryTimer = null;
+    const controller = new AbortController();
     async function restoreSession() {
-      // 1. Kiểm tra session qua endpoint /auth/session (luôn trả về 200, không bao giờ gây 401 trên console)
       try {
-        const sessionCheck = await authApi.getSession();
-        if (!active) return;
-        if (sessionCheck?.authenticated && sessionCheck.user) {
-          const user = sessionCheck.user;
-          let effectiveUser = user;
-          try {
-            const savedProfile = localStorage.getItem('vinfast_profile_custom');
-            if (savedProfile) {
-              const p = JSON.parse(savedProfile);
-              if (p?.name?.trim()) {
-                effectiveUser = { ...user, display_name: p.name.trim() };
-                if (p.name.trim() !== user.display_name) {
-                  void authApi.updateProfile(p.name.trim()).catch(() => {});
-                }
-              }
-            }
-          } catch { /* ignore */ }
-          setCurrentUser(effectiveUser);
-          try { localStorage.setItem('p043_user', JSON.stringify(effectiveUser)); } catch (e) { /* ignore */ void e; }
-          if (user.role === 'advisor') {
-            setCurrentTab((prev) => (prev === 'manager' ? 'copilot' : prev));
-          } else if (user.role === 'manager') {
-            setCurrentTab('manager');
-          }
-          setAuthStatus('authenticated');
-          setSessionConfirmed(true);
-          notifyAgendaChange();
-          setScenarioReloadToken((v) => v + 1);
+        const session = await authApi.getSession({ signal: controller.signal });
+        if (controller.signal.aborted) return;
+        if (!session?.authenticated || !session.user) {
+          setAuthStatus('anonymous');
           return;
         }
-      } catch {
-        // Backend đang khởi động hoặc chưa sẵn sàng
-      }
-
-      // 2. Chưa có cookie hợp lệ trên backend -> Đăng nhập tự động ngay mà không gọi me() gây 401
-      try {
-        const user = await authApi.login('advisor.demo', 'DemoAdvisor123!');
-        if (!active) return;
-        try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
-        setCurrentUser(user);
+        setCurrentUser(session.user);
+        setCurrentTab(session.user.role === 'manager' ? 'manager' : 'copilot');
         setAuthStatus('authenticated');
-        setSessionConfirmed(true);
-        notifyAgendaChange();
-        setScenarioReloadToken((v) => v + 1);
-      } catch {
-        // Nếu backend chưa khởi động xong, thử lại sau 2.5s để tự động nhận dữ liệu
-        if (active) {
-          retryTimer = setTimeout(restoreSession, 2500);
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setSessionError(error.message || 'Không thể kết nối máy chủ.');
+          setAuthStatus('unavailable');
         }
       }
     }
-    const init = restoreSession();
-    setSessionInitPromise(init);
-    return () => {
-      active = false;
-      if (retryTimer) clearTimeout(retryTimer);
-    };
-  }, []);
+    void restoreSession();
+    return () => controller.abort();
+  }, [sessionRetry]);
 
-  // Tải danh sách kịch bản thực tế từ backend khi advisor đã sẵn sàng và phiên đã xác thực
+  const ownerId = currentUser?.user_id;
+  const role = currentUser?.role;
   useEffect(() => {
-    if (!sessionConfirmed || authStatus !== 'authenticated' || currentUser?.role !== 'advisor') return;
-    async function loadBackendScenarios() {
+    if (authStatus !== 'authenticated' || role !== 'advisor') return;
+    const controller = new AbortController();
+    async function loadScenarios() {
       try {
-        const backendList = await practiceApi.getScenarios();
-        if (Array.isArray(backendList) && backendList.length > 0) {
-          setScenarios(formatScenarios(backendList));
+        const list = await practiceApi.getScenarios({ signal: controller.signal });
+        if (!controller.signal.aborted) {
+          setScenarios(formatScenarios(list));
+          setScenarioStatus('ready');
         }
       } catch {
-        // Giữ kịch bản fallback đã nạp sẵn
+        if (!controller.signal.aborted) setScenarioStatus('error');
       }
     }
-    loadBackendScenarios();
-  }, [sessionConfirmed, authStatus, currentUser?.role, scenarioReloadToken, currentTab]);
-
-  // Đảm bảo tài khoản tư vấn viên luôn ở đúng giao diện tư vấn
-  useEffect(() => {
-    if (currentUser?.role === 'advisor' && currentTab === 'manager') {
-      setCurrentTab('copilot');
-    }
-  }, [currentUser?.role, currentTab]);
+    void loadScenarios();
+    return () => controller.abort();
+  }, [authStatus, ownerId, role, scenarioReloadToken]);
 
   const handleLogin = async (username, password) => {
     const user = await authApi.login(username, password);
     setCurrentUser(user);
-    try { localStorage.setItem('p043_user', JSON.stringify(user)); } catch (e) { /* ignore */ void e; }
     setAuthStatus('authenticated');
-    setSessionConfirmed(true);
     notifyAgendaChange();
     setScenarioReloadToken((v) => v + 1);
     if (user.role === 'advisor') {
@@ -181,46 +104,39 @@ export function App() {
   };
 
 
+  const clearSession = () => {
+    setCurrentUser(null);
+    setAuthStatus('anonymous');
+    setCurrentTab('copilot');
+    setCopilotStartPage('home');
+    setScenarios([]);
+    setScenarioStatus('loading');
+    setCopilotOpened(false);
+    setCopilotQuery('');
+    setCrmTarget(null);
+    setSourceDocumentId(null);
+    setSourceReference(null);
+    setNotifications([]);
+    setIsNotifOpen(false);
+    notifyAgendaChange();
+  };
+
   const handleLogout = async () => {
-    try {
-      await authApi.logout();
-    } finally {
-      try {
-        localStorage.removeItem('p043_user');
-      } catch (e) { /* ignore */ void e; }
-      setCurrentUser(null);
-      setSessionConfirmed(false);
-      setAuthStatus('anonymous');
-      setCurrentTab('copilot');
-      setScenarios([]);
-      setScenarioStatus('loading');
-      setCopilotOpened(false);
-      setCopilotQuery('');
-    }
+    await authApi.logout();
+    clearSession();
   };
 
   const handleUpdateProfile = async (updated) => {
-    if (!updated) return;
-    const newName = (updated.name || updated.display_name)?.trim();
-    if (newName) {
-      setCurrentUser((prev) => {
-        const next = { ...prev, display_name: newName };
-        try { localStorage.setItem('p043_user', JSON.stringify(next)); } catch { /* ignore */ }
-        return next;
-      });
-      try {
-        await authApi.updateProfile(newName);
-      } catch (err) {
-        console.warn('Backend profile update deferred:', err);
-      }
+    const newName = (updated?.name || updated?.display_name)?.trim();
+    if (newName && newName !== currentUser?.display_name) {
+      const savedUser = await authApi.updateProfile(newName);
+      setCurrentUser(savedUser);
     }
   };
 
   const handleChangePassword = async (currentPassword, newPassword) => {
     await authApi.changePassword(currentPassword, newPassword);
-    try { localStorage.removeItem('p043_user'); } catch (e) { /* ignore */ void e; }
-    setCurrentUser(null);
-    setAuthStatus('anonymous');
+    clearSession();
   };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -238,6 +154,25 @@ export function App() {
       if (item.link === 'copilot') setCopilotOpened(true);
     }
   };
+
+  if (authStatus === 'checking' || authStatus === 'unavailable') {
+    return (
+      <main className="session-gate" aria-labelledby="session-heading">
+        <div>
+          <h1 id="session-heading">VinFast AI Sales</h1>
+          {authStatus === 'checking' ? <p role="status">Đang kiểm tra phiên đăng nhập…</p> : (
+            <>
+              <p role="alert">{sessionError}</p>
+              <button type="button" className="login-submit" onClick={() => {
+                setAuthStatus('checking');
+                setSessionRetry((value) => value + 1);
+              }}>Thử lại</button>
+            </>
+          )}
+        </div>
+      </main>
+    );
+  }
 
   if (authStatus === 'anonymous') {
     return <LoginView onLogin={handleLogin} />;
@@ -264,8 +199,8 @@ export function App() {
   }
 
   const advisorProfile = {
-    name: currentUser?.display_name || 'Phạm Đình Duy',
-    username: currentUser?.username || 'advisor.demo',
+    name: currentUser.display_name,
+    username: currentUser.username,
     role: 'Tư vấn viên',
   };
 
@@ -275,8 +210,21 @@ export function App() {
       <Header
         currentTab={currentTab}
         onTabChange={(tab) => {
+          if (tab === 'home') {
+            setCurrentTab('copilot');
+            setCrmTarget(null);
+            setCopilotStartPage('home');
+            setCopilotNavigation((value) => value + 1);
+            setCopilotOpened(true);
+            return;
+          }
           setCurrentTab(tab);
-          if (tab === 'copilot') setCopilotOpened(true);
+          if (tab === 'copilot') {
+            setCrmTarget(null);
+            setCopilotStartPage('dashboard');
+            setCopilotNavigation((value) => value + 1);
+            setCopilotOpened(true);
+          }
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         unreadCount={unreadCount}
@@ -284,6 +232,7 @@ export function App() {
         onOpenNotifications={() => setIsNotifOpen(true)}
         advisorProfile={advisorProfile}
         onLogout={handleLogout}
+        homeActive={currentTab === 'copilot' && copilotStartPage === 'home'}
       />
 
       {/* MAIN CONTENT AREA */}
@@ -293,6 +242,10 @@ export function App() {
             <CopilotView
               currentUser={currentUser}
               initialQuery={copilotQuery}
+              crmTarget={crmTarget}
+              navigationKey={copilotNavigation}
+              startPage={copilotStartPage}
+              onNavigatePage={setCopilotStartPage}
               onOpenDocument={(documentId, reference = null) => {
                 setSourceDocumentId(documentId);
                 setSourceReference(reference);
@@ -325,10 +278,13 @@ export function App() {
           />
         )}
 
-                {currentTab === 'portal' && (
+        {currentTab === 'portal' && (
           <PublicTestDrivePortal
             onBack={() => setCurrentTab('copilot')}
-            onOpenLeadInCrm={() => {
+            onOpenLeadInCrm={async (conversationId) => {
+              await salesCopilotApi.getConversationDetails(conversationId);
+              setCrmTarget({ conversationId, nonce: Date.now() });
+              setCopilotStartPage('customers');
               setCurrentTab('copilot');
               setCopilotOpened(true);
             }}
@@ -337,11 +293,11 @@ export function App() {
 
         {currentTab === 'profile' && (
           <ProfileView
+            key={currentUser.user_id}
             currentUser={currentUser}
             onUpdateProfile={handleUpdateProfile}
+            onChangePassword={handleChangePassword}
             onOpenRoleplay={() => setCurrentTab('roleplay')}
-            onOpenCopilot={() => setCurrentTab('copilot')}
-            onLogout={handleLogout}
           />
         )}
       </main>

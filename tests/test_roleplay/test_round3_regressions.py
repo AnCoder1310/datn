@@ -12,7 +12,7 @@ from src.agents.roleplay.contracts import ScenarioContract
 from src.agents.roleplay.customer_agent import CustomerAgent
 from src.agents.roleplay.graph import RoleplayGraph, RoleplaySessionConflictError
 from src.agents.roleplay.scenario_loader import ScenarioRepository
-from src.agents.roleplay.state import RoleplayState, TerminationStatus
+from src.agents.roleplay.state import EvaluationStatus, RoleplayState, TerminationStatus
 from src.agents.roleplay.state_reducer import apply_turn_analysis
 from src.agents.roleplay.turn_analyzer import TurnAnalysis, TurnAnalyzer
 from src.api.practice import create_practice_router
@@ -121,7 +121,11 @@ async def test_each_graph_conflict_site_has_explicit_code(case, expected):
     if case == "mismatched_evaluation":
         result = result.model_copy(update={"session_id": "other"})
     if case == "already_evaluated":
-        state.evaluation_result = SessionEvaluationResult.model_construct(session_id="other", scenario_id=SCENARIO)
+        state = state.with_evaluation_result(
+            SessionEvaluationResult.model_construct(session_id="session", scenario_id=SCENARIO),
+            EvaluationStatus.COMPLETE,
+        )
+        result = result.model_copy(update={"session_id": "other"})
     # Preserve valid production states for ordinary sites; evaluation comparison
     # needs only the already-loaded typed object, not a full evaluator fixture.
     graph.get_session_state = AsyncMock(return_value=state)

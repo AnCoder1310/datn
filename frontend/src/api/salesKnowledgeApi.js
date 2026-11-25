@@ -1,4 +1,4 @@
-import { request } from './client.js';
+import { ApiError, request } from './client.js';
 import { postCopilotStream } from './copilotStream.js';
 
 export const salesKnowledgeApi = {
@@ -10,7 +10,9 @@ export const salesKnowledgeApi = {
         signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
       });
     } catch (error) {
-      if (timeout.aborted && !signal?.aborted) error.message = 'Tải lịch sử quá lâu. Bạn có thể thử tải lại.';
+      if (timeout.aborted && !signal?.aborted) {
+        throw new ApiError('Tải lịch sử quá lâu. Bạn có thể thử tải lại.', 0, null, 'timeout');
+      }
       throw error;
     }
   },

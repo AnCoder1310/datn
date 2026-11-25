@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import '../../../assets/HomeShowroom.css';
 import {
   ArrowRight,
   BarChart3,
@@ -24,8 +25,7 @@ import {
   taskState,
 } from './agendaData';
 import { useWorkspaceClock } from '../customerWorkspace/useCustomerWorkspace';
-import { VinFastShowcaseHero } from './VinFastShowcaseHero';
-import dashboardFallback from '../../../data/dashboardFallback.json';
+import { VINFAST_SHOWCASE_MODELS } from '../../../data/vehicleShowcaseData';
 
 const WORK_FILTERS = [
   { key: 'today', label: 'Hôm nay' },
@@ -58,6 +58,12 @@ const STAGE_COLORS = {
   new: '#D1D1D6',
   needs_confirmation: '#8E8E93',
   lost: '#E5E5EA',
+};
+const DASHBOARD_MODEL_IMAGES = {
+  'VF 3': '/vehicles/official/vf-3.webp', 'VF 5': '/vehicles/official/vf-5.webp',
+  'VF 6': '/vehicles/official/vf-6.webp', 'VF 7': '/vehicles/official/vf-7.webp',
+  'VF 8': '/vehicles/official/vf-8.webp', 'VF 9': '/vehicles/official/vf-9.webp',
+  'VF Wild': '/vehicles/official/vf-wild.webp',
 };
 
 function getStageLabel(stageId) {
@@ -211,6 +217,146 @@ function Bars({ rows = [], label, totalCount, selectedKey, onSelect }) {
   );
 }
 
+const showroomGroups = [
+  { label: 'Tất cả' },
+  { label: 'Đô thị', ids: ['vf3', 'vf5'] },
+  { label: 'SUV gia đình', ids: ['vf6', 'vf7'] },
+  { label: 'SUV cao cấp', ids: ['vf8', 'vf9'] },
+];
+
+export function HomeShowroom({ onOpenCalendar, onOpenQueue, onCreateTask, creatingTask, actionError }) {
+  const [category, setCategory] = useState(showroomGroups[0]);
+  const [selectedIndex, setSelectedIndex] = useState(3);
+  const sectionRef = useRef(null);
+  const collectionRef = useRef(null);
+  const revealed = useRef(new WeakSet());
+  const models = VINFAST_SHOWCASE_MODELS;
+  const selected = models[selectedIndex];
+  const visibleModels = category.ids ? models.filter((model) => category.ids.includes(model.id)) : models;
+
+  useEffect(() => {
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!window.IntersectionObserver || !Element.prototype.animate || motion.matches) return;
+    const seen = revealed.current;
+    const animations = new Set();
+    const observer = new IntersectionObserver((entries) => {
+      if (motion.matches) return;
+      for (const { isIntersecting, target } of entries) {
+        if (!isIntersecting) continue;
+        observer.unobserve(target);
+        seen.add(target);
+        const animation = target.animate(
+          [{ opacity: 0.25, translate: '0 18px' }, { opacity: 1, translate: '0 0' }],
+          { duration: 460, easing: 'cubic-bezier(.2,.7,.25,1)' }
+        );
+        animations.add(animation);
+        animation.onfinish = () => animations.delete(animation);
+      }
+    }, { threshold: 0.15 });
+    sectionRef.current?.querySelectorAll('[data-showroom-reveal]').forEach((element) => {
+      if (!seen.has(element)) observer.observe(element);
+    });
+    const cancel = () => {
+      for (const animation of animations) animation.cancel();
+      animations.clear();
+    };
+    motion.addEventListener('change', cancel);
+    return () => {
+      observer.disconnect();
+      motion.removeEventListener('change', cancel);
+      cancel();
+    };
+  }, [category]);
+
+  function moveHero(step) {
+    setSelectedIndex((index) => (index + step + models.length) % models.length);
+  }
+
+  function scrollTo(ref) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    ref.current?.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' });
+  }
+
+  const quickHighlights = [
+    { title: 'Lịch hẹn lái thử tuần này', image: '/vehicles/user/vf-lineup.jpg', onClick: onOpenCalendar },
+    { title: 'Hàng đợi tư vấn', image: '/vehicles/user/vf6-lineup.webp', onClick: onOpenQueue },
+    { title: creatingTask ? 'Đang mở công việc…' : 'Tạo nhiệm vụ chăm sóc mới', image: '/vehicles/user/vf8-night.jpeg', onClick: onCreateTask, disabled: creatingTask },
+  ];
+
+  return (
+    <section className="porsche-showroom" aria-label="Showroom xe điện VinFast" ref={sectionRef}>
+      <div className="ps-hero">
+        <div className="ps-hero-brand">VINFAST</div>
+        <img className="ps-hero-bg" key={selected.id} src={selected.image} alt="" fetchPriority="high" />
+        <div className="ps-hero-bottom">
+          <div className="ps-hero-copy" key={selected.id} aria-live="polite">
+            <h2 className="ps-hero-title">{selected.name}</h2>
+            <p className="ps-hero-subtitle">{selected.tagline}</p>
+          </div>
+          <div className="ps-hero-actions">
+            <button type="button" className="ps-btn-outline-light" onClick={() => scrollTo(collectionRef)}>Khám phá dòng xe</button>
+            <button type="button" className="ps-btn-ghost-light" onClick={onOpenCalendar}>Xem lịch tuần</button>
+          </div>
+        </div>
+        <div className="ps-hero-controls" role="group" aria-label="Đổi xe trưng bày">
+          <button type="button" aria-label="Xe trước" onClick={() => moveHero(-1)}><ChevronLeft size={18} aria-hidden="true" /></button>
+          <span>{selectedIndex + 1} / {models.length}</span>
+          <button type="button" aria-label="Xe tiếp theo" onClick={() => moveHero(1)}><ChevronRight size={18} aria-hidden="true" /></button>
+        </div>
+      </div>
+
+      <div className="ps-highlight-strip" data-showroom-reveal>
+        {quickHighlights.map((item) => (
+          <button key={item.image} type="button" className="ps-highlight-card" disabled={item.disabled} onClick={item.onClick}>
+            <img src={item.image} alt="" loading="lazy" />
+            <span className="ps-highlight-footer">{item.title}<ArrowRight size={18} aria-hidden="true" /></span>
+          </button>
+        ))}
+        {actionError && <p className="ps-home-error" role="alert">{actionError}</p>}
+      </div>
+
+      <div className="ps-editorial-header" ref={collectionRef} data-showroom-reveal>
+        <h2>Hành trình VinFast của bạn bắt đầu ngay bây giờ.</h2>
+        <div className="ps-category-tabs" role="group" aria-label="Lọc nhóm xe">
+          {showroomGroups.map((item) => (
+            <button key={item.label} type="button" aria-pressed={category === item} onClick={() => setCategory(item)}>
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="ps-showcase-dark-band">
+        <div className="ps-model-grid" key={category.label}>
+          {visibleModels.map((model) => (
+            <button
+              key={model.id}
+              type="button"
+              className="ps-model-card"
+              data-showroom-reveal
+              aria-pressed={selected.id === model.id}
+              onClick={() => {
+                setSelectedIndex(models.indexOf(model));
+                scrollTo(sectionRef);
+              }}
+            >
+              <span className="ps-model-top"><strong>{model.name}</strong></span>
+              <img className="ps-model-bg" src={model.image} alt="" loading="lazy" />
+              <span className="ps-model-bottom">
+                <span className="ps-model-badges"><span>{model.segment}</span><span>{model.price}</span></span>
+                <span className="ps-model-caption-row">
+                  <span>{model.tagline}</span>
+                  <span className="ps-model-arrow"><ArrowRight size={18} aria-hidden="true" /></span>
+                </span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function DashboardView({
   currentUser,
   active,
@@ -238,7 +384,7 @@ export function DashboardView({
     () => salesCopilotApi.getDashboard({ activity_days: days, work_filter: filter, work_page: page }),
     active
   );
-  const data = resource.data || dashboardFallback;
+  const data = resource.data;
 
   function changeFilter(value) {
     setFilter(value);
@@ -278,7 +424,6 @@ export function DashboardView({
         ? data?.priority_customers || []
         : data?.customers || [];
 
-  // Filter by selected vehicle model or funnel stage
   let filteredCustomers = rawQueueList;
   if (selectedModel) {
     filteredCustomers = (data?.customers || []).filter((c) =>
@@ -292,7 +437,10 @@ export function DashboardView({
   const totalCustomers = data?.customers?.length || 0;
   const workCounts = data?.portfolio_insights?.work_counts || {};
 
-  const activityMax = Math.max(1, ...(data?.message_activity || []).map((day) => day.customer + day.sales));
+  const activityMax = Math.max(
+    1,
+    ...(data?.message_activity || []).map((day) => day.customer + day.sales)
+  );
   const totalCustomerMsgs = (data?.message_activity || []).reduce((acc, d) => acc + d.customer, 0);
   const totalSalesMsgs = (data?.message_activity || []).reduce((acc, d) => acc + d.sales, 0);
 
@@ -340,32 +488,35 @@ export function DashboardView({
         </div>
       )}
 
-      {/* SHOWCASE HERO — AUTOMOTIVE VINFAST VEHICLE SHOWCASE */}
-      <VinFastShowcaseHero
-        modelInterest={data?.model_interest || []}
-        customers={data?.customers || []}
-        selectedModelKey={selectedModel}
-        onSelectModel={(modelKey) => {
-          setSelectedModel(modelKey);
-          setSelectedStage(null);
-        }}
-        onBookTestDrive={() => {
-          if (onCreate) onCreate(data?.customers || []);
-        }}
-        onQuotePrice={() => {
-          if (onCreate) onCreate(data?.customers || []);
-        }}
-      />
+      <section className="dashboard-product-hero" aria-label="Dòng xe nổi bật">
+        <div className="dashboard-model-tabs">
+          {VINFAST_SHOWCASE_MODELS.map((model) => (
+            <button key={model.key} type="button" className={selectedModel === model.key ? 'is-active' : ''} onClick={() => setSelectedModel(model.key)}>
+              {model.name} <span>{(data?.model_interest || []).find((item) => item.model === model.key)?.count || 0}</span>
+            </button>
+          ))}
+        </div>
+        <div className="dashboard-product-copy">
+          <span className="dashboard-product-kicker">{VINFAST_SHOWCASE_MODELS.find((m) => m.key === selectedModel)?.segment || 'SUV điện cao cấp'}</span>
+          <h2>{VINFAST_SHOWCASE_MODELS.find((m) => m.key === selectedModel)?.name || 'VinFast VF 7'}</h2>
+          <p>Không gian rộng rãi, công nghệ thông minh và trải nghiệm lái đầy cảm hứng.</p>
+          <div className="dashboard-product-actions">
+            <button type="button" className="agenda-btn-solid" onClick={() => onCalendar()}><CalendarDays size={15} /> Lái thử</button>
+            <button type="button" className="agenda-btn-minimal" onClick={() => onCreate(data?.customers || [])}><Plus size={15} /> Báo giá</button>
+          </div>
+        </div>
+        <img className="dashboard-product-image" src={DASHBOARD_MODEL_IMAGES[selectedModel] || DASHBOARD_MODEL_IMAGES['VF 7']} alt="" />
+      </section>
 
       {!data && (
         <p className="agenda-empty" role="status">
-          {resource.loading ? 'Đang tải dữ liệu...' : 'Chưa tải được dữ liệu.'}
+          {resource.loading ? 'Đang tải dữ liệu…' : 'Chưa tải được dữ liệu.'}
         </p>
       )}
 
       {data && (
         <>
-          {/* UNIFIED EXECUTIVE COMMAND HUB (INTEGRATED METRICS + PIPELINE IN ONE COHESIVE CARD) */}
+          {/* UNIFIED EXECUTIVE COMMAND HUB */}
           <section className="agenda-command-hub" aria-label="Trung tâm điều hành kinh doanh">
             <div className="agenda-command-top">
               <button
@@ -464,7 +615,6 @@ export function DashboardView({
                 )}
               </div>
 
-              {/* Progress track */}
               <div className="agenda-pipeline-bar" role="meter" aria-label="Tiến độ phễu khách hàng">
                 {(data?.stage_distribution || [])
                   .filter((item) => item.count > 0)
@@ -488,7 +638,6 @@ export function DashboardView({
                   })}
               </div>
 
-              {/* Stage pills */}
               <div className="agenda-pipeline-pills" role="tablist" aria-label="Bộ lọc giai đoạn phễu">
                 <button
                   type="button"
@@ -537,9 +686,8 @@ export function DashboardView({
             </Panel>
           )}
 
-          {/* ROW 3: PRIMARY 2-COLUMN ACTION WORKSPACE */}
+          {/* PRIMARY 2-COLUMN ACTION WORKSPACE */}
           <div className="agenda-main-grid">
-            {/* LEFT COLUMN: CUSTOMERS QUEUE */}
             <div className="agenda-column" id="agenda-primary-queue">
               <section className="agenda-panel">
                 <div className="agenda-queue-header">
@@ -604,7 +752,9 @@ export function DashboardView({
                           <div className="agenda-minimal-row-main">
                             <div className="agenda-minimal-line1">
                               <span className="agenda-avatar-circle">
-                                {customer.customer_name ? customer.customer_name.slice(0, 1).toUpperCase() : 'K'}
+                                {customer.customer_name
+                                  ? customer.customer_name.slice(0, 1).toUpperCase()
+                                  : 'K'}
                               </span>
                               <button
                                 type="button"
@@ -652,7 +802,6 @@ export function DashboardView({
               </section>
             </div>
 
-            {/* RIGHT COLUMN: TASKS & UPCOMING SCHEDULE */}
             <div className="agenda-column">
               <section className="agenda-panel">
                 <div className="agenda-panel-title">
@@ -722,7 +871,9 @@ export function DashboardView({
                       type="button"
                       className="agenda-btn-minimal"
                       aria-label="Trang sau"
-                      disabled={data.work_items.page * 10 >= data.work_items.total || resource.loading}
+                      disabled={
+                        data.work_items.page * 10 >= data.work_items.total || resource.loading
+                      }
                       onClick={() => setPage((p) => p + 1)}
                     >
                       <ChevronRight size={14} />
@@ -730,7 +881,6 @@ export function DashboardView({
                   </div>
                 )}
 
-                {/* INTEGRATED UPCOMING SCHEDULE FOOTER */}
                 {(data?.upcoming_events || []).length > 0 && (
                   <div className="agenda-upcoming-section">
                     <div className="agenda-upcoming-header">
@@ -750,7 +900,8 @@ export function DashboardView({
                           <span className="agenda-upcoming-body">
                             <strong>{cleanDemoText(item.title)}</strong>
                             <small>
-                              <Clock3 size={11} /> {formatTimeRange(item.starts_at, item.ends_at, now)} ·{' '}
+                              <Clock3 size={11} />{' '}
+                              {formatTimeRange(item.starts_at, item.ends_at, now)} ·{' '}
                               {cleanDemoText(item.customer_name) || 'Cá nhân'}
                               {item.location ? ` · ${item.location}` : ''}
                             </small>
@@ -765,7 +916,7 @@ export function DashboardView({
             </div>
           </div>
 
-          {/* DEEP ANALYTICS ACCORDION (COLLAPSIBLE TO PREVENT PAGE OVERCROWDING) */}
+          {/* DEEP ANALYTICS ACCORDION */}
           <details className="agenda-analytics-accordion">
             <summary className="agenda-analytics-summary">
               <div className="agenda-analytics-title">
@@ -832,10 +983,18 @@ export function DashboardView({
                         key={day.date}
                         title={`${day.date}: Khách ${day.customer}, Sales ${day.sales}`}
                       >
-                        <span className="agenda-activity-total">{day.customer + day.sales || ''}</span>
+                        <span className="agenda-activity-total">
+                          {day.customer + day.sales || ''}
+                        </span>
                         <div className="agenda-activity-stack">
-                          <span className="sales" style={{ height: `${(day.sales / activityMax) * 90}px` }} />
-                          <span className="customer" style={{ height: `${(day.customer / activityMax) * 90}px` }} />
+                          <span
+                            className="sales"
+                            style={{ height: `${(day.sales / activityMax) * 90}px` }}
+                          />
+                          <span
+                            className="customer"
+                            style={{ height: `${(day.customer / activityMax) * 90}px` }}
+                          />
                         </div>
                         <small>
                           {days === 7 || index % 5 === 0 || index === days - 1

@@ -1,9 +1,9 @@
 """Cookie authentication endpoints and reusable current-user dependency."""
 
 from datetime import timedelta
-from pydantic import BaseModel, Field
 
 from fastapi import APIRouter, HTTPException, Request, Response, status
+from pydantic import BaseModel, Field
 
 from src.config import Settings
 from src.models.auth import (
@@ -11,6 +11,7 @@ from src.models.auth import (
     AuthenticatedUser,
     ChangePasswordRequest,
     CreateAdvisorRequest,
+    CreateCustomerRequest,
     LoginRequest,
     UserRole,
 )
@@ -143,6 +144,14 @@ def create_auth_router(service: AuthService, settings: Settings) -> APIRouter:
                 display_name=payload.display_name,
                 password=payload.password,
             )
+        except AccountAlreadyExistsError as exc:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists.") from exc
+
+    @router.post("/customers", response_model=AuthenticatedUser, status_code=status.HTTP_201_CREATED)
+    async def create_customer(payload: CreateCustomerRequest) -> AuthenticatedUser:
+        """Create a customer identity. Verification/CRM linkage is completed by the portal flow."""
+        try:
+            return await service.create_customer(username=payload.username, display_name=payload.display_name, password=payload.password)
         except AccountAlreadyExistsError as exc:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists.") from exc
 

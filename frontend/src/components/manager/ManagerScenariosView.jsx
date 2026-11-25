@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { managerApi } from "../../api/managerApi";
+import { useLoad } from "../../hooks/useLoad";
 import { SparkleIcon, CheckCircleIcon, CarIcon } from "../common/Icons";
 
 const QUICK_PROMPTS = [
@@ -15,24 +16,15 @@ export function ManagerScenariosView() {
   const [status, setStatus] = useState("idle"); // idle, generating, saving, saved, error
   const [generatedScenario, setGeneratedScenario] = useState(null);
   const [feedbackMsg, setFeedbackMsg] = useState("");
-  const [customScenarios, setCustomScenarios] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-
-  const loadCustomScenarios = async () => {
-    try {
+  const { data, status: listStatus, error: listError, reload: loadCustomScenarios } = useLoad(
+    async () => {
       const list = await managerApi.getScenarios();
-      const customs = (list || []).filter(
-        (s) => s.scenario_id.startsWith("SCENARIO_CUSTOM_") || s.scenario_id.startsWith("SCENARIO_GEN_") || s.scenario_id.startsWith("VF6_") || s.scenario_id.includes("CUSTOM") || s.scenario_id.includes("GEN")
-      );
-      setCustomScenarios(customs);
-    } catch (err) {
-      console.error("Failed to load custom scenarios:", err);
-    }
-  };
-
-  useEffect(() => {
-    loadCustomScenarios();
-  }, []);
+      return (list || []).filter(({ scenario_id: id }) =>
+        id.includes("CUSTOM") || id.includes("GEN") || id.startsWith("VF6_"));
+    }, "custom-scenarios", "Không thể tải danh sách kịch bản.",
+  );
+  const customScenarios = data || [];
 
   const handleGenerate = async (e) => {
     e?.preventDefault();
@@ -48,7 +40,7 @@ export function ManagerScenariosView() {
         await managerApi.createScenario(scenario);
         setStatus("saved");
         setFeedbackMsg(`Kịch bản "${scenario.title}" đã được lưu và kích hoạt thành công vào phòng luyện tập của tư vấn viên!`);
-        await loadCustomScenarios();
+        loadCustomScenarios();
       } else {
         setStatus("generated");
       }
@@ -65,7 +57,7 @@ export function ManagerScenariosView() {
       await managerApi.createScenario(generatedScenario);
       setStatus("saved");
       setFeedbackMsg(`Kịch bản "${generatedScenario.title}" đã được lưu và kích hoạt thành công vào phòng luyện tập!`);
-      await loadCustomScenarios();
+      loadCustomScenarios();
     } catch (err) {
       setFeedbackMsg(err.message || "Lỗi khi lưu kịch bản.");
       setStatus("error");
@@ -81,7 +73,7 @@ export function ManagerScenariosView() {
         setStatus("idle");
       }
       setFeedbackMsg(`Đã xóa kịch bản "${title}" thành công!`);
-      await loadCustomScenarios();
+      loadCustomScenarios();
     } catch (err) {
       alert(err.message || "Lỗi khi xóa kịch bản.");
     }
@@ -102,10 +94,10 @@ export function ManagerScenariosView() {
     <section className="md-panel" aria-labelledby="scenario-gen-title">
       <div className="md-panel-head">
         <div>
-          <h2 id="scenario-gen-title" className="md-panel-title" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <h1 id="scenario-gen-title" className="md-panel-title" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <SparkleIcon style={{ width: 22, height: 22, color: "var(--color-text-primary)" }} />
             AI Sinh Kịch Bản Luyện Tập (Prompt-to-Scenario)
-          </h2>
+          </h1>
           <p style={{ color: "var(--color-text-secondary)", fontSize: "13px", margin: "4px 0 0 0" }}>
             Nhập yêu cầu đào tạo thực tế, hệ thống AI sẽ tự động sinh Persona, rào cản và ánh xạ chính sách VinFast.
           </p>
@@ -384,11 +376,13 @@ export function ManagerScenariosView() {
             className="md-btn md-btn--outline"
             style={{ fontSize: "12px", padding: "6px 12px", background: "var(--color-white)" }}
           >
-            🔄 Làm mới danh sách
+            Làm mới danh sách
           </button>
         </div>
 
-        {customScenarios.length === 0 ? (
+        {listStatus === 'loading' ? <p className="md-state" role="status">Đang tải kịch bản…</p>
+          : listError ? <p className="md-state md-state--error" role="alert">{listError}</p>
+          : customScenarios.length === 0 ? (
           <div style={{ padding: "20px", textAlign: "center", background: "var(--color-white)", borderRadius: "6px", border: "1px dashed var(--color-border)", color: "var(--color-text-secondary)", fontSize: "13px" }}>
             Chưa có kịch bản tùy chỉnh nào do Quản lý tạo. Hãy dùng form phía trên để khởi tạo kịch bản mới!
           </div>

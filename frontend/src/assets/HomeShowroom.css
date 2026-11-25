@@ -1,0 +1,255 @@
+.porsche-showroom {
+  --showroom-gutter: clamp(16px, 6vw, 96px);
+  width: 100%;
+  background: #fff;
+}
+
+.ps-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  align-content: space-between;
+  gap: 24px;
+  isolation: isolate;
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(440px, 78svh, 740px);
+  padding: clamp(24px, 4vw, 56px) var(--showroom-gutter);
+  background: #101216;
+  color: #fff;
+}
+
+.ps-hero-bg,
+.ps-model-bg,
+.ps-highlight-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ps-hero-bg {
+  z-index: -2;
+  animation: showroom-photo-in 720ms ease-out;
+}
+
+.ps-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(0deg, rgba(10, 11, 14, .95), transparent 68%),
+    linear-gradient(90deg, rgba(10, 11, 14, .57), transparent 78%);
+}
+
+.ps-hero-brand {
+  grid-column: 1 / -1;
+  justify-self: center;
+  align-self: start;
+  letter-spacing: .4em;
+  font-size: clamp(14px, 2vw, 23px);
+  font-weight: 700;
+}
+
+.ps-hero-copy { animation: showroom-copy-in 480ms ease-out; }
+
+.porsche-showroom .ps-hero-title {
+  max-width: 16ch;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2.5rem, 6vw, 6.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -.045em;
+  overflow-wrap: anywhere;
+}
+
+.porsche-showroom .ps-hero-subtitle {
+  max-width: 50ch;
+  margin: 12px 0 22px;
+  color: #f1f2f5;
+  font-size: clamp(.95rem, 1.7vw, 1.12rem);
+}
+
+.ps-hero-actions,
+.ps-hero-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+
+.porsche-showroom .ps-hero-actions button,
+.porsche-showroom .ps-hero-controls button {
+  display: inline-grid;
+  place-items: center;
+  min-height: 42px;
+  padding: 8px 15px;
+  border: 1px solid #a6a8ac;
+  border-radius: 8px;
+  background: #15171cc4;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 180ms, color 180ms;
+}
+
+.porsche-showroom .ps-hero-actions .ps-btn-outline-light,
+.porsche-showroom .ps-hero-actions button:hover,
+.porsche-showroom .ps-hero-controls button:hover { background: #fff; color: #16181d; }
+.porsche-showroom .ps-hero-controls button { width: 42px; padding: 0; }
+.ps-hero-controls span { color: #fff; min-width: 4ch; text-align: center; font-variant-numeric: tabular-nums; }
+
+.ps-highlight-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(10px, 2vw, 24px);
+  padding: clamp(24px, 5vw, 64px) var(--showroom-gutter) 0;
+}
+
+.porsche-showroom .ps-highlight-card,
+.porsche-showroom .ps-model-card {
+  display: flex;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid #ffffff26;
+  border-radius: clamp(12px, 2vw, 24px);
+  color: #fff;
+  background: #232629;
+  text-align: left;
+  cursor: pointer;
+}
+
+.porsche-showroom .ps-highlight-card {
+  align-items: flex-end;
+  min-height: clamp(132px, 15vw, 240px);
+  padding: clamp(14px, 2.3vw, 24px);
+}
+
+.ps-highlight-card img, .ps-model-bg {
+  z-index: -2;
+  transition: transform 450ms cubic-bezier(.2,.7,.25,1);
+}
+
+.ps-highlight-card::before,
+.ps-model-card::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: '';
+  background: linear-gradient(0deg, #090b0eeb, #090b0e4d 46%, transparent 70%);
+}
+
+.ps-highlight-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; font-weight: 650; }
+.ps-highlight-footer svg, .ps-model-arrow svg { flex: none; transition: transform 220ms ease; }
+.ps-highlight-card:disabled { opacity: .7; cursor: wait; }
+.ps-home-error { grid-column: 1 / -1; color: #8d271f; margin: 0; }
+
+.ps-editorial-header {
+  display: grid;
+  justify-items: start;
+  gap: clamp(16px, 3vw, 32px);
+  padding: clamp(40px, 7vw, 100px) var(--showroom-gutter) clamp(24px, 4vw, 48px);
+  scroll-margin-top: 90px;
+}
+
+.porsche-showroom .ps-editorial-header h2 {
+  max-width: 23ch;
+  min-width: 0;
+  margin: 0;
+  color: #111113;
+  font-size: clamp(1.85rem, 4.25vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+
+.ps-category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 100%;
+  padding: 4px;
+  border-radius: 16px;
+  background: #f0f1f3;
+}
+
+.porsche-showroom .ps-category-tabs button {
+  padding: 8px clamp(8px, 2vw, 18px);
+  min-height: 38px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #44464e;
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 200ms, color 200ms;
+}
+
+.porsche-showroom .ps-category-tabs button:hover { background: #e0e2e7; }
+.porsche-showroom .ps-category-tabs button[aria-pressed='true'] { background: #15171b; color: #fff; }
+
+.ps-showcase-dark-band {
+  padding: clamp(20px, 4vw, 54px) var(--showroom-gutter) clamp(40px, 6vw, 92px);
+  background: #0b0c0e;
+}
+
+.ps-model-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2vw, 26px); }
+
+.porsche-showroom .ps-model-card {
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 120px;
+  width: 100%;
+  min-height: clamp(276px, 35vw, 520px);
+  padding: clamp(16px, 2.6vw, 34px);
+  transition: border-color 200ms, transform 220ms ease;
+}
+
+.ps-model-card::before {
+  background: linear-gradient(0deg, #090b0ef7, #090b0e66 39%, transparent 65%, #090b0e85);
+}
+
+.porsche-showroom .ps-model-card[aria-pressed='true'] { border-color: #f1f3f7; }
+.ps-model-top strong { font-size: clamp(1.15rem, 2.5vw, 2rem); line-height: 1.15; color: #fff; }
+.ps-model-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.ps-model-badges span { padding: 4px 8px; border-radius: 6px; background: #161a21d9; color: #fff; font-size: .81rem; font-weight: 550; }
+.ps-model-caption-row { display: flex; justify-content: space-between; align-items: end; gap: 10px; width: 100%; color: #f6f7fa; }
+.ps-model-arrow { display: inline-grid; flex: none; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #ffffff29; color: #fff; }
+
+.porsche-showroom button:focus-visible { outline: 2px solid #2269c4; outline-offset: 3px; }
+.ps-hero button:focus-visible, .ps-model-card:focus-visible { outline-offset: -4px; }
+
+@media (hover: hover) {
+  .ps-highlight-card:hover img, .ps-model-card:hover img { transform: scale(1.045); }
+  .ps-highlight-card:hover svg, .ps-model-card:hover svg { transform: translateX(3px); }
+  .porsche-showroom .ps-model-card:hover { transform: translateY(-3px); border-color: #b6b9bf; }
+}
+
+@media (max-width: 760px) {
+  .ps-hero { grid-template-columns: minmax(0, 1fr); align-items: start; min-height: min(560px, 82svh); }
+  .ps-hero-controls { justify-self: end; }
+  .ps-highlight-strip { grid-template-columns: minmax(0, 1fr); }
+  .porsche-showroom .ps-highlight-card { min-height: 140px; }
+}
+
+@media (max-width: 580px) {
+  .ps-model-grid { grid-template-columns: minmax(0, 1fr); }
+  .ps-editorial-header { scroll-margin-top: 64px; }
+}
+
+@keyframes showroom-photo-in {
+  from { opacity: .35; transform: scale(1.045); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes showroom-copy-in {
+  from { opacity: .2; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .porsche-showroom *, .porsche-showroom *::before { animation: none; transition: none; }
+  .porsche-showroom .ps-model-card:hover,
+  .ps-highlight-card:hover img, .ps-model-card:hover img,
+  .ps-highlight-card:hover svg, .ps-model-card:hover svg { transform: none; }
+}

@@ -1,0 +1,218 @@
+/* Shared visual tokens and control states for the existing application shells. */
+:root {
+  --ui-ink: #111111;
+  --ui-surface: #ffffff;
+  --ui-surface-alt: #f5f5f7;
+  --ui-muted: #626267;
+  --ui-line: #d2d2d7;
+  --ui-radius-control: 8px;
+  --ui-radius-panel: 12px;
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-5: 24px;
+  --ui-space-6: 32px;
+  --ui-page-gutter: clamp(12px, 2vw, 24px);
+}
+
+:where(button, a, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--ui-ink);
+  outline-offset: 2px;
+}
+
+:where(input[type='checkbox'], input[type='radio']) {
+  accent-color: var(--ui-ink);
+}
+
+:is(.vf-btn-cancel, .vf-btn-submit, .vf-btn-hero, .vf-btn-panel-action) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ui-space-2);
+  min-height: 38px;
+  padding: 6px 12px;
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-radius-control);
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+:is(.vf-btn-cancel, .vf-btn-hero.is-secondary, .vf-btn-panel-action):hover:not(:disabled) {
+  background: var(--ui-surface-alt);
+}
+
+:is(.vf-btn-submit, .vf-btn-hero.is-primary) {
+  background: var(--ui-ink);
+  border-color: var(--ui-ink);
+  color: white;
+}
+
+:is(.vf-btn-submit, .vf-btn-hero.is-primary):hover:not(:disabled) {
+  background: #3a3a3c;
+}
+
+.vf-btn-submit:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.vf-form-group :is(input, textarea) {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-radius-control);
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  font: inherit;
+}
+
+.session-gate {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--ui-space-4);
+  background: var(--ui-surface-alt);
+}
+
+.session-gate > div {
+  width: min(100%, 400px);
+  padding: var(--ui-space-5);
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-radius-panel);
+  background: var(--ui-surface);
+}
+
+.session-gate h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.session-gate p {
+  color: var(--ui-muted);
+}
+
+:is(.kb-title, .ap-title, .md-page-head, .md-title-row, .agenda-topbar) h1 {
+  font-size: clamp(1.375rem, 2.1vw, 1.875rem);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+:is(.md-table-scroll, .vf-history-table-wrap, .agenda-calendar-scroll) {
+  max-width: 100%;
+  overscroll-behavior-inline: contain;
+}
+
+:is(.sw-dialog, .kb-modal, .vf-modal-card) {
+  max-height: calc(100dvh - 32px);
+  max-width: calc(100vw - 24px);
+}
+
+.knowledge-main-content .kb-page {
+  gap: var(--ui-space-4);
+  background: transparent;
+}
+
+.kb-page :is(.kb-doc, .kb-vehicle, .kb-faq, .kb-update),
+.manager-app-content .md-panel {
+  border-radius: var(--ui-radius-panel);
+}
+
+.kb-page .kb-search {
+  max-width: 100%;
+}
+
+.manager-app-layout,
+.manager-app-layout .manager-app-content {
+  background: var(--ui-surface-alt);
+}
+
+.manager-app-layout .manager-app-content {
+  padding: var(--ui-space-5) var(--ui-page-gutter) var(--ui-space-6);
+}
+
+.roleplay-app-container .ap-page {
+  margin-inline: auto;
+  max-width: 1320px;
+  min-width: 0;
+}
+
+.dashboard-showcase {
+  margin-bottom: var(--ui-space-4);
+  padding: var(--ui-space-3);
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-radius-panel);
+  background: var(--ui-surface);
+}
+
+.dashboard-showcase > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.dashboard-showcase[open] > summary {
+  margin-bottom: var(--ui-space-3);
+}
+
+.vf-portal-grid > * {
+  min-width: 0;
+}
+
+.vf-portal-shell :is(.vf-form-card, .vf-vehicle-selector-card, .vf-portal-success-card) {
+  border-radius: var(--ui-radius-panel);
+}
+
+.vf-portal-shell .vf-portal-submit-btn {
+  background: var(--ui-ink);
+}
+
+.vf-portal-shell .vf-portal-submit-btn:hover:not(:disabled) {
+  background: #3a3a3c;
+}
+
+@media (max-width: 900px) {
+  .top-header .nav-tabs-pill.desktop-nav-pill {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .kb-page .kb-search {
+    flex-basis: 100%;
+    width: 100%;
+  }
+}
+
+.account-menu-error {
+  margin: 0;
+  padding: var(--ui-space-2);
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-radius-control);
+  color: var(--ui-ink);
+  overflow-wrap: anywhere;
+}
+
+.login-panel .login-form-wrap {
+  max-width: 440px;
+}
+
+.login-panel .login-input-wrap,
+.login-panel .login-demo-card,
+.password-change-card {
+  border-radius: var(--ui-radius-panel);
+}
+
+.manager-app-content h1.md-panel-title {
+  font-size: clamp(1.375rem, 2.1vw, 1.875rem);
+}
+
+.vf-portal-shell .vf-portal-img-stage {
+  background: var(--ui-surface-alt);
+}

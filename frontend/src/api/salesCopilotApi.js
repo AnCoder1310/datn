@@ -1,4 +1,4 @@
-import { request } from './client.js';
+import { ApiError, request } from './client.js';
 import { postCopilotStream } from './copilotStream.js';
 import { notifyAgendaChange } from '../components/copilot/agenda/agendaResource.js';
 
@@ -11,7 +11,7 @@ async function mutate(endpoint, options) {
 export const salesCopilotApi = {
   getIntelligence(id) { return request(`/sales-copilot/customers/${id}/intelligence`); },
   getAnalyzedSource(id, analysis, message) { return request(`/sales-copilot/customers/${id}/analyses/${analysis}/messages/${message}`); },
-  historyChat(id, analysis_id, query) { return request(`/sales-copilot/customers/${id}/history-chat`, { method: 'POST', body: JSON.stringify({ analysis_id, query }) }); },
+  historyChat(id, query) { return request(`/sales-copilot/customers/${id}/history-chat`, { method: 'POST', body: JSON.stringify({ query }), timeout: 0 }); },
   reviewProposal(id, proposal, approve, changes) { return mutate(`/sales-copilot/customers/${id}/proposals/${proposal}/review`, { method: 'POST', body: JSON.stringify({ approve, changes }) }); },
   confirmMilestone(id, event, revoke) { return mutate(`/sales-copilot/customers/${id}/milestones/${event}/confirm`, { method: 'POST', body: JSON.stringify({ revoke }) }); },
   getDashboard(params = {}) { return request(`/sales-copilot/dashboard?${new URLSearchParams(params)}`); },
@@ -54,10 +54,14 @@ export const salesCopilotApi = {
       body: JSON.stringify(data),
     });
   },
+  async getPublicShowrooms() {
+    return request('/sales-copilot/public/showrooms');
+  },
 
   async analyzeConversation(conversationId) {
     return mutate(`/sales-copilot/conversations/${conversationId}/analyze`, {
       method: 'POST',
+      timeout: 0,
     });
   },
 
@@ -75,6 +79,7 @@ export const salesCopilotApi = {
   async generateDraft(conversationId, force = false) {
     return request(`/sales-copilot/conversations/${conversationId}/draft?force=${force}`, {
       method: 'POST',
+      timeout: 150000,
     });
   },
 
@@ -112,9 +117,12 @@ export const salesCopilotApi = {
     try {
       return await request(`/sales-copilot/conversations/${encodeURIComponent(conversationId)}/copilot-chat${page}`, {
         signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
+        timeout: 0,
       });
     } catch (error) {
-      if (timeout.aborted && !signal?.aborted) error.message = 'Tải lịch sử quá lâu. Bạn có thể thử tải lại.';
+      if (timeout.aborted && !signal?.aborted) {
+        throw new ApiError('Tải lịch sử quá lâu. Bạn có thể thử tải lại.', 0, null, 'timeout');
+      }
       throw error;
     }
   },

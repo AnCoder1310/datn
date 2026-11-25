@@ -55,14 +55,14 @@ def _deterministic_fallback(schema: type, context: dict[str, Any]) -> Any:
         from src.agents.roleplay.turn_analyzer import TurnAnalysis
         advisor_msg = str(context.get("advisor_message", "")).strip().lower()
         scenario = context.get("scenario", {})
-        
+
         products = []
         for p in ["VF 3", "VF 5", "VF 6", "VF 7", "VF 8", "VF 9", "VF Wild"]:
             if p.lower() in advisor_msg:
                 products.append(p)
         if not products:
             products = ["VinFast"]
-            
+
         detected_intents = []
         discovered_fact_ids = []
         for r in scenario.get("disclosure_rules", []):
@@ -84,7 +84,7 @@ def _deterministic_fallback(schema: type, context: dict[str, Any]) -> Any:
             if any(k in advisor_msg for k in kws):
                 detected_intents.append(t)
                 discovered_fact_ids.append(f)
-                
+
         is_greeting = any(w in advisor_msg for w in ["chào", "xin chào", "hello", "hi"]) and not any(k in advisor_msg for k in ["lái thử", "đặt cọc", "ký hợp đồng", "đặt lịch"])
         is_ping = advisor_msg in ["alo", "a lô", "ok", "oke", "dạ", "vâng", "ừ", "uh", "um", "hi", "hey"] or len(advisor_msg.split()) < 3
 
@@ -94,7 +94,7 @@ def _deterministic_fallback(schema: type, context: dict[str, Any]) -> Any:
                 obj_id = obj.get("objection_id", "")
                 if any(w in advisor_msg for w in ["pin", "sạc", "chi phí", "tiết kiệm", "bảo hành", "trạm", "v-green"]):
                     addressed.append(obj_id)
-                
+
         closing_kws = [
             "lái thử", "chạy thử", "trải nghiệm lái",
             "đặt cọc", "chốt cọc", "giữ cọc", "ký hợp đồng", "làm hợp đồng",
@@ -104,7 +104,7 @@ def _deterministic_fallback(schema: type, context: dict[str, Any]) -> Any:
         next_step = False if (is_greeting or is_ping) else any(kw in advisor_msg for kw in closing_kws)
         active_objection_ids = context.get("state", {}).get("active_objection_ids", [])
         premature_closing = next_step and bool(active_objection_ids)
-        
+
         return TurnAnalysis(
             mentioned_products=products,
             detected_intents=detected_intents,
@@ -132,14 +132,14 @@ def _deterministic_fallback(schema: type, context: dict[str, Any]) -> Any:
 
         messages = context.get("messages", [])
         replying_opening = context.get("replying_to_advisor_opening", False)
-        
+
         advisor_msgs = []
         for m in messages:
             role = m.get("role") if isinstance(m, dict) else getattr(m, "role", "")
             c = m.get("content") if isinstance(m, dict) else getattr(m, "content", "")
             if role in ("advisor", "user", "sales"):
                 advisor_msgs.append(c.strip())
-                
+
         is_first_customer_turn = replying_opening or len(advisor_msgs) <= 1
         last_adv = advisor_msgs[-1] if advisor_msgs else ""
         last_adv_lower = last_adv.lower()
@@ -267,10 +267,10 @@ def _deterministic_fallback(schema: type, context: dict[str, Any]) -> Any:
 
     if schema_name == "EvaluationDraft":
         from src.agents.roleplay.evaluator import (
-            EvaluationDraft,
             CriterionEvaluation,
-            CriterionType,
             CriterionStatus,
+            CriterionType,
+            EvaluationDraft,
             TranscriptEvidence,
         )
         from src.agents.roleplay.state import RoleplayMessage
@@ -466,7 +466,7 @@ def _deterministic_fallback(schema: type, context: dict[str, Any]) -> Any:
 
     if schema_name == "FactualFindingsDraft":
         from src.agents.roleplay.evaluator import FactualFindingsDraft
-        from src.models.evaluation import FactualFinding, FactualClaimStatus
+        from src.models.evaluation import FactualClaimStatus, FactualFinding
         claims = context.get("factual_claims", [])
         findings = []
         for c in claims:

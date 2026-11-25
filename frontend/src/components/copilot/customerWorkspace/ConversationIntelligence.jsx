@@ -95,8 +95,8 @@ export function ConversationSummary({ customer, onAnalyze, analyzing, onSourceCl
   </section>;
 }
 
-export function DraftReply({ customer, busy, onGenerate, onInsert, onDismiss, hasComposerText, dismissed }) {
-  const hasDraft = Boolean(customer.draft && !dismissed);
+export function DraftReply({ customer, busy, onGenerate, onInsert, onDismiss, hasComposerText, error }) {
+  const hasDraft = Boolean(customer.draft && customer.draftContextKnown);
   return <section className="sw-inline-draft" aria-label="Bản nháp trả lời AI">
     <div className="sw-inline-heading">
       <strong><Sparkles size={14} />Gợi ý trả lời tin nhắn</strong>
@@ -104,13 +104,14 @@ export function DraftReply({ customer, busy, onGenerate, onInsert, onDismiss, ha
         <IconButton label="Đóng gợi ý trả lời" onClick={onDismiss}><X size={14} /></IconButton>
       </div>
     </div>
+    {error && <p className="sw-error-banner" role="alert">{error}</p>}
     {busy && !hasDraft ? (
       <p className="sw-secondary" role="status"><RefreshCw size={13} className="sw-spin" style={{ verticalAlign: 'middle', marginRight: 6 }} />AI đang đọc lịch sử hội thoại và tài liệu VinFast để soạn câu trả lời…</p>
     ) : hasDraft ? (
       <>
         {customer.draftStale && <p className="sw-freshness" role="status">Bản nháp chưa bao gồm tin nhắn mới nhất. Bấm <strong>Tạo lại</strong> để cập nhật.</p>}
         <p className="sw-draft-text">{customer.draft}</p>
-        <small className="sw-draft-context">Tạo lúc {displayDateTime(customer.draftGeneratedAt)}{!customer.draftContextKnown && ' · Bản nháp cũ, cần kiểm tra lại ngữ cảnh'}</small>
+        <small className="sw-draft-context">Tạo lúc {displayDateTime(customer.draftGeneratedAt)}</small>
         {customer.draftContext && (
           <details className="sw-draft-references">
             <summary>Ngữ cảnh & tài liệu tham khảo</summary>
@@ -124,13 +125,11 @@ export function DraftReply({ customer, busy, onGenerate, onInsert, onDismiss, ha
           </details>
         )}
       </>
-    ) : (
-      <p className="sw-secondary">Bấm <strong>Tạo gợi ý</strong> để AI đọc lịch sử chat và soạn câu trả lời cho tin nhắn mới nhất của khách.</p>
-    )}
+    ) : null}
     <div className="sw-inline-actions">
       <button type="button" className="sw-text-button" onClick={onDismiss}>Đóng</button>
       <div>
-        <button type="button" className="sw-secondary-button" disabled={busy || !customer.loaded} onClick={onGenerate}>
+        <button type="button" className="sw-secondary-button" disabled={busy || !customer.loaded || !customer.canSuggestReply} onClick={onGenerate}>
           <RefreshCw size={13} className={busy ? 'sw-spin' : ''} />
           {busy ? 'Đang tạo…' : hasDraft ? 'Tạo lại' : 'Tạo gợi ý'}
         </button>

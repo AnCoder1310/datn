@@ -424,7 +424,6 @@ class ScenarioGeneratorService:
         is_taxi = bool(re.search(r"(taxi|dịch\s*vụ|chạy\s*grab|chở\s*khách|bác\s*tài)", clean, re.IGNORECASE))
         is_apartment = bool(re.search(r"(chung\s*cư|hầm|sạc\s*chung\s*cư|tòa\s*nhà)", clean, re.IGNORECASE))
         has_kids = bool(re.search(r"(con|gia\s*đình|bé|trẻ\s*nhỏ|đưa\s*đón)", clean, re.IGNORECASE))
-        has_long_trip = bool(re.search(r"(đường\s*dài|về\s*quê|cao\s*tốc|đi\s*xa|xuyên\s*việt)", clean, re.IGNORECASE))
         is_strict = bool(re.search(r"(khó\s*tính|kỹ\s*tính|cẩn\s*thận|đòi\s*hỏi|soi)", clean, re.IGNORECASE))
 
         # 5. Budget

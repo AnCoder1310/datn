@@ -2,21 +2,22 @@ import { useEffect, useState } from 'react';
 import { copilotApi } from '../../api/copilotApi';
 import { BookIcon, CloseIcon } from '../common/Icons';
 
-export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument }) {
+export function SourceViewerModal({ isOpen, ...props }) {
+  const { citation } = props;
+  if (!isOpen || !citation) return null;
+  return <SourceViewer key={`${citation.document_id || ''}:${citation.chunk_id || ''}`} {...props} />;
+}
+
+function SourceViewer({ onClose, citation, onOpenDocument }) {
   const [docData, setDocData] = useState(null);
   const [loadedKey, setLoadedKey] = useState(null);
   const [error, setError] = useState(null);
   const [showFull, setShowFull] = useState(false);
 
-  const docKey = isOpen && citation?.document_id ? `${citation.document_id}_${citation.chunk_id || ''}` : null;
+  const docKey = citation.document_id ? `${citation.document_id}_${citation.chunk_id || ''}` : null;
   const loading = Boolean(docKey && loadedKey !== docKey && !error);
 
   useEffect(() => {
-    setDocData(null);
-    setLoadedKey(null);
-    setError(null);
-    setShowFull(false);
-
     if (!docKey || !citation?.document_id) {
       return;
     }
@@ -44,22 +45,17 @@ export function SourceViewerModal({ isOpen, onClose, citation, onOpenDocument })
   }, [docKey, citation?.document_id, citation?.chunk_id]);
 
   useEffect(() => {
-    function handleKeyDown(e) {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') onClose();
     }
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      window.addEventListener('keydown', handleKeyDown);
-    }
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
-
-  if (!isOpen || !citation) return null;
+  }, [onClose]);
 
   const isCurrentDocLoaded = loadedKey === docKey;
   const currentDoc = isCurrentDocLoaded ? docData : null;

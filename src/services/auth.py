@@ -93,6 +93,22 @@ class AuthService:
         await self._repository.create_user(user, require_password_change=True)
         return self._public_user(user, must_change_password=True)
 
+    async def create_customer(self, *, username: str, display_name: str, password: str) -> AuthenticatedUser:
+        normalized_username = username.strip().casefold()
+        normalized_name = display_name.strip()
+        if not normalized_username or not normalized_name or len(password) < 12:
+            raise ValueError("invalid customer identity")
+        salt = secrets.token_bytes(16)
+        user = StoredUser(
+            user_id=str(uuid4()), username=normalized_username, display_name=normalized_name,
+            role=UserRole.CUSTOMER,
+            password_hash=base64.urlsafe_b64encode(self._derive_password(password, salt, PBKDF2_ITERATIONS)).decode("ascii"),
+            password_salt=base64.urlsafe_b64encode(salt).decode("ascii"),
+            password_iterations=PBKDF2_ITERATIONS,
+        )
+        await self._repository.create_user(user)
+        return self._public_user(user)
+
     async def bootstrap_manager(
         self,
         *,

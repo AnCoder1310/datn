@@ -2,16 +2,11 @@
 
 import logging
 from datetime import UTC, date, datetime, timedelta, timezone
-try:
-    from enum import StrEnum
-except ImportError:
-    from enum import Enum
-    class StrEnum(str, Enum):
-        pass
+from enum import StrEnum
 from typing import Any, Literal
 from uuid import uuid4
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
 
 from src.knowledge.validity import today_in_vietnam
 from src.models.evaluation import SessionEvaluationResult
@@ -48,6 +43,9 @@ class RoleplayMessage(BaseModel):
     message_id: str = Field(default_factory=lambda: str(uuid4()))
     role: Literal["customer", "advisor"]
     content: str = Field(min_length=1)
+    timestamp: datetime | None = None
+    interrupted: bool = False
+    turn_id: str | None = None
 
 
 class AdvisorFactualClaim(BaseModel):
@@ -64,6 +62,8 @@ class LinkedBenefit(BaseModel):
 
 
 class RoleplayState(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+
     session_id: str
     created_at: datetime | None = None
     scenario_id: str
@@ -101,6 +101,16 @@ class RoleplayState(BaseModel):
     evaluation_result: SessionEvaluationResult | None = None
     messages: list[RoleplayMessage] = Field(default_factory=list)
     factual_claims: list[AdvisorFactualClaim] = Field(default_factory=list)
+    realtime_call_id: str | None = None
+    realtime_pending_audio: bool = False
+    realtime_transcript_incomplete: bool = False
+    realtime_models: list[str] = Field(default_factory=list)
+    realtime_analysis_complete: bool = False
+
+    @field_serializer("termination_status")
+    def serialize_termination_status(self, value: TerminationStatus | str) -> str:
+        """Serialize legacy string checkpoints and typed statuses consistently."""
+        return value.value if isinstance(value, TerminationStatus) else str(value)
 
     @property
     def target_date(self) -> date:
@@ -118,8 +128,10 @@ class RoleplayState(BaseModel):
     def pending_customer_reply(self) -> bool:
         return (
             self.termination_status is TerminationStatus.ACTIVE
+            and self.realtime_call_id is None
             and bool(self.messages)
             and self.messages[-1].role == "advisor"
+            and self.messages[-1].turn_id is None
         )
 
     @model_validator(mode="after")
@@ -149,6 +161,13 @@ class RoleplayState(BaseModel):
         ):
             raise ValueError("active practice session cannot have an evaluation status")
         return self
+
+    def with_evaluation_result(self, result: SessionEvaluationResult, status: EvaluationStatus) -> "RoleplayState":
+        """Build the next checkpoint atomically so lifecycle invariants are never transiently broken."""
+        payload = self.model_dump(mode="python")
+        payload["evaluation_result"] = result
+        payload["evaluation_status"] = status
+        return type(self).model_validate(payload)
 
     @classmethod
     def from_scenario(

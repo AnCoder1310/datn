@@ -5,7 +5,7 @@ from src.services import llm as llm_service
 
 
 def test_openrouter_uses_provider_specific_model(monkeypatch):
-    settings = Settings(_env_file=None, 
+    settings = Settings(_env_file=None,
         llm_provider="openrouter",
         openrouter_api_key="sk-or-v1-test-only",
         openrouter_model_name="openai/gpt-6-luna",

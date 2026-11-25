@@ -43,7 +43,7 @@ export function filterCustomers(customers, query = '', filter = 'all', sort = 'u
   const todayStr = new Date().toISOString().slice(0, 10);
 
   const filtered = customers.filter((customer) => {
-    let matchesStatus = true;
+    let matchesStatus;
     if (filter === 'attention') {
       matchesStatus = Boolean(customer.attention);
     } else if (filter === 'today') {
@@ -131,7 +131,7 @@ export function toWorkspaceCustomer(item, detail, savedDraft, index = 0, now = D
   const name = String(rawName).replace(/^\[Mẫu\]\s*/i, '').trim();
   const models = Array.isArray(profile.interested_models) ? profile.interested_models : item.interested_models || [];
   const model = models.join(', ') || item.model || '';
-  const stageId = detail?.lead_status?.stage || item.stage || 'new';
+  const stageId = detail?.lead_status?.stage || item.lead_stage || item.stage || 'new';
   const [stage = 'Mới liên hệ', tone = 'gray'] = stageLabels[stageId] || [];
   const messages = (detail?.messages || []).map(toWorkspaceMessage);
   // Source messages that are not visible in the thread must not be clickable.
@@ -139,7 +139,7 @@ export function toWorkspaceCustomer(item, detail, savedDraft, index = 0, now = D
   // Before thread history is loaded, unconfirmed messages are unverified.
   const validSources = new Set(messages.map((message) => message.id));
   const sourceAllowed = (id) => id && (detail?.message_total !== undefined || validSources.has(id));
-  const updatedAt = detail?.memory?.updated_at || detail?.last_analyzed_at || item.last_analyzed_at;
+  const updatedAt = detail?.last_analyzed_at || detail?.memory?.updated_at || item.last_analyzed_at;
   const primaryModel = models[0]?.match(/VF\s*([3-9]|Wild)/i)?.[1] || item.model?.match(/VF\s*([3-9]|Wild)/i)?.[1] || '';
   const tasks = (detail?.tasks || []).filter((task) => task.status !== 'cancelled').map(toWorkspaceTask);
   const throughSeq = detail?.memory?.analyzed_through_seq;
@@ -149,10 +149,12 @@ export function toWorkspaceCustomer(item, detail, savedDraft, index = 0, now = D
       ? Math.max(0, lastSeq - throughSeq)
       : updatedAt ? messages.filter((message) => timestamp(message.sentAt) > timestamp(updatedAt)).length : detail?.message_total ?? messages.length)
     : (item.pending_analysis_count ?? (item.analysis_version ? 0 : item.message_total ?? 0));
+  const lastHumanRole = messages.findLast((message) => message.role === 'customer' || message.role === 'sales')?.role
+    ?? detail?.last_human_sender_role;
+  const canSuggestReply = lastHumanRole === 'customer';
   const draftSeq = savedDraft?.based_on_message_seq;
-  const draftStale = Number.isInteger(draftSeq)
-    ? lastSeq > draftSeq
-    : Boolean(savedDraft?.generated_at && messages.some((message) => timestamp(message.sentAt) > timestamp(savedDraft.generated_at)));
+  const draftContextKnown = savedDraft?.reply_version === 2 && Number.isInteger(draftSeq);
+  const draftStale = Boolean(savedDraft && (!draftContextKnown || lastSeq > draftSeq || !canSuggestReply));
   const timeline = detail?.memory?.stage ? (detail.milestones || []).map((m) => ({
     title: m.action, event_type: m.event_type, occurred_at: m.occurred_at || m.created_at,
     source_message_id: m.evidence?.[0]?.message_id || m.source_message_ids?.[0],
@@ -184,6 +186,7 @@ export function toWorkspaceCustomer(item, detail, savedDraft, index = 0, now = D
     summary: detail?.memory?.quick_summary || '', draft: savedDraft?.text || '',
     intelligence: customerIntelligence(detail?.memory, profile, sourceAllowed),
     usage: profile.usage_purpose || 'Chưa rõ nhu cầu', updatedAt, pendingAnalysis,
+    requiresReanalysis: Boolean(detail?.requires_reanalysis ?? item.requires_reanalysis),
     pendingItems: detail?.memory?.pending_items || [], promises: detail?.memory?.key_promises || [],
     consultationProgress: {
       summary: detail?.memory?.detailed_summary || '',
@@ -203,8 +206,8 @@ export function toWorkspaceCustomer(item, detail, savedDraft, index = 0, now = D
     facts: (profile.facts || []).map((fact) => ({ ...fact, source_message_ids: (fact.source_message_ids || []).filter(sourceAllowed) })),
     lead: detail?.lead_status || {},
     draftId: savedDraft?.draft_id, draftGeneratedAt: savedDraft?.generated_at,
-    draftStale, draftContext: savedDraft?.context_trigger || '', draftSources: savedDraft?.sources || [],
-    draftContextKnown: Number.isInteger(draftSeq),
+    canSuggestReply, draftStale, draftContext: savedDraft?.context_trigger || '', draftSources: savedDraft?.sources || [],
+    draftContextKnown,
     events,
     documents: [], loaded: Boolean(detail),
   };

@@ -4,12 +4,7 @@ Customer facts, versioned consultation memory, requested drafts and activities.
 """
 
 from datetime import UTC, datetime
-try:
-    from enum import StrEnum
-except ImportError:
-    from enum import Enum
-    class StrEnum(str, Enum):
-        pass
+from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -99,9 +94,11 @@ class ConversationResponse(BaseModel):
     customer_location: str | None = None
     last_analyzed_at: datetime | None = None
     analysis_version: int = 0
+    requires_reanalysis: bool = False
     messages: list[ChatMessageResponse] = Field(default_factory=list)
     message_total: int = 0
     last_message_seq: int = 0
+    last_human_sender_role: SenderRole | None = None
     next_before_seq: int | None = None
     profile: dict[str, Any] = Field(default_factory=dict)
     memory: dict[str, Any] = Field(default_factory=dict)
@@ -215,6 +212,7 @@ class MessageDraftResponse(BaseModel):
     model_config = ConfigDict(extra="ignore")
     conversation_id: str
     draft_id: str
+    reply_version: int = 2
     text: str
     tone: str = "friendly_professional"
     context_trigger: str = ""  # which question or context caused this draft
@@ -233,3 +231,16 @@ class SalesPreferences(BaseModel):
     advisor_id: str
     draft_enabled: bool = False
     notifications_enabled: bool = True
+
+
+class SalesNotification(BaseModel):
+    """A persisted, advisor-scoped notification for CRM work."""
+
+    id: str
+    recipient_id: str
+    notification_type: str
+    title: str
+    body: str
+    payload: dict[str, Any] = Field(default_factory=dict)
+    read_at: datetime | None = None
+    created_at: datetime

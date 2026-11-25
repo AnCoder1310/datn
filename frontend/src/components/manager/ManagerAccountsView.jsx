@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   CheckCircle2,
   KeyRound,
   Plus,
   RefreshCw,
   Search,
-  ShieldCheck,
   User,
   UserPlus,
   UsersRound,
 } from 'lucide-react';
 import { managerApi } from '../../api/managerApi';
+import { useLoad } from '../../hooks/useLoad';
 import { fmtScore } from '../../utils/scoreFormat';
 
 export function ManagerAccountsView() {
@@ -21,27 +21,11 @@ export function ManagerAccountsView() {
   const [error, setError] = useState('');
   const [created, setCreated] = useState(null);
 
-  const [advisors, setAdvisors] = useState([]);
-  const [listStatus, setListStatus] = useState('loading');
-  const [listError, setListError] = useState('');
+  const { data, status: listStatus, error: listError, reload: loadAdvisors } = useLoad(
+    managerApi.getAdvisors, 'advisor-accounts', 'Không thể tải danh sách tư vấn viên.',
+  );
+  const advisors = data || [];
   const [searchQuery, setSearchQuery] = useState('');
-
-  const loadAdvisors = async () => {
-    setListStatus('loading');
-    setListError('');
-    try {
-      const data = await managerApi.getAdvisors();
-      setAdvisors(data || []);
-      setListStatus('ready');
-    } catch (err) {
-      setListError(err.message || 'Không thể tải danh sách tư vấn viên.');
-      setListStatus('error');
-    }
-  };
-
-  useEffect(() => {
-    loadAdvisors();
-  }, []);
 
   const submit = async (event) => {
     event.preventDefault();
@@ -64,18 +48,7 @@ export function ManagerAccountsView() {
       setPassword('');
       setStatus('ready');
 
-      // Thêm tư vấn viên mới vào danh sách ngay lập tức
-      setAdvisors((prev) => [
-        {
-          advisor_id: account.username || username.trim(),
-          display_name: account.display_name || displayName.trim(),
-          completed_sessions: 0,
-          approved_sessions: 0,
-          average_score: null,
-          rank: null,
-        },
-        ...prev,
-      ]);
+      loadAdvisors();
     } catch (createError) {
       setError(
         createError.status === 409

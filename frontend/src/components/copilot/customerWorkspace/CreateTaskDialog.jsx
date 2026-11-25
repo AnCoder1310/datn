@@ -32,7 +32,6 @@ export function TaskEditor({ task, customer, customers = [], onSave, onCancel })
 
   useEffect(() => {
     let cancelled = false;
-    setConfirmOverlap(false);
     const timer = setTimeout(() => {
       if (!start || !end || end <= start) {
         setOverlaps([]);
@@ -110,7 +109,10 @@ export function TaskEditor({ task, customer, customers = [], onSave, onCancel })
               id="task-kind-select"
               className="sw-form-select"
               value={kind}
-              onChange={(event) => setKind(event.target.value)}
+              onChange={(event) => {
+                setKind(event.target.value);
+                setConfirmOverlap(false);
+              }}
             >
               <option value="task">Công việc bán hàng</option>
               <option value="appointment">Lịch hẹn gặp khách / Lái thử</option>
@@ -186,8 +188,10 @@ export function TaskEditor({ task, customer, customers = [], onSave, onCancel })
               className="sw-form-input"
               required
               value={start}
-              onInput={(event) => setStart(event.target.value)}
-              onChange={(event) => setStart(event.target.value)}
+              onChange={(event) => {
+                setStart(event.target.value);
+                setConfirmOverlap(false);
+              }}
             />
           </div>
 
@@ -201,8 +205,10 @@ export function TaskEditor({ task, customer, customers = [], onSave, onCancel })
               className="sw-form-input"
               required
               value={end}
-              onInput={(event) => setEnd(event.target.value)}
-              onChange={(event) => setEnd(event.target.value)}
+              onChange={(event) => {
+                setEnd(event.target.value);
+                setConfirmOverlap(false);
+              }}
             />
           </div>
         </div>

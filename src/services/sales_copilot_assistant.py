@@ -7,31 +7,34 @@ from src.config import get_settings
 from src.integrations.customer_intelligence_store import IntelligenceStore
 from src.knowledge.retrieval_service import get_retrieval_service
 from src.models.customer_intelligence import DraftAnswer
-from src.models.sales_copilot import MessageDraftResponse
+from src.models.sales_copilot import MessageDraftResponse, SenderRole
 from src.observability import private_customer_context
 from src.services.customer_pii import CustomerPII
 
-DRAFT_PROMPT = """Bạn là Trợ lý AI hỗ trợ Tư vấn viên (Sales) ô tô điện VinFast soạn tin nhắn trả lời khách hàng.
+DRAFT_PROMPT = """Soạn một tin nhắn tiếng Việt để tư vấn viên VinFast gửi cho khách.
 
-NHIỆM VỤ:
-Đọc 6 tin nhắn gần nhất (`messages`), kết hợp với:
-1. Hồ sơ & bối cảnh riêng của khách hàng (`customer_context`),
-2. Phong cách xưng hô & giọng văn của chính Sales (`sales_style`),
-3. Tài liệu sản phẩm/chính sách VinFast (`knowledge`),
-để soạn một tin nhắn trả lời hoàn chỉnh cho tin nhắn mới nhất của khách hàng.
+Trả lời trực tiếp lượt khách đang chờ trong `customer_turn` (có thể gồm nhiều tin liên tiếp). Dùng
+`messages` để hiểu câu hỏi nối tiếp như “còn bản Plus thì sao?” hoặc “tầm đó được không em?”.
+Ưu tiên nội dung khách vừa xác nhận khi hồ sơ cũ mâu thuẫn. Chỉ nhắc nhu cầu, ngân sách,
+phiên bản xe hay lịch đã trao đổi khi chúng giúp trả lời lượt này, tránh hỏi lại thông tin đã có.
 
-QUY TẮC CÁ NHÂN HÓA & BẮT CHƯỚC VĂN PHONG (BẮT BUỘC):
-1. Bắt chước cách xưng hô & giọng điệu của Sales (`sales_style`):
-   - Sử dụng ĐÚNG cặp đại từ xưng hô trong `sales_style.self_pronoun` (VD: "em") và `sales_style.customer_address` (VD: "anh Khoa", "anh", "chị Lan").
-   - Giữ đúng thói quen mở đầu câu và từ đệm cuối câu của Sales trong `sales_style.tone_markers` và `sales_style.sample_messages` (VD: "Dạ anh Khoa ơi,", "Dạ...", "...ạ", "...nhé").
-   - Độ dài câu và cách ngắt nhịp tương đồng với `sales_style.sample_messages` để khách đọc thấy tự nhiên như chính Sales đang nhắn.
-2. Cá nhân hóa theo bối cảnh khách hàng (`customer_context`):
-   - Trả lời thẳng vào câu hỏi/ý kiến mới nhất của khách trong `messages`.
-   - Khéo léo gắn câu trả lời với nhu cầu thực tế của khách trong `customer_context` (dòng xe quan tâm, hình thức mua trả thẳng/trả góp, mục đích sử dụng, điều kiện sạc, thời điểm mua hoặc lịch hẹn đã thống nhất) khi phù hợp, tránh trả lời chung chung như văn mẫu.
-3. Chính xác theo tài liệu (`knowledge`):
-   - Chỉ sử dụng số liệu giá bán, thông số kỹ thuật, chính sách bảo hành/trả góp có trong `knowledge` hoặc đã xác nhận trong `messages`.
-   - Nếu khách hỏi thông tin thực tế tại đại lý (tồn kho màu xe, số VIN sẵn, lịch bấm biển...) hoặc chi tiết chưa có trong `knowledge`, hãy hẹn kiểm tra ngay với bộ phận liên quan và báo lại khách sớm nhất, tuyệt đối không tự bịa số liệu.
-4. Trường `evidence`: nếu trích dẫn từ `messages` thì dẫn đúng `message_id` và `quote` nguyên văn (hoặc để mảng rỗng `[]` nếu chỉ dùng `knowledge`)."""
+Viết như tin nhắn hội thoại, thường từ 1 đến 3 câu. Giữ cách tư vấn viên xưng hô nếu đã rõ.
+Nếu chưa rõ cách gọi khách, có thể mở đầu “Dạ” rồi trả lời mà không cần gọi tên hay dùng “anh/chị”.
+Không đọc lại họ tên và số điện thoại khách, chào lại giữa cuộc trò chuyện, chèn lời quảng cáo
+hay mời lái thử khi chưa phù hợp với nội dung trao đổi. Chỉ thêm một câu hỏi làm rõ nếu cần để xử lý yêu cầu.
+
+Chỉ nêu giá, ưu đãi, chính sách, điều kiện trả góp, thông số và mốc thời gian khi có căn cứ
+trong `knowledge` hoặc đã được tư vấn viên xác nhận trong `messages`. Đối chiếu đúng xe,
+phiên bản, khu vực, thời điểm và đối tượng. Ngân sách khách đưa ra không phải giá bán.
+Nếu chưa thể xác nhận (ví dụ giá lăn bánh hiện tại, tồn kho, lịch giao xe), nêu đúng điểm cần
+kiểm tra hoặc hỏi dữ kiện còn thiếu. Không đoán số liệu hay cam kết kết quả.
+
+Chỉ viết tin nhắn gửi khách trong `text`. Nếu dẫn lời trong `messages`, trường `evidence`
+chứa `message_id` và `quote` nguyên văn. Dùng `[]` nếu không dẫn lời."""
+
+_VEHICLE_REFERENCE = re.compile(
+    r"\b(?:VF[\s-]*(?:[356789]|Wild)|(?:Minio|Herio|Nerio|Limo)\s+Green|EC\s+Van)\b", re.I,
+)
 
 
 def _doc_label(doc) -> str:
@@ -62,24 +65,16 @@ def _extract_sales_style(all_messages, customer_name: str, pii: CustomerPII) -> 
     if re.search(r"\bmình\b", lower_joined) and not re.search(r"\bem\b", lower_joined):
         self_pronoun = "mình"
 
-    # 2. How Sales addresses the customer (honorific + short name)
-    name_clean = (customer_name or "").strip()
-    parts = name_clean.split()
-    honorific = ""
-    short_name = parts[-1] if parts else ""
-    if parts and parts[0].lower() in ("anh", "chị", "bác", "cô", "chú", "bạn"):
-        honorific = parts[0].lower()
-        short_name = parts[-1] if len(parts) > 1 else ""
-
-    if not honorific:
-        for cand in ("anh", "chị", "bác", "cô", "chú", "bạn"):
-            if re.search(rf"\b{cand}\b", lower_joined):
-                honorific = cand
-                break
-    if not honorific:
-        honorific = "anh/chị"
-
-    customer_address = f"{honorific} {short_name}".strip() if short_name and honorific in ("anh", "chị", "bác", "cô", "chú", "bạn") else honorific
+    # Recognize observed forms of address. A name on its own gives no reliable honorific.
+    honorifics = ("anh", "chị", "bác", "cô", "chú", "bạn")
+    name_parts = (customer_name or "").strip().split()
+    explicit_honorific = name_parts[0].lower() if name_parts else ""
+    customer_address = explicit_honorific if explicit_honorific in honorifics else ""
+    for message in reversed(sales_msgs):
+        address = re.search(r"(?i)^(?:dạ|vâng|chào)[, ]+?(anh/chị|anh|chị|bác|cô|chú|bạn)\b", message)
+        if address:
+            customer_address = address[1].lower()
+            break
 
     # 3. Tone markers / particles used by Sales
     markers = []
@@ -92,7 +87,6 @@ def _extract_sales_style(all_messages, customer_name: str, pii: CustomerPII) -> 
     return {
         "self_pronoun": self_pronoun,
         "customer_address": customer_address,
-        "customer_full_name": name_clean,
         "tone_markers": markers,
         "sample_messages": sales_msgs[-3:],
     }
@@ -110,7 +104,6 @@ def _build_customer_context(detail, confirmed: dict) -> dict:
         if isinstance(kp, dict) and kp.get("status") == "open" and (kp.get("question") or kp.get("topic"))
     ]
     return {
-        "customer_name": detail.customer_name or "",
         "location": detail.customer_location or profile.get("living_area") or "",
         "lead_stage": (detail.lead_status or {}).get("stage") or "",
         "interested_models": profile.get("interested_models") or [],
@@ -144,52 +137,58 @@ class SalesCopilotAssistant:
         pii = CustomerPII(head["pii_mapping"], customer_id=customer_id)
         from src.services.sales_conversation_service import SalesConversationService
 
-        detail = SalesConversationService(repo).get_conversation_details(conversation_id)
+        detail = SalesConversationService(repo).get_conversation_details(conversation_id, message_limit=1)
         confirmed = {
             f["field"]: f["value"]
             for f in detail.profile.get("facts", [])
             if f.get("verification_status") == "confirmed"
         }
-        all_messages = repo.list_messages(conversation_id, limit=12)
-        if not all_messages:
-            raise ValueError("Chưa có tin để soạn nháp.")
+        all_messages = repo.list_messages(
+            conversation_id, limit=12, sender_roles=(SenderRole.CUSTOMER, SenderRole.SALES),
+        )
         messages = all_messages[-6:]
+        if not messages or messages[-1].sender_role != "customer":
+            raise ValueError("Chưa có tin nhắn mới từ khách hàng cần trả lời.")
+        customer_turn = []
+        for message in reversed(messages):
+            if message.sender_role != "customer":
+                break
+            customer_turn.append(message)
+        customer_turn.reverse()
         customer_context = _build_customer_context(detail, confirmed)
         sales_style = _extract_sales_style(all_messages, detail.customer_name or "", pii)
         models = customer_context["interested_models"]
 
-        latest_customer_text = next(
-            (m.content for m in reversed(messages) if m.sender_role == "customer"),
-            messages[-1].content,
-        )
-        query = pii.mask(latest_customer_text)
+        query = pii.mask("\n".join(m.content for m in customer_turn))
         rag_query = query
-        if models and not any(str(m).lower() in rag_query.lower() for m in models if m):
-            rag_query = f"{', '.join(str(m) for m in models if m)}: {rag_query}"
+        if not _VEHICLE_REFERENCE.search(query):
+            previous_mention = next(
+                (match[0] for message in reversed(messages[:-len(customer_turn)])
+                 if (match := _VEHICLE_REFERENCE.search(message.content))),
+                None,
+            )
+            vehicle_context = previous_mention or ", ".join(str(model) for model in models if model)
+            if vehicle_context:
+                rag_query = f"{vehicle_context}: {query}"
         # Retrieval may call an embedding model; it receives masked text too.
         with private_customer_context():
-            docs = get_retrieval_service().retrieve(rag_query, top_k=5)
+            docs = get_retrieval_service().retrieve(pii.mask(rag_query), top_k=5)
         sources = [{"id": str(i), "title": _doc_label(d), "content": d.content} for i, d in enumerate(docs)]
-        try:
-            draft = await pii.ask(
-                DRAFT_PROMPT,
-                {
-                    "profile": confirmed,
-                    "customer_context": customer_context,
-                    "sales_style": sales_style,
-                    "messages": [m.model_dump(mode="json") for m in messages],
-                    "knowledge": sources,
-                },
-                DraftAnswer,
-            )
-        except Exception:
-            target_model = models[0] if models else (customer_context.get('interested_models', ['VinFast'])[0] if customer_context.get('interested_models') else 'VinFast')
-            cust_name = detail.customer_name or 'Anh/Chị'
-            fallback_text = (
-                f"Dạ em chào {cust_name}, về dòng xe {target_model}, VinFast hiện đang có chính sách ưu đãi sạc pin "
-                f"và hỗ trợ trả góp rất tốt. Em có thể gửi bảng tính dự toán chi tiết hoặc mời {cust_name} qua showroom lái thử trải nghiệm thực tế xe được không ạ?"
-            )
-            draft = DraftAnswer(text=fallback_text, evidence=[])
+        draft = await pii.ask(
+            DRAFT_PROMPT,
+            {
+                "profile": confirmed,
+                "customer_context": customer_context,
+                "sales_style": sales_style,
+                "messages": [m.model_dump(mode="json") for m in messages],
+                "customer_turn": [m.content for m in customer_turn],
+                "knowledge": sources,
+            },
+            DraftAnswer,
+        )
+        draft_text = pii.restore(draft.text).strip()
+        if not draft_text:
+            raise ValueError("AI chưa soạn được nội dung trả lời.")
         from src.services.intelligence_engine import checked_evidence
 
         masked = {m.id: {"content": pii.mask(m.content)} for m in messages}
@@ -203,10 +202,10 @@ class SalesCopilotAssistant:
         response = MessageDraftResponse(
             conversation_id=conversation_id,
             draft_id=uuid4().hex,
-            text=pii.restore(draft.text),
+            text=draft_text,
             context_trigger=pii.restore(query),
             sources=unique_sources,
-            based_on_message_seq=max(m.seq for m in messages),
+            based_on_message_seq=max(detail.last_message_seq, all_messages[-1].seq),
         )
         # Persist any new identifiers with optimistic concurrency before saving the draft.
         store.save_mapping(customer_id, pii, head)

@@ -146,7 +146,9 @@ export function RoleplayView({ scenarios, scenarioStatus, onRetryScenarios, onOp
     if (!attemptDetail || retryingEvaluation) return;
     setRetryingEvaluation(true);
     try {
-      await practiceApi.finishSession(attemptDetail.attempt.session_id);
+      await practiceApi.finishSession(attemptDetail.attempt.session_id, {
+        realtime: Boolean(attemptDetail.session?.messages.some((message) => message.turn_id)),
+      });
       setAttemptDetail(await practiceApi.getAttempt(attemptDetail.attempt.session_id));
       await loadHistory();
     } catch (error) {
@@ -223,7 +225,7 @@ export function RoleplayView({ scenarios, scenarioStatus, onRetryScenarios, onOp
         </div>
       )}
       {viewMode === 'room' && (
-        <PracticeRoom initialMode={initialMode} scenario={activeScenario} session={activeSession} onFinish={handleFinishSession} onSavedAttempt={openAttempt} onExit={handleBackToCatalog} />
+        <PracticeRoom key={activeSession.session_id} initialMode={initialMode} scenario={activeScenario} session={activeSession} onFinish={handleFinishSession} onSavedAttempt={openAttempt} onExit={handleBackToCatalog} />
       )}
       {viewMode === 'evaluation' && (
         <EvaluationScorecard result={evaluationResult} scenario={activeScenario} onRetry={() => requestStartScenario(activeScenario?.scenario_id)} onBackToCatalog={handleBackToCatalog} onOpenAttempt={openAttempt} />

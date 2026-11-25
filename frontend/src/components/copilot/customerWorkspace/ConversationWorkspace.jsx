@@ -4,10 +4,8 @@ import {
   Bot,
   Car,
   Check,
-  CheckCheck,
   ChevronDown,
   Copy,
-  ListTodo,
   MapPin,
   MessageSquare,
   Phone,
@@ -18,11 +16,9 @@ import {
   Star,
   X,
 } from 'lucide-react';
-import { Avatar, StageBadge, IconButton, CopilotBubble } from './WorkspacePrimitives';
+import { Avatar, StageBadge, IconButton } from './WorkspacePrimitives';
 import { DraftReply } from './ConversationIntelligence';
 import { LeadStageEditor } from './CustomerToolsDrawer';
-import { taskCounts } from './workspaceData';
-import { useWorkspaceClock } from './useCustomerWorkspace';
 import { replySuggestionsAvailable } from './workspaceFeatures';
 
 function ConversationViewer({
@@ -201,7 +197,8 @@ function ConversationViewer({
 }
 
 function MessageComposer({
-  value,
+  salesValue,
+  customerValue,
   onChange,
   onSend,
   inputRef,
@@ -209,10 +206,15 @@ function MessageComposer({
   sending,
   disabled,
   draft,
-  onCreateTask,
 }) {
-  const [dismissedDraftId, setDismissedDraftId] = useState(null);
-  const [senderRole, setSenderRole] = useState('sales'); // 'sales' | 'customer'
+  const [senderRole, setSenderRole] = useState('sales');
+  const isSales = senderRole === 'sales';
+  const value = isSales ? salesValue : customerValue;
+
+  function changeRole(role) {
+    setSenderRole(role);
+    if (role === 'customer') draft.onClose();
+  }
 
   function submit(event) {
     event?.preventDefault();
@@ -221,19 +223,16 @@ function MessageComposer({
   }
 
   return (
-    <form className="sw-conversation-composer" onSubmit={submit}>
-      {draft.open && (
+    <form className="sw-composer" onSubmit={submit}>
+      {replySuggestionsAvailable && isSales && draft.open && customer.canSuggestReply && (
         <DraftReply
           customer={customer}
           busy={draft.busy}
+          error={draft.error}
           onGenerate={draft.onGenerate}
           onInsert={draft.onInsert}
           hasComposerText={Boolean(value.trim())}
-          onDismiss={() => {
-            if (customer.draftId) setDismissedDraftId(customer.draftId);
-            draft.onClose();
-          }}
-          dismissed={Boolean(customer.draftId && dismissedDraftId === customer.draftId)}
+          onDismiss={draft.onClose}
         />
       )}
 
@@ -244,14 +243,16 @@ function MessageComposer({
           <button
             type="button"
             className={`sw-role-pill ${senderRole === 'sales' ? 'is-active' : ''}`}
-            onClick={() => setSenderRole('sales')}
+            aria-pressed={isSales}
+            onClick={() => changeRole('sales')}
           >
             Tư vấn viên (Sales)
           </button>
           <button
             type="button"
             className={`sw-role-pill is-customer-pill ${senderRole === 'customer' ? 'is-active' : ''}`}
-            onClick={() => setSenderRole('customer')}
+            aria-pressed={!isSales}
+            onClick={() => changeRole('customer')}
             title="Đóng vai khách hàng đặt câu hỏi để kiểm tra AI bóc tách việc và gợi ý trả lời"
           >
             Khách hàng (Giả lập)
@@ -265,14 +266,14 @@ function MessageComposer({
           aria-label={`Tin nhắn cho ${customer.name}`}
           placeholder={
             senderRole === 'customer'
-              ? "Nhập câu hỏi/tin nhắn đóng vai khách (VD: 'Mai 14h em qua showroom lái thử VF 7 nhé', 'Chung cư chưa có chỗ sạc thì sao em?')..."
-              : "Nhập nội dung tư vấn khách hàng... (Enter để gửi, Shift+Enter xuống dòng)"
+              ? 'Nhập tin nhắn giả lập của khách hàng…'
+              : "Nhập nội dung tư vấn…"
           }
           rows={1}
           maxLength={6000}
           disabled={disabled}
           value={value}
-          onChange={(event) => onChange(event.target.value)}
+          onChange={(event) => onChange(event.target.value, senderRole)}
           onKeyDown={(event) => {
             if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
               event.preventDefault();
@@ -282,22 +283,15 @@ function MessageComposer({
         />
 
         <div className="sw-composer-tools">
-          {replySuggestionsAvailable && (
+          {replySuggestionsAvailable && isSales && (
             <button
               type="button"
               className={`sw-draft-trigger ${draft.open ? 'is-active' : ''}`}
               aria-label="Gợi ý trả lời AI"
-              title="AI đọc lịch sử hội thoại và tài liệu VinFast để gợi ý câu trả lời chuẩn xác"
+              title={customer.canSuggestReply ? 'Soạn bản nháp trả lời tin nhắn mới nhất của khách' : 'Có thể tạo gợi ý khi khách là người nhắn gần nhất'}
               aria-expanded={draft.open}
-              disabled={disabled || !customer.messages.length}
-              onClick={() => {
-                if (draft.open) {
-                  draft.onClose();
-                } else {
-                  setDismissedDraftId(null);
-                  draft.onOpen();
-                }
-              }}
+              disabled={disabled || !customer.canSuggestReply}
+              onClick={draft.open ? draft.onClose : draft.onOpen}
             >
               {draft.busy ? <RefreshCw size={13} className="sw-spin" /> : <Sparkles size={14} />}
               <span>{draft.busy ? 'Đang gợi ý…' : 'Gợi ý trả lời'}</span>
@@ -323,11 +317,11 @@ export function ConversationWorkspace({
   onStar,
   highlight,
   composerValue,
+  customerComposerValue,
   onComposerChange,
   onSend,
   composerRef,
   onBack,
-  onShowTool,
   loading,
   error,
   onRetry,
@@ -341,6 +335,7 @@ export function ConversationWorkspace({
   preferenceBusy,
   onGenerateDraft,
   draftBusy,
+  draftError,
   onInsertDraft,
   onLoadOlder,
   loadingOlder,
@@ -531,14 +526,14 @@ export function ConversationWorkspace({
 
         {!detailLoading && (
           <MessageComposer
-            value={composerValue}
+            salesValue={composerValue}
+            customerValue={customerComposerValue}
             onChange={onComposerChange}
             onSend={(role) => onSend(role)}
             inputRef={composerRef}
             customer={customer}
             sending={sending}
             disabled={!customer.loaded}
-            onCreateTask={onCreateTask}
             draft={{
               open: draftOpen,
               enabled: draftEnabled,
@@ -548,6 +543,7 @@ export function ConversationWorkspace({
               preferenceBusy,
               onGenerate: onGenerateDraft,
               busy: draftBusy,
+              error: draftError,
               onInsert: onInsertDraft,
             }}
           />

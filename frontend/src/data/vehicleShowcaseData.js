@@ -9,7 +9,7 @@ export const VINFAST_SHOWCASE_MODELS = [
     battery: '18.64 kWh LFP',
     charging: '10–70% / 36 phút',
     power: '40.2 HP · 110 Nm RWD',
-    image: '/vehicles/official/vf-3.webp',
+    image: '/vehicles/user/vf3.png',
     tagline: 'Cá tính, linh hoạt, di chuyển xanh trong đô thị',
   },
   {
@@ -22,7 +22,7 @@ export const VINFAST_SHOWCASE_MODELS = [
     battery: '37.23 kWh',
     charging: '10–70% / 30 phút',
     power: '134 HP · 135 Nm FWD',
-    image: '/vehicles/official/vf-5.webp',
+    image: '/vehicles/user/vf5-plus.jpg',
     tagline: 'Lựa chọn SUV điện quốc dân, kinh tế và bền bỉ',
   },
   {
@@ -35,7 +35,7 @@ export const VINFAST_SHOWCASE_MODELS = [
     battery: '59.6 kWh LFP',
     charging: '10–70% / 27 phút',
     power: '201 HP · ADAS Cấp 2',
-    image: '/vehicles/official/vf-6.webp',
+    image: '/vehicles/user/vf6-city.jpg',
     tagline: 'Thiết kế tinh tế của Torino Design, công nghệ hỗ trợ lái vượt trội',
   },
   {
@@ -48,7 +48,7 @@ export const VINFAST_SHOWCASE_MODELS = [
     battery: '75.3 kWh',
     charging: '10–70% / 24 phút',
     power: '349 HP · 0–100km/h 5.8s',
-    image: '/vehicles/official/vf-7.webp',
+    image: '/vehicles/user/vf8-night.jpeg',
     tagline: 'Thiết kế vũ trụ phi đối xứng, sức mạnh 2 mô-tơ điện thông minh',
   },
   {
@@ -61,7 +61,7 @@ export const VINFAST_SHOWCASE_MODELS = [
     battery: '87.7 kWh CATL',
     charging: '10–70% / 24 phút',
     power: '402 HP · 620 Nm AWD',
-    image: '/vehicles/official/vf-8.webp',
+    image: '/vehicles/user/vf8-vf9-city.jpeg',
     tagline: 'Chuẩn an toàn 5 sao toàn cầu, trợ lý ảo thông minh Vivi tiếng Việt',
   },
   {
@@ -74,7 +74,7 @@ export const VINFAST_SHOWCASE_MODELS = [
     battery: '123 kWh CATL',
     charging: '10–70% / 26 phút',
     power: '402 HP · Ghế Captain Seat',
-    image: '/vehicles/official/vf-9.webp',
+    image: '/vehicles/user/vf9-dark.jpg',
     tagline: 'Không gian siêu sang, ghế massage đa điểm và cửa hít tự động',
   },
   {
@@ -87,7 +87,7 @@ export const VINFAST_SHOWCASE_MODELS = [
     battery: 'Pin thế hệ mới',
     charging: 'Siêu nạp V-GREEN',
     power: '4x4 Địa hình Thông minh',
-    image: '/vehicles/official/vf-wild.webp',
+    image: '/vehicles/user/vf-wild-new.jpeg',
     tagline: 'Ngôn ngữ thiết kế đột phá, dẫn đầu phân khúc bán tải điện tương lai',
   },
 ];

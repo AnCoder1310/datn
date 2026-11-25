@@ -150,7 +150,7 @@ Lưu ý cấu hình hiện tại: Compose đặt mặc định generator là `go
 
 ### Luồng demo và câu hỏi mẫu
 
-Practice Room hỗ trợ push-to-talk: giữ micro tối đa 90 giây, thả để Groq Whisper chép tiếng Việt. Công tắc **Tự động gửi** quyết định gửi ngay bản chép hay sửa trước khi nhấn Gửi; phản hồi AI Customer có thể được đọc bằng Google WaveNet. Hộp nhập chữ vẫn hiện trong cả hai chế độ. Xem [cấu hình Voice Mode](docs/voice-mode.md); chat chữ vẫn chạy khi chưa có key giọng nói.
+Trong **Phòng luyện tập**, chọn **Gọi thoại → Bắt đầu cuộc gọi** để nói trực tiếp qua mic với khách AI. Bản chép lời cập nhật trong lúc gọi và dùng chung phiên luyện tập với chế độ nhắn tin. Cuộc gọi dùng OpenAI Realtime qua WebRTC. Cần đặt `OPENAI_API_KEY` trên backend. Xem [cấu hình và luồng gọi thoại](docs/voice-mode.md).
 
 Bốn kịch bản hiện có trong [scenarios.json](data/scenarios/scenarios.json):
 

@@ -568,6 +568,22 @@ class SQLPracticeRecordsRepository:
             )
         return result
 
+    async def latest_approved_evaluation(self, advisor_id: str) -> SessionEvaluationResult | None:
+        """Return the newest manager-approved evaluation for an advisor."""
+        if not advisor_id.strip():
+            return None
+        self._ensure_schema()
+        query = (
+            select(self._reviews.c.approved_result_json)
+            .select_from(self._attempts.join(self._reviews, self._attempts.c.session_id == self._reviews.c.session_id))
+            .where(self._attempts.c.advisor_id == advisor_id)
+            .order_by(self._reviews.c.reviewed_at.desc())
+            .limit(1)
+        )
+        with self._engine.connect() as connection:
+            payload = connection.execute(query).scalar_one_or_none()
+        return SessionEvaluationResult.model_validate_json(payload) if payload else None
+
     async def approve(self, session_id: str, manager_id: str, decision: ManagerReviewDecision) -> ManagerReviewRecord:
         if not manager_id.strip():
             raise ValueError("manager_id must not be blank")

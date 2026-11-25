@@ -1,10 +1,5 @@
 from datetime import date
-try:
-    from enum import StrEnum
-except ImportError:
-    from enum import Enum
-    class StrEnum(str, Enum):
-        pass
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
 

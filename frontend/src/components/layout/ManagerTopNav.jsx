@@ -7,6 +7,7 @@ import {
   SparkleIcon,
   ShieldCheckIcon,
 } from "../common/Icons";
+import { MapPin } from "lucide-react";
 import { AccountMenu } from "./AccountMenu";
 
 export function ManagerTopNav({
@@ -23,6 +24,7 @@ export function ManagerTopNav({
     { id: "scenarios", label: "Kịch bản AI", icon: SparkleIcon },
     { id: "audit", label: "Kiểm toán", icon: ShieldCheckIcon },
     { id: "accounts", label: "Tài khoản", icon: UsersIcon },
+    { id: "showrooms", label: "Showroom", icon: MapPin },
   ];
 
   const displayName = currentUser?.display_name?.trim() || "Quản lý";

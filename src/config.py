@@ -21,6 +21,12 @@ class Settings(BaseSettings):
     sales_pii_key: SecretStr = SecretStr("eaYS5ljqJTcGJ03Lgf82dsqzN1bh74RS7IBVD_5BYbc=")
     sales_intelligence_v2_enabled: bool = True
     cors_origins: str = "http://localhost:3000"
+    # Owner for unauthenticated showroom enquiries.  Leave empty to route to
+    # the first active advisor and use the demo inbox only in development.
+    public_lead_advisor_id: str = Field(
+        default="",
+        validation_alias=AliasChoices("public_lead_advisor_id", "PUBLIC_LEAD_ADVISOR_ID"),
+    )
 
     # Copilot telemetry: Settings reads .env; the SDK is configured explicitly.
     langsmith_tracing: bool = Field(
@@ -190,6 +196,13 @@ class Settings(BaseSettings):
     google_tts_service_account_json: str = ""
     voice_stt_usd_per_hour: float = Field(default=0.04, ge=0)
     voice_tts_usd_per_million_characters: float = Field(default=16.0, ge=0)
+    realtime_model: str = "gpt-realtime-2.1"
+    realtime_fallback_model: str = "gpt-realtime-2.1-mini"
+    realtime_voice: Literal["marin", "cedar"] = "marin"
+    realtime_transcription_model: str = "gpt-live-transcribe"
+    realtime_vad_threshold: float = Field(default=0.55, ge=0, le=1)
+    realtime_vad_silence_ms: int = Field(default=850, ge=300, le=2500)
+    realtime_call_limit_seconds: int = Field(default=1200, ge=60, le=3600)
 
     # Local authentication
     auth_cookie_name: str = Field(default="p043_session", min_length=1, max_length=100)

@@ -1383,3 +1383,16 @@
   height: 0;
   border-top: 2px dashed #94A3B8;
 }
+
+
+@media (max-width: 540px) {
+  .ap-library-actions,
+  .ap-filter-pills {
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .ap-filter-pill {
+    padding-inline: 8px;
+  }
+}

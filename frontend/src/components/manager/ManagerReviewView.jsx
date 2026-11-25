@@ -9,6 +9,7 @@ import { ManagerAssignmentsView } from "./ManagerAssignmentsView";
 import { ManagerAccountsView } from "./ManagerAccountsView";
 import { ManagerScenariosView } from "./ManagerScenariosView";
 import { ManagerAuditView } from "./ManagerAuditView";
+import { ManagerShowroomsView } from "./ManagerShowroomsView";
 import { ManagerDashboard } from "./ManagerDashboard";
 import "./managerDashboard.css";
 
@@ -152,6 +153,7 @@ export function ManagerReviewView({ currentUser, onLogout }) {
         )}
         {activeTab === "assignments" && <ManagerAssignmentsView onNavigateTab={setActiveTab} />}
         {activeTab === "accounts" && <ManagerAccountsView />}
+        {activeTab === "showrooms" && <ManagerShowroomsView />}
         {activeTab === "scenarios" && <ManagerScenariosView />}
         {activeTab === "audit" && <ManagerAuditView />}
         {activeTab === "dashboard" && (

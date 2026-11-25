@@ -27,15 +27,16 @@ import { CopilotWorkspace } from './agenda/CopilotWorkspace';
 const STORAGE_KEY_PREFIX = 'vinfast_copilot_chat_';
 
 export function CopilotView(props) {
+  const key = `${props.currentUser?.user_id || ''}:${props.crmTarget?.nonce || ''}:${props.navigationKey ?? props.startPage ?? 'home'}`;
   return import.meta.env.VITE_STANDALONE_COPILOT_ENABLED === 'true'
-    ? <LegacyCopilotView {...props} />
-    : <CopilotWorkspace key={props.currentUser?.user_id} currentUser={props.currentUser} onOpenDocument={props.onOpenDocument} />;
+    ? <LegacyCopilotView key={key} {...props} />
+    : <CopilotWorkspace key={key} currentUser={props.currentUser} onOpenDocument={props.onOpenDocument} crmTarget={props.crmTarget} startPage={props.startPage} onNavigatePage={props.onNavigatePage} />;
 }
 
 import { renderMarkdownWithCitations } from './markdownRenderer';
 
 
-function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = null }) {
+function LegacyCopilotView({ onOpenDocument, crmTarget, initialQuery = '', currentUser = null }) {
   const [filterDomain, setFilterDomain] = useState('all');
   const [inputDraft, setInputDraft] = useState({ initialQuery, value: initialQuery || '' });
   const inputMessage = inputDraft.initialQuery === initialQuery ? inputDraft.value : initialQuery || '';
@@ -499,6 +500,7 @@ function LegacyCopilotView({ onOpenDocument, initialQuery = '', currentUser = nu
               handleSend(q);
             }}
             onOpenDocument={onOpenDocument}
+            navigationIntent={crmTarget}
           />
         </div>
       )}

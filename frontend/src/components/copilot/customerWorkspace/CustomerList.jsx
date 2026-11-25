@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Search, SlidersHorizontal, ChevronDown, Users, Inbox, AlertCircle, Sparkles, Check, RefreshCw, X, Clock, Car } from 'lucide-react';
-import { Avatar, StageBadge, IconButton } from './WorkspacePrimitives';
+import { Search, ChevronDown, Inbox, AlertCircle, Sparkles, Check, RefreshCw, X, Clock } from 'lucide-react';
+import { Avatar, StageBadge } from './WorkspacePrimitives';
 import { filterCustomers } from './workspaceData';
 
-const QUEUE_TABS = [
+const QUEUE_FILTERS = [
   { id: 'attention', label: 'Cần chú ý' },
   { id: 'today', label: 'Hôm nay' },
   { id: 'active', label: 'Đang chăm sóc' },
@@ -13,10 +13,10 @@ const QUEUE_TABS = [
 ];
 
 const SORT_OPTIONS = [
-  { id: 'urgency', label: 'Mức độ khẩn cấp' },
+  { id: 'urgency', label: 'Khẩn cấp' },
   { id: 'waiting', label: 'Chờ lâu nhất' },
-  { id: 'recent', label: 'Tin nhắn mới nhất' },
-  { id: 'deadline', label: 'Hạn chót công việc' },
+  { id: 'recent', label: 'Tin mới nhất' },
+  { id: 'deadline', label: 'Hạn công việc' },
 ];
 
 export function CustomerList({
@@ -40,10 +40,12 @@ export function CustomerList({
   const [checked, setChecked] = useState({});
 
   const filtered = filterCustomers(customers, query, filter, sort);
-  const unprocessed = customers.filter((customer) => customer.pendingAnalysis > 0 && customer.messageTotal > 0);
-  const selectedIds = customers.filter((customer) => checked[customer.id]).map((customer) => customer.id);
+  const analyzable = customers.filter((customer) => customer.messageTotal > 0);
+  const unprocessed = analyzable.filter((customer) => customer.pendingAnalysis > 0 || customer.requiresReanalysis);
+  const selectedIds = analyzable.filter((customer) => checked[customer.id]).map((customer) => customer.id);
   const allUnprocessedSelected = unprocessed.length > 0 && unprocessed.every((customer) => checked[customer.id]);
-  const isAllSelected = customers.length > 0 && customers.every((customer) => checked[customer.id]);
+  const isAllSelected = analyzable.length > 0 && analyzable.every((customer) => checked[customer.id]);
+  const processed = batchProgress ? batchProgress.completed + batchProgress.skipped + batchProgress.failures.length : 0;
 
   // Counts for each tab
   const counts = {
@@ -62,7 +64,7 @@ export function CustomerList({
     if (isAllSelected) {
       setChecked({});
     } else {
-      setChecked(Object.fromEntries(customers.map((c) => [c.id, true])));
+      setChecked(Object.fromEntries(analyzable.map((c) => [c.id, true])));
     }
   }
 
@@ -87,13 +89,12 @@ export function CustomerList({
 
   return (
     <section className="sw-customer-list" aria-label="Hộp thư khách hàng">
-      {/* 1. HEADER: INBOX TITLE & BATCH AI TRIGGER */}
       <div className="sw-list-heading">
         <div className="sw-list-title-wrap">
-          <h2>Hộp thư khách hàng</h2>
-          <span className="sw-active-customers-badge">{counts.active} đang xử lý</span>
+          <h2>Hộp thư</h2>
+          <span className="sw-active-customers-badge">{filtered.length} / {counts.all} khách hàng</span>
         </div>
-        {!batchProgress?.running && customers.length > 0 && (
+        {!batchProgress?.running && analyzable.length > 0 && !error && (
           selecting ? (
             <button
               type="button"
@@ -106,7 +107,7 @@ export function CustomerList({
             <button
               type="button"
               className={`sw-batch-trigger ${unprocessed.length > 0 ? 'has-pending' : ''}`}
-              onClick={() => { setSelecting(true); setChecked({}); }}
+              onClick={() => { setSelecting(true); setChecked(Object.fromEntries(unprocessed.map((customer) => [customer.id, true]))); }}
               title="Chọn hội thoại để AI phân tích hàng loạt"
             >
               <Sparkles size={13} />
@@ -121,20 +122,36 @@ export function CustomerList({
         <div className="sw-batch-progress" role="status" aria-live="polite">
           <div className="sw-batch-progress-top">
             <span>
-              <RefreshCw size={12} className="sw-spin" /> Đang phân tích {batchProgress.completed}/{batchProgress.total}
+              <RefreshCw size={12} className="sw-spin" /> {batchProgress.cancelled ? 'Đang dừng' : 'Đang phân tích'} · {processed}/{batchProgress.total}
               {batchProgress.currentLabel ? ` · ${batchProgress.currentLabel}` : '…'}
             </span>
-            <button type="button" className="sw-text-button sw-batch-stop" onClick={onCancelBatch}>
+            <button type="button" className="sw-text-button" disabled={batchProgress.cancelled} onClick={onCancelBatch}>
               Dừng
             </button>
           </div>
-          <div className="sw-batch-progress-track">
-            <span
-              style={{
-                width: `${Math.max(6, Math.round((batchProgress.completed / Math.max(1, batchProgress.total)) * 100))}%`,
-              }}
-            />
-          </div>
+          <progress aria-label="Tiến độ phân tích khách hàng" value={processed} max={batchProgress.total} />
+        </div>
+      )}
+
+      {batchProgress && !batchProgress.running && !selecting && (
+        <div className="sw-batch-progress" role="status">
+          <span>
+            {batchProgress.completed}/{batchProgress.total} khách đã phân tích
+            {batchProgress.failures.length > 0 && ` · ${batchProgress.failures.length} lỗi`}
+            {batchProgress.skipped > 0 && ` · ${batchProgress.skipped} chưa có tin nhắn`}
+            {batchProgress.cancelled && ` · ${batchProgress.total - processed} chưa chạy`}
+          </span>
+          {batchProgress.failures.length > 0 && (
+            <>
+              <details>
+                <summary>Xem lỗi</summary>
+                <ul>{batchProgress.failures.map(({ id, name, message }) => <li key={id}>{name} · {message}</li>)}</ul>
+              </details>
+              <button type="button" className="sw-text-button" onClick={() => startBatch(batchProgress.failures.map(({ id }) => id))}>
+                Thử lại các khách bị lỗi
+              </button>
+            </>
+          )}
         </div>
       )}
 
@@ -147,14 +164,14 @@ export function CustomerList({
                 <span className={`sw-row-checkbox ${isAllSelected ? 'is-checked' : ''}`}>
                   {isAllSelected && <Check size={11} />}
                 </span>
-                <span>{isAllSelected ? 'Bỏ chọn tất cả' : `Chọn tất cả (${customers.length})`}</span>
+                <span>{isAllSelected ? 'Bỏ chọn tất cả' : `Chọn tất cả (${analyzable.length})`}</span>
               </button>
               {unprocessed.length > 0 && (
                 <button type="button" className="sw-select-all-pill is-secondary" onClick={toggleSelectAllUnprocessed}>
                   <span className={`sw-row-checkbox ${allUnprocessedSelected ? 'is-checked' : ''}`}>
                     {allUnprocessedSelected && <Check size={11} />}
                   </span>
-                  <span>Tin mới ({unprocessed.length})</span>
+                  <span>Cần phân tích ({unprocessed.length})</span>
                 </button>
               )}
             </div>
@@ -201,44 +218,25 @@ export function CustomerList({
         </label>
       </div>
 
-      {/* 3. 6 QUEUE CATEGORIES / FILTER PILLS */}
-      <div className="sw-customer-filters" aria-label="Lọc hàng chờ khách hàng">
-        {QUEUE_TABS.map((tab) => {
-          const isActive = filter === tab.id;
-          const count = counts[tab.id] || 0;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              aria-pressed={isActive}
-              className={`sw-queue-pill ${isActive ? 'is-active' : ''}`}
-              onClick={() => onFilterChange(tab.id)}
-            >
-              <span>{tab.label}</span>
-              <span className="sw-pill-count">{count}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* 4. SORTING BAR & RECORD COUNT */}
-      <div className="sw-list-sort">
-        <span className="sw-sort-count">{filtered.length} khách hàng</span>
-        <div className="sw-sort-select-wrap">
-          <select
-            aria-label="Sắp xếp danh sách khách hàng"
-            className="sw-sort-select"
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-          >
-            {SORT_OPTIONS.map((opt) => (
-              <option key={opt.id} value={opt.id}>
-                {opt.label}
-              </option>
+      <div className="sw-inbox-controls">
+        <label>
+          <span>Trạng thái</span>
+          <select value={filter} onChange={(event) => onFilterChange(event.target.value)}>
+            {QUEUE_FILTERS.map(({ id, label }) => (
+              <option key={id} value={id}>{label} ({counts[id]})</option>
             ))}
           </select>
-          <ChevronDown size={11} className="sw-sort-chevron" />
-        </div>
+          <ChevronDown size={12} aria-hidden="true" />
+        </label>
+        <label>
+          <span>Sắp xếp</span>
+          <select value={sort} onChange={(event) => setSort(event.target.value)}>
+            {SORT_OPTIONS.map(({ id, label }) => (
+              <option key={id} value={id}>{label}</option>
+            ))}
+          </select>
+          <ChevronDown size={12} aria-hidden="true" />
+        </label>
       </div>
 
       {/* 5. CUSTOMER ROWS LIST */}
@@ -292,6 +290,7 @@ export function CustomerList({
                 type="button"
                 className={`sw-customer-row ${isSelected ? 'is-selected' : ''} ${selecting && isChecked ? 'is-checked-row' : ''}`}
                 onClick={() => (selecting ? toggleRow(customer.id) : onSelect(customer.id))}
+                disabled={selecting && !customer.messageTotal}
                 aria-pressed={selecting ? isChecked : isSelected}
               >
                 {selecting && (
@@ -302,7 +301,6 @@ export function CustomerList({
 
                 <div className="sw-avatar-col">
                   <Avatar customer={customer} />
-                  {isUnread && <span className="sw-unread-dot" title="Khách đang chờ phản hồi" />}
                 </div>
 
                 <div className="sw-customer-row-content">
@@ -342,6 +340,9 @@ export function CustomerList({
                         )}
                         {customer.pendingAnalysis > 0 && (
                           <span className="sw-unprocessed-pill">+{customer.pendingAnalysis}</span>
+                        )}
+                        {customer.requiresReanalysis && !customer.pendingAnalysis && (
+                          <span className="sw-unprocessed-pill">Cần cập nhật</span>
                         )}
                       </>
                     )}

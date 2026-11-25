@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { managerApi } from '../../api/managerApi';
+import { useLoad } from '../../hooks/useLoad';
 import { ShieldCheckIcon, RefreshIcon } from '../common/Icons';
 
 const ACTION_LABELS = {
@@ -19,36 +20,25 @@ function formatDateTime(val) {
 }
 
 export function ManagerAuditView() {
-  const [logs, setLogs] = useState([]);
   const [actionFilter, setActionFilter] = useState('');
-  const [status, setStatus] = useState('loading');
-  const [error, setError] = useState('');
-
-  const loadLogs = async () => {
-    setStatus('loading');
-    setError('');
-    try {
-      const res = await managerApi.getAuditLogs({ action: actionFilter || null, pageSize: 50 });
-      setLogs(res.items || []);
-      setStatus('ready');
-    } catch (err) {
-      setError(err.message || 'Không thể tải nhật ký kiểm toán.');
-      setStatus('error');
-    }
-  };
-
-  useEffect(() => {
-    loadLogs();
-  }, [actionFilter]);
+  const { data, status: requestStatus, error, reload: loadLogs } = useLoad(
+    async () => {
+      const response = await managerApi.getAuditLogs({ action: actionFilter || null, pageSize: 50 });
+      return { filter: actionFilter, items: response.items || [] };
+    }, actionFilter, 'Không thể tải nhật ký kiểm toán.',
+  );
+  const matchesFilter = data?.filter === actionFilter;
+  const logs = matchesFilter ? data.items : [];
+  const status = !matchesFilter && !error ? 'loading' : requestStatus;
 
   return (
     <section className="md-panel" aria-labelledby="audit-title">
       <div className="md-panel-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 id="audit-title" className="md-panel-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h1 id="audit-title" className="md-panel-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <ShieldCheckIcon style={{ width: 22, height: 22, color: 'var(--color-text-primary)' }} />
-            Nhật Ký Kiểm Toán Doanh Nghiệp (Audit Trail)
-          </h2>
+            Nhật ký kiểm toán
+          </h1>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '13px', margin: '4px 0 0 0' }}>
             Lưu vết bất biến mọi hành động can thiệp sửa điểm, duyệt bài, giao bài và tạo kịch bản của quản lý.
           </p>
@@ -56,6 +46,7 @@ export function ManagerAuditView() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <select
+            aria-label="Lọc hành động kiểm toán"
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
             style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--color-border)', fontSize: '13px' }}
